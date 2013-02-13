@@ -241,8 +241,7 @@ namespace matrixfactbasic
 					errPerEpoch = 0.0;
 					for (int q = 0; q < numEntries; ++q) {						
 																							
-						userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);						
-						predictRating = globalAverage + userBiasHash[userIdList[q]] + movieBiasHash[movieIdList[q]] + userMovieProduct;
+						userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);												
 						predictRating = globalAverage + userMovieProduct;
 	
 						err = ratingArray[q] - predictRating;						 			
@@ -253,11 +252,6 @@ namespace matrixfactbasic
 						userFeature[j,uId] += lrate * (err * movieFeature[j,mId] - K * uv);
 						movieFeature[j,mId] += lrate * (err * uv - K * movieFeature[j,mId]);	
 					
-				//		userBiasHash[userIdList[q]] += lrate * (err - K * userBiasHash[userIdList[q]]);
-				//		movieBiasHash[movieIdList[q]] += lrate * (err - K * movieBiasHash[movieIdList[q]]);
-						
-						//userBiasHash[userIdList[q]] += lrate * (err);
-						//movieBiasHash[movieIdList[q]] += lrate * (err);
 						errPerEpoch += err*err;
 					}															
 					errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
