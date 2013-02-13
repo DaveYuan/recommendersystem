@@ -189,6 +189,7 @@ namespace matrixfactbasic
 			double uv;
 			double err;				
 			double errPerEpoch;		
+			double errPerEntry;
 			double predictRating;			
 			double globalAverage;
 			double userMovieProduct;
@@ -234,31 +235,30 @@ namespace matrixfactbasic
 
 			stopwatch.Start();		
 			
-			for (int j = 0; j < numFeatures; ++j) {	
-				errPerEpoch = 0.0;
-				err = 0;
-				for (itr = 0; itr < epochs; ++itr) {
-					errPerEpoch = 0.0;
-					for (int q = 0; q < numEntries; ++q) {						
-																							
-						userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);												
-						predictRating = globalAverage + userMovieProduct;
+			for (itr = 0; itr < epochs; ++itr) {			
+				errPerEpoch = 0.0;					
+				for (int q = 0; q < numEntries; ++q) {					
+					userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);												
+					predictRating = globalAverage;// + userMovieProduct;
 	
-						err = ratingArray[q] - predictRating;						 			
-						uId = userIdHash[userIdList[q]];
-						mId = movieIdHash[movieIdList[q]];
-							
+					err = ratingArray[q] - predictRating;						 			
+					uId = userIdHash[userIdList[q]];
+					mId = movieIdHash[movieIdList[q]];
+					errPerEpoch += err*err;
+					
+					for (int j = 0; j < numFeatures; ++j) {																																																			
 						uv = userFeature[j,uId];
-						userFeature[j,uId] += lrate * (err * movieFeature[j,mId] - K * uv);
-						movieFeature[j,mId] += lrate * (err * uv - K * movieFeature[j,mId]);	
+						userFeature[j,uId] += lrate * (err * movieFeature[j,mId]);
+						movieFeature[j,mId] += lrate * (err * uv);
+						//userFeature[j,uId] += lrate * (err * movieFeature[j,mId] - K * uv);
+						//movieFeature[j,mId] += lrate * (err * uv - K * movieFeature[j,mId]);
+					}																
+				}
+				
+				errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
 					
-						errPerEpoch += err*err;
-					}															
-					errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
-					
-					Console.WriteLine( "Training feature = {0}, Epoch = {1}, errPerEpoch = {2},", j+1, itr, errPerEpoch);
-				}					
-				errList.Add(j, errPerEpoch);				
+				Console.WriteLine( "Epoch = {0}, errPerEpoch = {1}", itr, errPerEpoch);
+				errList.Add(itr, errPerEpoch);				
 			}
 			
 			stopwatch.Stop();
@@ -278,7 +278,7 @@ namespace matrixfactbasic
 		{	
 			int numUsers;
 			int numMovies;			
-			int epochs = 60;
+			int epochs = 100;
 			int numFeatures = 50;
 			double K = 25;
 			double lrate = 0.001;

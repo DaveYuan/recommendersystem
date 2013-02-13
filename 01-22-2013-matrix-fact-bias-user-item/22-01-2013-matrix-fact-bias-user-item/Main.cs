@@ -235,36 +235,29 @@ namespace matrixfactbiasuseritem
 
 			stopwatch.Start();		
 			
-			for (int j = 0; j < numFeatures; ++j) {	
+			for (itr = 0; itr < epochs; ++itr) {
 				errPerEpoch = 0.0;
-				err = 0;
-				for (itr = 0; itr < epochs; ++itr) {
-					errPerEpoch = 0.0;
-					for (int q = 0; q < numEntries; ++q) {						
-																							
-						userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);						
-						predictRating = globalAverage + userBiasHash[userIdList[q]] + movieBiasHash[movieIdList[q]] + userMovieProduct;
-	
-						err = ratingArray[q] - predictRating;						 			
-						uId = userIdHash[userIdList[q]];
-						mId = movieIdHash[movieIdList[q]];
-							
+				for (int q = 0; q < numEntries; ++q) {
+					userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);						
+					predictRating = globalAverage + userBiasHash[userIdList[q]] + movieBiasHash[movieIdList[q]] + userMovieProduct;
+					
+					err = ratingArray[q] - predictRating;	
+					uId = userIdHash[userIdList[q]];
+					mId = movieIdHash[movieIdList[q]];
+					userBiasHash[userIdList[q]] += lrate * (err - Kbias * userBiasHash[userIdList[q]]);
+					movieBiasHash[movieIdList[q]] += lrate * (err - Kbias * movieBiasHash[movieIdList[q]]);
+					
+					errPerEpoch += err*err;
+					
+					for(int j = 0; j < numFeatures; j++) {
 						uv = userFeature[j,uId];
 						userFeature[j,uId] += lrate * (err * movieFeature[j,mId] - K * uv);
 						movieFeature[j,mId] += lrate * (err * uv - K * movieFeature[j,mId]);	
-					
-						userBiasHash[userIdList[q]] += lrate * (err - Kbias * userBiasHash[userIdList[q]]);
-						movieBiasHash[movieIdList[q]] += lrate * (err - Kbias * movieBiasHash[movieIdList[q]]);
-						
-						//userBiasHash[userIdList[q]] += lrate * (err);
-						//movieBiasHash[movieIdList[q]] += lrate * (err);
-						errPerEpoch += err*err;
-					}															
-					errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
-					
-					Console.WriteLine( "Training feature = {0}, Epoch = {1}, errPerEpoch = {2},", j+1, itr, errPerEpoch);
-				}					
-				errList.Add(j, errPerEpoch);				
+					}					
+				}		
+				errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
+				Console.WriteLine( "Epoch = {0}, errPerEpoch = {1},", itr, errPerEpoch);
+				errList.Add(itr, errPerEpoch);				
 			}
 			
 			stopwatch.Stop();
@@ -284,10 +277,10 @@ namespace matrixfactbiasuseritem
 		{	
 			int numUsers;
 			int numMovies;			
-			int epochs = 60;
+			int epochs = 100;
 			int numFeatures = 50;
-			double K = 25;
-			double Kbias = 0.25;
+			double K = 70;
+			double Kbias = 0.001;
 			double lrate = 0.001;
 						
 			List<string> userIdList = new List<string>();
