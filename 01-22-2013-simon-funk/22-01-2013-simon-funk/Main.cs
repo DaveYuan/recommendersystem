@@ -116,7 +116,7 @@ namespace simonfunk
 			return globalOffset;						
 		}
 		
-		static void initAverageRating(double globalAverage, double K, 
+		static void initAverageRating(double globalAverage, int K, 
 		                              Dictionary<string, List<int>> movieIdMapping, 
 		                              int[] ratingArray, ref Dictionary<string, double> averageRating) 
 		{
@@ -136,7 +136,7 @@ namespace simonfunk
 			}
 		}
 		
-		static void initAverageOffset(double globalOffset, double K,
+		static void initAverageOffset(double globalOffset, int K,
 		                              Dictionary<string, List<int>> userIdMapping,
 		                              List<string> movieIdList,
 		                              int[] ratingArray, 		                              
@@ -192,7 +192,7 @@ namespace simonfunk
 			return dotProduct;
 		}
 		
-		static void train(double K,		           
+		static void train(int K,		           
 		                  int epochs,
 		                  int numUsers,
 		                  int numMovies,
@@ -258,30 +258,33 @@ namespace simonfunk
 			
 			Stopwatch stopwatch = new Stopwatch();
 
-			stopwatch.Start();			
-							
-			for (itr = 0; itr < epochs; ++itr) {
-				errPerEpoch = 0.0;
-				for (int q = 0; q < numEntries; ++q) {	
-					userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);	
-					predictRating = averageRating[movieIdList[q]] + averageOffset[userIdList[q]] + userMovieProduct;
-				
-					err = ratingArray[q] - predictRating;	
-					uId = userIdHash[userIdList[q]];
-					mId	= movieIdHash[movieIdList[q]];
+			stopwatch.Start();
 			
-					for (int j = 0; j < numFeatures; ++j) {
-					uv = userFeature[j,uId];
-					userFeature[j,uId] += lrate * (err * movieFeature[j,mId] - K * uv);
-					movieFeature[j,mId] += lrate * (err * uv - K * movieFeature[j,mId]);						
-					}	
-					errPerEpoch += err*err;
-				}	
-				errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
-				Console.WriteLine( "Epoch = {0}, errPerEpoch = {1},", itr, errPerEpoch);
-				errList.Add(itr, errPerEpoch);	
+			for (int j = 0; j < numFeatures; ++j) {	
+				errPerEpoch = 0.0;
+				err = 0;
+				for (itr = 0; itr < epochs; ++itr) {
+					errPerEpoch = 0.0;
+					for (int q = 0; q < numEntries; ++q) {													
+						userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);							
+						predictRating = averageRating[movieIdList[q]] + averageOffset[userIdList[q]] + userMovieProduct;
+	
+						err = ratingArray[q] - predictRating;						 			
+						uId = userIdHash[userIdList[q]];
+						mId = movieIdHash[movieIdList[q]];
+							
+						uv = userFeature[j,uId];
+						userFeature[j,uId] += lrate * (err * movieFeature[j,mId] - K * uv);
+						movieFeature[j,mId] += lrate * (err * uv - K * movieFeature[j,mId]);										
+						errPerEpoch += err*err;
+					}															
+					errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
+					
+					Console.WriteLine( "Training feature = {0}, Epoch = {1}, errPerEpoch = {2},", j+1, itr, errPerEpoch);
+				}					
+				errList.Add(j, errPerEpoch);				
 			}
-
+			
 			stopwatch.Stop();
 			Console.WriteLine("Time elapsed: {0}", stopwatch.Elapsed);
 			
@@ -299,8 +302,8 @@ namespace simonfunk
 		{	
 			int numUsers;
 			int numMovies;
-			double K = 0.25;			
-			int epochs = 100;
+			int K = 25;			
+			int epochs = 60;
 			int numFeatures = 50;
 			double lrate = 0.001;
 						

@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "22-01-2013-simon-funk", "22-01-2013-simon-funk\22-01-2013-simon-funk.csproj", "{3C019610-9965-4C03-9A9B-A17B7B9D28C4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3C019610-9965-4C03-9A9B-A17B7B9D28C4}.Debug|x86.ActiveCfg = Debug|x86
+		{3C019610-9965-4C03-9A9B-A17B7B9D28C4}.Debug|x86.Build.0 = Debug|x86
+		{3C019610-9965-4C03-9A9B-A17B7B9D28C4}.Release|x86.ActiveCfg = Release|x86
+		{3C019610-9965-4C03-9A9B-A17B7B9D28C4}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = 22-01-2013-simon-funk\22-01-2013-simon-funk.csproj
+	EndGlobalSection
+EndGlobal

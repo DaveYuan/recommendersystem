@@ -17,7 +17,7 @@ set ytics 0,0.010
 
 plot "matrix-fact-glb-avg.txt" u 1:2 title 'Global Average' w lp, \
 "matrix-fact-basic.txt" u 1:2 title 'Basic matrix factorizaton' w lp , \
-"matrix-fact-bias-learning.txt" u 1:2 title 'Bias learning without regularisation' w lp , \
-"matrix-fact-bias-learning-map.txt" u 1:2 title 'Bias learning with regularisation' w lp , \
-"matrix-fact-bias-user-item.txt" u 1:2 title 'Bias learning matrix factorization' w lp, \
-"simon-funk.txt" u 1:2 title 'Simon Funk' w lp
+"matrix-fact-bias-learning.txt" u 1:2 title 'Bias learning without MAP' w lp , \
+"matrix-fact-bias-learning-map.txt" u 1:2 title 'Bias learning with MAP' w lp , \
+"matrix-fact-bias-user-item.txt" u 1:2 title 'MAP regularization + bias learning matrix factorization' w lp, \
+"simon-funk.txt" u 1:2 title 'MAP regularization Simon Funk' w lp

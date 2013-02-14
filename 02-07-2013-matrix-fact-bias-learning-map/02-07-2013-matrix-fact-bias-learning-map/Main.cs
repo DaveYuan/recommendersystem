@@ -180,14 +180,18 @@ namespace matrixfactbiaslearningmap
 		                  Dictionary<string, List<int>> movieIdMapping		           
 		                  )
 		{	
+			int uId;
+			int mId;
 			int itr;
 			int numEntries;
 			int userIdCounter;
-			int movieIdCounter;								
+			int movieIdCounter;						
+			double uv;
 			double err;				
 			double errPerEpoch;		
 			double predictRating;			
-			double globalAverage;	
+			double globalAverage;
+			double userMovieProduct;
 			
 			string[] line = new string[epochs];
 			Dictionary<int, double> errList = new Dictionary<int, double>();
@@ -230,19 +234,36 @@ namespace matrixfactbiaslearningmap
 
 			stopwatch.Start();		
 			
-			for (itr = 0; itr < epochs; ++itr) {
+			for (int j = 0; j < numFeatures; ++j) {	
 				errPerEpoch = 0.0;
-				for (int q = 0; q < numEntries; ++q) {
-					predictRating = globalAverage + userBiasHash[userIdList[q]] + movieBiasHash[movieIdList[q]];
-					err = ratingArray[q] - predictRating;						 			
-					errPerEpoch += err*err;
-					userBiasHash[userIdList[q]] += lrate * (err - K * userBiasHash[userIdList[q]]);
-					movieBiasHash[movieIdList[q]] += lrate * (err - K * movieBiasHash[movieIdList[q]]);
+				err = 0;
+				for (itr = 0; itr < epochs; ++itr) {
+					errPerEpoch = 0.0;
+					for (int q = 0; q < numEntries; ++q) {						
+																							
+					//	userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);						
+						predictRating = globalAverage + userBiasHash[userIdList[q]] + movieBiasHash[movieIdList[q]];
+	
+						err = ratingArray[q] - predictRating;						 			
+						uId = userIdHash[userIdList[q]];
+						mId = movieIdHash[movieIdList[q]];
+							
+					//	uv = userFeature[j,uId];
+					//	userFeature[j,uId] += lrate * (err * movieFeature[j,mId] - K * uv);
+					//	movieFeature[j,mId] += lrate * (err * uv - K * movieFeature[j,mId]);	
+					
+						userBiasHash[userIdList[q]] += lrate * (err - K * userBiasHash[userIdList[q]]);
+						movieBiasHash[movieIdList[q]] += lrate * (err - K * movieBiasHash[movieIdList[q]]);
 						
-				}		
-				errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
-				Console.WriteLine( "Epoch = {0}, errPerEpoch = {1},", itr, errPerEpoch);
-				errList.Add(itr, errPerEpoch);				
+						//userBiasHash[userIdList[q]] += lrate * (err);
+						//movieBiasHash[movieIdList[q]] += lrate * (err);
+						errPerEpoch += err*err;
+					}															
+					errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
+					
+					Console.WriteLine( "Training feature = {0}, Epoch = {1}, errPerEpoch = {2},", j+1, itr, errPerEpoch);
+				}					
+				errList.Add(j, errPerEpoch);				
 			}
 			
 			stopwatch.Stop();
@@ -262,10 +283,10 @@ namespace matrixfactbiaslearningmap
 		{	
 			int numUsers;
 			int numMovies;			
-			int epochs = 100;
+			int epochs = 60;
 			int numFeatures = 50;
-			double K = 0.18;
-			double lrate = 0.01;
+			double K = 0.3;
+			double lrate = 0.001;
 						
 			List<string> userIdList = new List<string>();
 			List<string> movieIdList = new List<string>();
