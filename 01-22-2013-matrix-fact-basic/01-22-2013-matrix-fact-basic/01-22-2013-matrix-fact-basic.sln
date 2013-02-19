@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "01-22-2013-matrix-fact-basic", "01-22-2013-matrix-fact-basic\01-22-2013-matrix-fact-basic.csproj", "{4D1B8B25-4866-48A2-A30E-C48E6A32691C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D1B8B25-4866-48A2-A30E-C48E6A32691C}.Debug|x86.ActiveCfg = Debug|x86
+		{4D1B8B25-4866-48A2-A30E-C48E6A32691C}.Debug|x86.Build.0 = Debug|x86
+		{4D1B8B25-4866-48A2-A30E-C48E6A32691C}.Release|x86.ActiveCfg = Release|x86
+		{4D1B8B25-4866-48A2-A30E-C48E6A32691C}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = 01-22-2013-matrix-fact-basic\01-22-2013-matrix-fact-basic.csproj
+	EndGlobalSection
+EndGlobal
