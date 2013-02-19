@@ -24,9 +24,9 @@ namespace matrixfactbasic
 		static void readTrainSet(String fileName, 
 		                         ref Dictionary<string, List<int>> userIdMapping, 
 		                         ref Dictionary<string, List<int>> movieIdMapping,
-		                         ref List<string> userIdList,
-		                         ref List<string> movieIdList,
-		                         ref List<int> ratingList)
+		                         ref List<string> trainUserIdList,
+		                         ref List<string> trainMovieIdList,
+		                         ref List<int> trainRatingList)
 		{
 			int userIdIndex;
 			int movieIdIndex;
@@ -46,7 +46,7 @@ namespace matrixfactbasic
 				foreach (string s in result)
 				{
 					if (rowIndexCounter == 0) {
-						userIdList.Add(s);
+						trainUserIdList.Add(s);
 						if (userIdMapping.ContainsKey(s))
 						{
 							userIdMapping[s].Add(userIdIndex);				
@@ -60,7 +60,7 @@ namespace matrixfactbasic
 					} 
 					
 					if (rowIndexCounter == 1) {
-						movieIdList.Add(s);
+						trainMovieIdList.Add(s);
 						if (movieIdMapping.ContainsKey(s))
 						{
 							movieIdMapping[s].Add(movieIdIndex);				
@@ -74,7 +74,7 @@ namespace matrixfactbasic
 					}
 					
 					if(rowIndexCounter == 2) {
-						ratingList.Add(Convert.ToInt32(s));
+						trainRatingList.Add(Convert.ToInt32(s));
 					}
 					
 					rowIndexCounter++;
@@ -82,13 +82,47 @@ namespace matrixfactbasic
 			}	
 		}	
 		
-		static double calcGlobalAverage(List<int> ratingList) 
+		static void readTestSet(String fileName, 
+		                         ref List<string> testUserIdList,
+		                         ref List<string> testMovieIdList,
+		                         ref List<int> testRatingList)
+		{
+			int rowIndexCounter;	
+			
+			string[] lines = System.IO.File.ReadAllLines(fileName);		
+			displayTrainSet(lines);
+				
+			foreach (string line in lines)
+	        {	
+				string[] stringSeparator = new string[] { "\t" };
+				string[] result = line.Split(stringSeparator, StringSplitOptions.None);
+				rowIndexCounter = 0;
+				
+				foreach (string s in result)
+				{
+					if (rowIndexCounter == 0) {
+						testUserIdList.Add(s);
+					} 
+					
+					if (rowIndexCounter == 1) {
+						testMovieIdList.Add(s);
+					}
+					
+					if(rowIndexCounter == 2) {
+						testRatingList.Add(Convert.ToInt32(s));
+					}					
+					rowIndexCounter++;
+				}
+			}	
+		}
+		
+		static double calcGlobalAverage(List<int> trainRatingList) 
 		{
 			int sum = 0;
-			int size = ratingList.Count;
+			int size = trainRatingList.Count;
 			double globalAverage;
 			
-			foreach (int rating in ratingList) {
+			foreach (int rating in trainRatingList) {
 				sum = sum + rating;
 			}
 			globalAverage = (double)sum/(double)size;
@@ -131,7 +165,7 @@ namespace matrixfactbasic
 		
 		static void userAvg(ref Dictionary<string, double> userIdAvgHash, 
 		                    Dictionary<string, List<int>> userIdMapping,
-		                    int[] ratingArray)
+		                    int[] trainRatingArray)
 		{
 			double sum;
 			int size;
@@ -140,7 +174,7 @@ namespace matrixfactbasic
 				size = userId.Value.Count;
 				sum = 0.0;
 				foreach (int indx in userId.Value) {
-					sum += ratingArray[indx];
+					sum += trainRatingArray[indx];
 				}
 				sum = sum / size;
 				userIdAvgHash.Add(userId.Key, sum);
@@ -149,7 +183,7 @@ namespace matrixfactbasic
 		
 		static void movieAvg(ref Dictionary<string, double> movieIdAvgHash,
 		                     Dictionary<string, List<int>> movieIdMapping,
-		                     int[] ratingArray)
+		                     int[] trainRatingArray)
 		{
 			double sum;
 			int size;
@@ -158,14 +192,14 @@ namespace matrixfactbasic
 				size = movieId.Value.Count;
 				sum = 0.0;
 				foreach (int indx in movieId.Value) {
-					sum += ratingArray[indx];
+					sum += trainRatingArray[indx];
 				}
 				sum = sum / size;
 				movieIdAvgHash.Add(movieId.Key, sum);
 			}
 		}
 		
-		static void train(double K,		           
+		static void trainTestError(double K,		           
 		                  int epochs,
 		                  int numUsers,
 		                  int numMovies,
@@ -173,11 +207,14 @@ namespace matrixfactbasic
 		                  double lrate,
 		                  ref double[,] userFeature,
 		                  ref double[,] movieFeature,
-		                  List<string> userIdList, 
-		                  List<string> movieIdList,
-		                  List<int> ratingList,
+		                  List<string> trainUserIdList, 
+		                  List<string> trainMovieIdList,
+		                  List<int> trainRatingList,
 		                  Dictionary<string, List<int>> userIdMapping,
-		                  Dictionary<string, List<int>> movieIdMapping		           
+		                  Dictionary<string, List<int>> movieIdMapping,
+		                  List<string> testUserIdList, 
+		                  List<string> testMovieIdList,
+		                  List<int> testRatingList                    
 		                  )
 		{	
 			int uId;
@@ -187,15 +224,19 @@ namespace matrixfactbasic
 			int userIdCounter;
 			int movieIdCounter;						
 			double uv;
-			double err;				
-			double errPerEpoch;		
-			double errPerEntry;
-			double predictRating;			
+			double trainErr;				
+			double testErr;
+			double testErrPerEpoch;
+			double trainErrPerEpoch;					
+			double trainPredictRating;	
+			double testPredictRating;
 			double globalAverage;
-			double userMovieProduct;
+			double trainUserMovieProduct;
+			double testUserMovieProduct;
 			
 			string[] line = new string[epochs];
-			Dictionary<int, double> errList = new Dictionary<int, double>();
+			Dictionary<int, double> trainErrList = new Dictionary<int, double>();
+			Dictionary<int, double> testErrList = new Dictionary<int, double>();
 			Dictionary<string, int> userIdHash = new Dictionary<string, int>();
 			Dictionary<string, int> movieIdHash = new Dictionary<string, int>();
 			Dictionary<string, double> userIdAvgHash = new Dictionary<string, double>();
@@ -203,18 +244,19 @@ namespace matrixfactbasic
 			Dictionary<string, double> userBiasHash = new Dictionary<string, double>();
 			Dictionary<string, double> movieBiasHash = new Dictionary<string, double>();		
 	
-			numEntries = ratingList.Count;
-			int[] ratingArray = ratingList.ToArray();			
+			numEntries = trainRatingList.Count;
+			int[] trainRatingArray = trainRatingList.ToArray();	
+			int[] testRatingArray = testRatingList.ToArray();
 			
-			globalAverage = calcGlobalAverage(ratingList);			
+			globalAverage = calcGlobalAverage(trainRatingList);			
 		
 			initFeatures(userIdMapping.Count, ref userFeature, 
 			             movieIdMapping.Count, ref movieFeature,
 			             numFeatures);			
 			
 			userIdCounter = movieIdCounter = 0;
-			userAvg(ref userIdAvgHash, userIdMapping, ratingArray);
-			movieAvg(ref movieIdAvgHash, movieIdMapping, ratingArray);
+			userAvg(ref userIdAvgHash, userIdMapping, trainRatingArray);
+			movieAvg(ref movieIdAvgHash, movieIdMapping, trainRatingArray);
 			
 			
 			foreach (KeyValuePair<string, List<int>> userId in userIdMapping)
@@ -236,42 +278,63 @@ namespace matrixfactbasic
 			stopwatch.Start();		
 			
 			for (itr = 0; itr < epochs; ++itr) {			
-				errPerEpoch = 0.0;					
+				trainErrPerEpoch = 0.0;	
+				testErrPerEpoch = 0.0;
 				for (int q = 0; q < numEntries; ++q) {					
-					userMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[userIdList[q]], movieIdHash[movieIdList[q]]);												
-					predictRating = globalAverage;// + userMovieProduct;
-	
-					err = ratingArray[q] - predictRating;						 			
-					uId = userIdHash[userIdList[q]];
-					mId = movieIdHash[movieIdList[q]];
-					errPerEpoch += err*err;
+					trainUserMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[trainUserIdList[q]], movieIdHash[trainMovieIdList[q]]);												
+					if(!userIdHash.ContainsKey(testUserIdList[q])) {
+						Console.WriteLine("User-id: key {0} not present",testUserIdList[q]);
+					}
+					if(!movieIdHash.ContainsKey(testMovieIdList[q])) {
+						Console.WriteLine("Movie-id: key {0} not present",testMovieIdList[q]);
+					}
+					testUserMovieProduct = adjustingFactor(userFeature, movieFeature, numFeatures, userIdHash[testUserIdList[q]], movieIdHash[testMovieIdList[q]]);
+					trainPredictRating = globalAverage + trainUserMovieProduct;
+					testPredictRating = globalAverage + testUserMovieProduct;
+					
+					trainErr = trainRatingArray[q] - trainPredictRating;						 			
+					testErr = testRatingArray[q] - testPredictRating;
+				
+					uId = userIdHash[trainUserIdList[q]];
+					mId = movieIdHash[trainMovieIdList[q]];
+					trainErrPerEpoch += trainErr * trainErr;
+					testErrPerEpoch += testErr * testErr;
 					
 					for (int j = 0; j < numFeatures; ++j) {																																																			
 						uv = userFeature[j,uId];
-						userFeature[j,uId] += lrate * (err * movieFeature[j,mId]);
-						movieFeature[j,mId] += lrate * (err * uv);
-						//userFeature[j,uId] += lrate * (err * movieFeature[j,mId] - K * uv);
-						//movieFeature[j,mId] += lrate * (err * uv - K * movieFeature[j,mId]);
+						userFeature[j,uId] += lrate * (trainErr * movieFeature[j,mId]);
+						movieFeature[j,mId] += lrate * (trainErr * uv);
 					}																
 				}
 				
-				errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);	
+				trainErrPerEpoch = Math.Sqrt(trainErrPerEpoch/numEntries);	
+				testErrPerEpoch = Math.Sqrt(testErrPerEpoch/numEntries);
 					
-				Console.WriteLine( "Epoch = {0}, errPerEpoch = {1}", itr, errPerEpoch);
-				errList.Add(itr, errPerEpoch);				
+				Console.WriteLine( "Epoch = {0}, trainErrPerEpoch = {1} testErrPerEpoch = {2}", itr, trainErrPerEpoch, testErrPerEpoch);
+				trainErrList.Add(itr, trainErrPerEpoch);
+				testErrList.Add(itr, testErrPerEpoch);
 			}
 			
 			stopwatch.Stop();
 			Console.WriteLine("Time elapsed: {0}", stopwatch.Elapsed);
 			
 			itr = 0;
-			foreach (KeyValuePair<int, double> errId in errList)
+			foreach (KeyValuePair<int, double> errId in trainErrList)
             {
 				string tmp = errId.Key + " " + errId.Value;
 				line[itr] = tmp;
 				itr++;                
             }
-			System.IO.File.WriteAllLines("/home/whitepearl/upb/Program/01-22-2013-matrix-fact-basic/error.txt", line);						
+			System.IO.File.WriteAllLines("train_error.txt", line);
+			
+			itr = 0;
+			foreach (KeyValuePair<int, double> errId in testErrList)
+            {
+				string tmp = errId.Key + " " + errId.Value;
+				line[itr] = tmp;
+				itr++;                
+            }
+			System.IO.File.WriteAllLines("test_error.txt", line);
 		}
 		
 		public static void Main (string[] args)
@@ -283,19 +346,28 @@ namespace matrixfactbasic
 			double K = 25;
 			double lrate = 0.001;
 						
-			List<string> userIdList = new List<string>();
-			List<string> movieIdList = new List<string>();
-			List<int> ratingList = new List<int>();
+			List<string> trainUserIdList = new List<string>();
+			List<string> trainMovieIdList = new List<string>();
+			List<int> trainRatingList = new List<int>();
+			
+			List<string> testUserIdList = new List<string>();
+			List<string> testMovieIdList = new List<string>();
+			List<int> testRatingList = new List<int>();
 			
 			Dictionary<string, List<int>> userIdMapping = new Dictionary<string, List<int>>();
 			Dictionary<string, List<int>> movieIdMapping = new Dictionary<string, List<int>>();			
 			
-			readTrainSet("/home/whitepearl/upb/Program/01-22-2013-matrix-fact-basic/dataset_train.txt", 
+			readTrainSet("/home/whitepearl/upb/Program/dataset/dataset_train.txt", 
 			             ref userIdMapping, 
 			             ref movieIdMapping, 
-			             ref userIdList, 
-			             ref movieIdList, 
-			             ref ratingList);
+			             ref trainUserIdList, 
+			             ref trainMovieIdList, 
+			             ref trainRatingList);
+			
+			readTestSet("/home/whitepearl/upb/Program/dataset/dataset_test.txt", 
+			             ref testUserIdList, 
+			             ref testMovieIdList, 
+			             ref testRatingList);
 			
 			numUsers = userIdMapping.Count;
 			numMovies = movieIdMapping.Count;
@@ -303,7 +375,7 @@ namespace matrixfactbasic
 			double[,] userFeature = new double[numFeatures,numUsers];
 			double[,] movieFeature = new double[numFeatures,numMovies];						
 
-			train(K,		           
+			trainTestError(K,		           
 		          epochs,
 		          numUsers,
 		          numMovies,
@@ -311,14 +383,18 @@ namespace matrixfactbasic
 		          lrate,
 			      ref userFeature,
 			      ref movieFeature,
-		          userIdList, 
-		          movieIdList,
-		          ratingList,
+		          trainUserIdList, 
+		          trainMovieIdList,
+		          trainRatingList,
 		          userIdMapping,
-		          movieIdMapping
+		          movieIdMapping,
+			      testUserIdList, 
+		          testMovieIdList,
+		          testRatingList
 			      );
 			
-			Process.Start("/home/whitepearl/upb/Program/01-22-2013-matrix-fact-basic/plot.sh");
+			Process.Start("plot.sh");
+
 		}		
 	}
 }

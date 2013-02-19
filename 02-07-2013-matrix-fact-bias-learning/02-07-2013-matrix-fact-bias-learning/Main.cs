@@ -283,9 +283,9 @@ namespace matrixfactbiaslearning
 		{	
 			int numUsers;
 			int numMovies;			
-			int epochs = 60;
+			int epochs = 100;
 			int numFeatures = 50;
-			double K = 0.3;
+			double K = 25;
 			double lrate = 0.001;
 						
 			List<string> userIdList = new List<string>();
