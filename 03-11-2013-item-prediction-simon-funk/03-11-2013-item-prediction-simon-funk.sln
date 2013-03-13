@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "03-11-2013-item-prediction-simon-funk", "03-11-2013-item-prediction-simon-funk\03-11-2013-item-prediction-simon-funk.csproj", "{264FAFD8-CB12-41F2-A150-A3F81B064BEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{264FAFD8-CB12-41F2-A150-A3F81B064BEE}.Debug|x86.ActiveCfg = Debug|x86
+		{264FAFD8-CB12-41F2-A150-A3F81B064BEE}.Debug|x86.Build.0 = Debug|x86
+		{264FAFD8-CB12-41F2-A150-A3F81B064BEE}.Release|x86.ActiveCfg = Release|x86
+		{264FAFD8-CB12-41F2-A150-A3F81B064BEE}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = 03-11-2013-item-prediction-simon-funk\03-11-2013-item-prediction-simon-funk.csproj
+	EndGlobalSection
+EndGlobal
