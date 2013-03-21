@@ -3,7 +3,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace baselineitemrecomnitemavg2
+namespace baselineitemrecomnitemtoprating2
 {
 	class MainClass
 	{		
@@ -68,28 +68,16 @@ namespace baselineitemrecomnitemavg2
 	
 		static void baselineAvgRating(List<string> trainItemIdList, 
 		                                      List<int> trainRatingList, 
-		                                      ref Dictionary<string,double> avgRating) 
-		{		
-			Dictionary<string,int> countUsers = new Dictionary<string, int>();
-			Dictionary<string, int> sumRatings = new Dictionary<string, int>();
-		
-			for (int itr = 0; itr < trainRatingList.Count; itr++) {
-				if (countUsers.ContainsKey(trainItemIdList[itr])){
-					countUsers[trainItemIdList[itr]] = countUsers[trainItemIdList[itr]] + 1;
+		                                      ref Dictionary<string, int> numRatings) 
+		{					
+			int n = trainRatingList.Count;
+			for (int itr = 0; itr < n; itr++) {
+				if (numRatings.ContainsKey( trainItemIdList[itr] )){
+					numRatings[trainItemIdList[itr]] = numRatings[trainItemIdList[itr]] + 1;
 				} else {
-					countUsers.Add(trainItemIdList[itr],1);
+					numRatings.Add(trainItemIdList[itr], 1);
 				}
-				
-				if (sumRatings.ContainsKey(trainItemIdList[itr])){
-					sumRatings[trainItemIdList[itr]] = sumRatings[trainItemIdList[itr]] + trainRatingList[itr];
-				} else {
-					sumRatings.Add(trainItemIdList[itr],trainRatingList[itr]);
-				}
-			}
-			
-			foreach (KeyValuePair<string, int> pair in sumRatings) {
-				avgRating.Add(pair.Key, ((double)pair.Value)/((double)countUsers[pair.Key]));
-			}			
+			}							
 		}
 					
 		static int calcItemHitInSortedList(int N, string rankedItem, Dictionary<string,double> itemAvgList)
@@ -116,7 +104,7 @@ namespace baselineitemrecomnitemavg2
 			return 0;
 		}	
 		
-		static void readDataAndRecall(String fileName, int N, Dictionary<string,double> avgRating,
+		static void readDataAndRecall(String fileName, int N, Dictionary<string, int> numRatings,
 		                              ref Dictionary<int, double> recallData)
 		{
 			int T = 0; 
@@ -152,8 +140,8 @@ namespace baselineitemrecomnitemavg2
 						
 					if (rowIndexCounter >= 1) {
 						if (!itemAvgList.ContainsKey(s)) {
-							if (avgRating.ContainsKey(s)) {
-								itemAvgList.Add(s,avgRating[s]);
+							if (numRatings.ContainsKey(s)) {
+								itemAvgList.Add(s, numRatings[s]);
 							} 
 //								else {
 //								Console.WriteLine("Key not present in train: {0}", s);
@@ -188,7 +176,7 @@ namespace baselineitemrecomnitemavg2
 		
 			Dictionary<string, List<int>> trainUserIdMapping = new Dictionary<string, List<int>>();
 			Dictionary<string, List<int>> trainItemIdMapping = new Dictionary<string, List<int>>();
-			Dictionary<string,double> avgRating = new Dictionary<string, double>();
+			Dictionary<string, int> numRatings = new Dictionary<string, int>();
 			Dictionary<int, double> recallData = new Dictionary<int, double>();
 						
 			readTrainSet("train.txt", 
@@ -197,10 +185,11 @@ namespace baselineitemrecomnitemavg2
 			             ref trainUserIdList, 
 			             ref trainItemIdList, 
 			             ref trainRatingList);						
-			baselineAvgRating(trainItemIdList,trainRatingList, ref avgRating);				
+			
+			baselineAvgRating(trainItemIdList,trainRatingList, ref numRatings);				
 			
 			for (int N = minN; N <= maxN; N = N+1) {			
-				readDataAndRecall("test.txt", N, avgRating, ref recallData);			
+				readDataAndRecall("test.txt", N, numRatings, ref recallData);			
 			}
 		
 			itr = 0;

@@ -10,4 +10,4 @@ set ylabel "Recall"
 set title "Benchmarks"
 set ytics 0,0.01
 
-plot "recall.txt" u 1:2 title 'Recall plot Top Avg(Movie lens)' w lp
+plot "recall.txt" u 1:2 title 'Recall plot Top Rating(Movie lens)' w lp
