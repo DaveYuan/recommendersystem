@@ -122,7 +122,8 @@ namespace bprmatrixfact
 		{
 			double dotProduct = 0.0;
 			for (int i = 0; i < numFeatures; ++i) {
-				dotProduct += userFeature[i,userId] * itemFeature[i,itemId];				
+				dotProduct += userFeature[i,userId] * itemFeature[i,itemId];	
+				//Console.WriteLine("{0} ", userFeature[i,userId]);
 			}
 			return dotProduct;
 		}			
@@ -166,94 +167,6 @@ namespace bprmatrixfact
 			return norm;
 		}
 		
-		static void learnBPR(
-		                     int bprEpochs,
-		                     int numFeatures,
-		                     double lrate,
-		                     double K,
-		                     ref double[,] userFeature,
-		                     ref double[,] itemFeature,
-		                     Dictionary<string, int> userIdHash,
-		                     Dictionary<string, int> itemIdHash,
-		                     Dictionary<string, List<string>> ratedItemsPerUser, 
-		                     List<string> uniqueItemList
-		                     ) 
-		{
-			int userIndx;
-			int itemIIndex;
-			int itemJIndex;
-			int epoch;
-			int randUserIndx;
-			int randRatedItemIndx;			
-			int randNonRatedItemIndx;
-			int numRatedItems;
-			int numUniqueUsers = ratedItemsPerUser.Keys.Count;
-			int numUniqueItems = uniqueItemList.Count;						
-			double uv;
-			double xuij;
-			double xui;
-			double xuj;
-			double bprOpt;
-			double dervXuij;
-			string randUser;
-			string randRatedItem;
-			string randNonRatedItem;
-			
-			Random r1 = new Random();
-			Random r2 = new Random();
-			Random r3 = new Random();	
-			
-			bprOpt = 0.0;
-		//	Console.WriteLine("BPR Learning");		
-		//	Console.WriteLine("numUniqueUsers: {0}, numUniqueItems: {1}", numUniqueUsers, numUniqueItems);
-			
-			for (epoch = 1; epoch < bprEpochs; epoch++) {
-
-				randUserIndx = r1.Next(0, numUniqueUsers);
-				numRatedItems = ratedItemsPerUser[ratedItemsPerUser.Keys.ElementAt(randUserIndx)].Count;
-				randRatedItemIndx = r2.Next(0, numRatedItems);
-				randNonRatedItemIndx = r3.Next(0, numUniqueItems);
-				
-				randUser = ratedItemsPerUser.Keys.ElementAt(randUserIndx);
-				randRatedItem = ratedItemsPerUser[randUser][randRatedItemIndx];
-				randNonRatedItem = uniqueItemList[randNonRatedItemIndx];
-				
-				while (ratedItemsPerUser[randUser].Contains(randNonRatedItem)) {
-					randNonRatedItemIndx = r3.Next(0, numUniqueItems);
-					randNonRatedItem = uniqueItemList[randNonRatedItemIndx];
-				}
-				
-				userIndx = userIdHash[randUser];
-				itemIIndex = itemIdHash[randRatedItem];
-				itemJIndex = itemIdHash[randNonRatedItem];			
-				xui = adjustingFactor(userFeature, itemFeature, numFeatures, userIndx, itemIIndex);
-				xuj = adjustingFactor(userFeature, itemFeature, numFeatures, userIndx, itemJIndex);
-				xuij = xui - xuj;
-				
-				for(int j = 0; j < numFeatures; j++) {	
-					uv = userFeature[j,userIndx];
-					dervXuij = itemFeature[j,itemIIndex] - itemFeature[j,itemJIndex];
-					userFeature[j,userIndx] += lrate * 
-											( ( ( (Math.Exp(-xuij)) / (1 + Math.Exp(-xuij)) ) * dervXuij ) + K * uv );
-					
-					dervXuij = uv;
-					itemFeature[j, itemIIndex] += lrate * 
-											( ( ( (Math.Exp(-xuij)) / (1 + Math.Exp(-xuij)) ) * dervXuij ) + K * itemFeature[j, itemIIndex] );
-					
-					dervXuij = -uv;
-					itemFeature[j, itemJIndex] += lrate * 
-											( ( ( (Math.Exp(-xuij)) / (1 + Math.Exp(-xuij)) ) * dervXuij ) + K * itemFeature[j, itemJIndex] );															                                    					
-				}
-					
-				bprOpt += Math.Log( sigmoid(xuij) ) - 
-							(K * calNorm(userFeature, userIndx, numFeatures)) - 
-							(K * calNorm(itemFeature, itemIIndex, numFeatures)) - 
-							(K * calNorm(itemFeature, itemJIndex, numFeatures));
-												
-				//Console.WriteLine( "Epoch: {0}, u: {1}, i: {2}, j: {3}", epoch, randUser, randRatedItem, randNonRatedItem);
-			}
-			Console.WriteLine("Epoch: {0}, Bpr-Opt: {1}", epoch, bprOpt);
-		}	
 		
 		static int calcItemHitInSortedList(int N, string rankedItem, Dictionary<string, double> itemRatingMapping)
 		{
@@ -337,7 +250,7 @@ namespace bprmatrixfact
 					}
 					rowIndexCounter++;
 				}					
-				hits += calcItemHitInSortedList(N, rankedItem, itemRatingMapping);						
+				hits += calcItemHitInSortedList(N, rankedItem, itemRatingMapping);							
 			}	
 							
 			Console.WriteLine("#Test: {0}",T);
@@ -346,22 +259,175 @@ namespace bprmatrixfact
 			precision = (double)recall / (double)N;
 			
 			Console.WriteLine("Recall: {0}, Precision: {1}\n", recall, precision);	
-			recallData.Add(epoch, recall);
+			recallData.Add(N, recall);
+			//recallData.Add(epoch, recall);
 		}
+		
+
+		
+		static void learnBPR(
+		                     double globalAverage,
+		                     int bprEpochs,
+		                     int numFeatures,
+		                     int numTrainingExamples,
+		                     double lrate,
+		                     double K,
+		                     ref double[,] userFeature,
+		                     ref double[,] itemFeature,
+		                     Dictionary<string, int> userIdHash,
+		                     Dictionary<string, int> itemIdHash,
+		                     Dictionary<string, List<string>> ratedItemsPerUser, 
+		                     List<string> uniqueItemList,
+		                     List<int> ratingList,
+		                     Dictionary<string, List<int>> userIdMapping,
+		                     Dictionary<string, List<int>> itemIdMapping
+		                     ) 
+		{
+			int userIndx;
+			int itemIIndex;
+			int itemJIndex;
+			int epoch;
+			int randUserIndx;
+			int randRatedItemIndx;			
+			int randNonRatedItemIndx;
+			int numRatedItems;
+			int numUniqueUsers = ratedItemsPerUser.Keys.Count;
+			int numUniqueItems = uniqueItemList.Count;						
+			double uv;
+			double xuij;
+			double xui;
+			double xuj;
+			double bprOpt;
+			double dervXuij;
+			double err1;
+			double err2;
+			double errPerEpoch;
+			string randUser;
+			string randRatedItem;
+			string randNonRatedItem;
+			
+			Random r1 = new Random();
+			Random r2 = new Random();
+			Random r3 = new Random();	
+		
+					
+		//	Console.WriteLine("BPR Learning");		
+		//	Console.WriteLine("numUniqueUsers: {0}, numUniqueItems: {1}", numUniqueUsers, numUniqueItems);
+			
+			int[] ratingArray = ratingList.ToArray();
+			
+			for (epoch = 1; epoch <= bprEpochs; epoch++) {
+				bprOpt = 0.0;
+				errPerEpoch = 0.0;
+				
+				for (int n = 0; n < numTrainingExamples; n++) {
+					err1 = 0.0;
+					err2 = 0.0;
+					randUserIndx = r1.Next(0, numUniqueUsers);
+					numRatedItems = ratedItemsPerUser[ratedItemsPerUser.Keys.ElementAt(randUserIndx)].Count;
+					randRatedItemIndx = r2.Next(0, numRatedItems);
+					randNonRatedItemIndx = r3.Next(0, numUniqueItems);
+				
+					randUser = ratedItemsPerUser.Keys.ElementAt(randUserIndx);
+					randRatedItem = ratedItemsPerUser[randUser][randRatedItemIndx];
+					randNonRatedItem = uniqueItemList[randNonRatedItemIndx];
+				
+					while (ratedItemsPerUser[randUser].Contains(randNonRatedItem)) {
+						randNonRatedItemIndx = r3.Next(0, numUniqueItems);
+						randNonRatedItem = uniqueItemList[randNonRatedItemIndx];
+					}
+				
+					userIndx = userIdHash[randUser];
+					itemIIndex = itemIdHash[randRatedItem];
+					itemJIndex = itemIdHash[randNonRatedItem];
+					
+//					if (userIndx >= userIdMapping.Count) {Console.WriteLine("Exceeding User index: {0}", userIndx);}
+//					if (itemIIndex >= itemIdMapping.Count) {Console.WriteLine("Exceeding Item_I index: {0}", itemIIndex);}
+//					if (itemJIndex >= itemIdMapping.Count) {Console.WriteLine("Exceeding Item_J index: {0}", itemJIndex);}
+//					
+					xui = adjustingFactor(userFeature, itemFeature, numFeatures, userIndx, itemIIndex);
+					xuj = adjustingFactor(userFeature, itemFeature, numFeatures, userIndx, itemJIndex);
+					xuij = xui - xuj;
+				
+				//	if (xuij > 5)
+				//	Console.WriteLine("xui: {0}, xuj: {1}, XUIJ: {2}", xui, xuj, xuij);
+					
+					for(int j = 0; j < numFeatures; j++) {	
+						uv = userFeature[j,userIndx];
+						dervXuij = itemFeature[j,itemIIndex] - itemFeature[j,itemJIndex];						
+						userFeature[j,userIndx] += lrate * 
+												( ( ( (Math.Exp(-xuij)) / (1 + Math.Exp(-xuij)) ) * dervXuij ) + K * uv );
+					
+						dervXuij = uv;
+						itemFeature[j, itemIIndex] += lrate * 
+												( ( ( (Math.Exp(-xuij)) / (1 + Math.Exp(-xuij)) ) * dervXuij ) + K * itemFeature[j, itemIIndex] );
+					
+						dervXuij = -uv;
+						itemFeature[j, itemJIndex] += lrate * 
+												( ( ( (Math.Exp(-xuij)) / (1 + Math.Exp(-xuij)) ) * dervXuij ) + K * itemFeature[j, itemJIndex] );															                                    					
+					}
+					
+//					int ratingIndx;
+//					List<int> userMappingIndx = userIdMapping[randUser];
+//					List<int> itemIMappingIndx = itemIdMapping[randRatedItem];
+//					List<int> itemJMappingIndx = itemIdMapping[randNonRatedItem];
+//					
+////					foreach (int i in userMappingIndx) {
+//						if (itemIMappingIndx.Contains(i)) {	
+//							if (i < ratingArray.Length) {								
+//								err1 = ratingArray[i] - (globalAverage + xui);
+//						//		err1 = err1 * err1;
+//								break;
+//							}
+//						}
+//					}					
+//					
+//					if (epoch == 1) {
+//			//			Console.WriteLine("#Training: {0}, Err1: {1}, Product: {2}", n+1, err1, xui);
+//					}
+//					
+//					errPerEpoch += err1 * err1;
+					
+					bprOpt += Math.Log( sigmoid(xuij) ) -
+								(K * calNorm(userFeature, userIndx, numFeatures)) -
+								(K * calNorm(itemFeature, itemIIndex, numFeatures)) -
+								(K * calNorm(itemFeature, itemJIndex, numFeatures));				
+				}
+							
+			//	Console.Write("{0}, {1} ", numTrainingExamples, errPerEpoch);
+					errPerEpoch = (errPerEpoch / numTrainingExamples);
+				Console.WriteLine("Epoch: {0}, Err: {1}, Bpr-Opt: {2}", epoch, errPerEpoch, bprOpt);	
+				
+//				int N = 8;
+//					Dictionary<int, double> recallData = new Dictionary<int, double>();
+//				readDataAndRecall("test.txt", 				                  
+//						N, 			
+//				    	epoch,
+//					    globalAverage,
+//					    numFeatures,
+//					    userFeature, 
+//					    itemFeature, 
+//				    	userIdHash,
+//				    	itemIdHash, 
+//				    	ref recallData);				
+					//Console.WriteLine( "Epoch: {0}, u: {1}, i: {2}, j: {3}", epoch, randUser, randRatedItem, randNonRatedItem);
+			}				
+		}			
 		
 		public static void Main (string[] args)
 		{		
 			int itr;
-			int N = 10;
-//			int minN = 8;
-//			int maxN = 50;
-//			int numLines = (maxN - minN) + 1;
+		//	int N = 8;
+			int minN = 8;
+			int maxN = 50;
+			int numLines = (maxN - minN) + 1;
 			int numUsers;
 			int numItems;											
-			int bprEpochs = 50;
-			int numFeatures = 50;
-			double K = 0.25;
-			double lrate = 0.001;
+			int bprEpochs = 10;
+			int numTrainingExamples;
+			int numFeatures = 10;
+			double K = 0.001;
+			double lrate = 0.3;
 			
 			List<string> userIdList = new List<string>();
 			List<string> itemIdList = new List<string>();
@@ -387,25 +453,29 @@ namespace bprmatrixfact
 			
 			numUsers = userIdMapping.Count;
 			numItems = itemIdMapping.Count;
+			numTrainingExamples = ratingList.Count;
 			
+			double globalAverage = calcGlobalAverage(ratingList);	
 			double[,] userFeature = new double[numFeatures,numUsers];
 			double[,] itemFeature = new double[numFeatures,numItems];								
-			
+				
 			initFeatures(userIdMapping.Count, ref userFeature, 
 			             itemIdMapping.Count, ref itemFeature,
 			             numFeatures);												
-			
+								
 			learnHashID(ref userIdHash,
 		                ref itemIdHash,
 		                userIdMapping,
 		                itemIdMapping
-		                );
-				
-			double globalAverage = calcGlobalAverage(ratingList);	
+		                );				
 			
-			for (int i = 20; i <= 50; i++) {
-				learnBPR(i,
+		//	Console.WriteLine("numUsers: {0}, usersList: {1}, numItems: {2}, itemsList: {3}", numUsers, userIdHash.Count, numItems, itemIdHash.Count);
+			
+			learnBPR(
+			         globalAverage,
+				     bprEpochs,
 			         numFeatures,
+				     numTrainingExamples,
 					 lrate,
 				     K,
 		             ref userFeature,
@@ -413,20 +483,24 @@ namespace bprmatrixfact
 			         userIdHash,
 		             itemIdHash,
 		             ratedItemsPerUser, 
-		             uniqueItemList
-		             );		
-				
-				readDataAndRecall("test.txt", 				                  
-					N, 			
-				    i,
-				    globalAverage,
-				    numFeatures,
-				    userFeature, 
-				    itemFeature, 
-				    userIdHash,
-				    itemIdHash, 
-				    ref recallData);
-			}
+		             uniqueItemList,
+				     ratingList,
+				     userIdMapping,
+				     itemIdMapping
+		             );							
+			
+//			for (int N = minN; N <= maxN; N++) {
+//				readDataAndRecall("test.txt", 				                  
+//						N, 			
+//				    	30,
+//					    globalAverage,
+//					    numFeatures,
+//					    userFeature, 
+//					    itemFeature, 
+//				    	userIdHash,
+//				    	itemIdHash, 
+//				    	ref recallData);
+//			}
 			
 			itr = 0;
 			string[] line = new string[50];
