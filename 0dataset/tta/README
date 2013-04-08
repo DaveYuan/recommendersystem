@@ -1,0 +1,13 @@
+.hcr Files
+
+* contain rating data
+* note that the first line contains meta-information: max_user_id,max_item_id,num_of_examples
+
+.ht files
+
+* contain testdata
+* based on the .probe[.hcr] data
+* each test instance is represented by one lines:
+	first string: user_id
+	second string: rated item by user
+	second string: item_ids(non-rated), separated by space
