@@ -1,0 +1,20 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="04-15-2013-protobufnet-dataset/Main.cs" ctype="Workbench">
+    <Files>
+      <File FileName="04-15-2013-protobufnet-dataset/Main.cs" Line="21" Column="4" />
+      <File FileName="04-15-2013-protobufnet-dataset/protobuf-classes.cs" Line="26" Column="18" />
+    </Files>
+    <Pads>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True">
+          <Node name="04-17-2013-protobufnet-dataset" expanded="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches ctype="PinnedWatchStore" />
+</Properties>
