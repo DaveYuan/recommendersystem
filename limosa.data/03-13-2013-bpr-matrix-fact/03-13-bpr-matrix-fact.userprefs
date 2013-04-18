@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="03-13-bpr-matrix-fact/Main.cs" ctype="Workbench">
+    <Files>
+      <File FileName="03-13-bpr-matrix-fact/Main.cs" Line="15" Column="26" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches ctype="PinnedWatchStore" />
+  <AuthorInfo Name="shivani" Email="shivani.mah.91@gmail.com" Copyright="shivani" ctype="AuthorInformation" />
+</Properties>

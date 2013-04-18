@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "03-14-2013-baseline-item-recomn-item-avg-2", "03-14-2013-baseline-item-recomn-item-avg-2\03-14-2013-baseline-item-recomn-item-avg-2.csproj", "{F472FE9C-A52B-4E6B-9025-1C346780CEA5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F472FE9C-A52B-4E6B-9025-1C346780CEA5}.Debug|x86.ActiveCfg = Debug|x86
+		{F472FE9C-A52B-4E6B-9025-1C346780CEA5}.Debug|x86.Build.0 = Debug|x86
+		{F472FE9C-A52B-4E6B-9025-1C346780CEA5}.Release|x86.ActiveCfg = Release|x86
+		{F472FE9C-A52B-4E6B-9025-1C346780CEA5}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = 03-14-2013-baseline-item-recomn-item-avg-2\03-14-2013-baseline-item-recomn-item-avg-2.csproj
+	EndGlobalSection
+EndGlobal
