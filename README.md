@@ -1,4 +1,4 @@
-recommendersystem
+Recommendersystem
 =================
 
 Practice session for recommender system variants.
