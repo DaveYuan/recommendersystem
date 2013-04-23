@@ -1,8 +1,10 @@
 using System;
 using System.IO;
 using System.Linq; /* Add System.Core in References to use this */
+using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using ProtoBuf;
 
 namespace socialmf
@@ -67,8 +69,8 @@ namespace socialmf
 				}
 				indx++;
 			}			
-		}
-		
+		}		
+				
 		/*
 		 * Write message to the Console and log.txt
 		 */
@@ -193,6 +195,20 @@ namespace socialmf
 			return sigmoidDerv;
 		}
 		
+		/*
+		 * Maps R(0-1) => R(0-5)
+		 */
+		public double mapUpRating(double r) {
+			return (r * 5);
+		}
+		
+		/* 
+		 * Maps R(0-5) => R(0-1)
+		 */
+		public double mapDownRating(double r) {
+			return g(r);
+		}			
+		
 		/* 
 		 * Calculates the gradient of objective function wrt userfeature
 		 * Assume binary rating(u,i)
@@ -200,7 +216,9 @@ namespace socialmf
 		public double gradientUser(double[,] userFeature,
 		                           double[,] itemFeature,
 		                           int feature,
-		                           int userId)
+		                           int userId,
+		                           Dictionary<int, List<int>> userToIndxInList,
+		                           Dictionary<int, List<int>> itemToIndxInList)
 		{
 			int numNghbr;
 			double trustuv;
@@ -210,44 +228,52 @@ namespace socialmf
 			double v3;
 			double usrItmProduct;
 			double gradient;
+						
+			gradient = v1 = 0.0;
 			
 			Stopwatch stopwatch = new Stopwatch();
 			stopwatch.Start();
-			
-			gradient = v1 = 0.0;
-			for (int i = 0; i < numItems; i++) {
-				usrItmProduct = dotProduct(userFeature, itemFeature, userId, i);
-				v1 += itemFeature[feature, i] * gDerv(usrItmProduct) * g(usrItmProduct);
-			}
-			
+				for (int i = 0; i < numItems; i++) {
+					usrItmProduct = dotProduct(userFeature, itemFeature, userId, i);
+//					var indxVar = userToIndxInList[userId].Intersect(itemToIndxInList[i]);
+//				//	int intersectSize = (int)indxVar.Count;
+//					foreach (int indx in indxVar) {		
+//						if (indx >= 0) {
+//							if(userToIndxInList[userId][indx] != itemToIndxInList[i][indx]){
+//								Console.WriteLine("GradientUser:Not matching");
+//							}
+//						}
+//					}
+					v1 += itemFeature[feature, i] * gDerv(usrItmProduct) * (g(usrItmProduct) - 1.0);
+				}
 			stopwatch.Stop();
-			Console.WriteLine("Term1 time: {0}", stopwatch.Elapsed);
+			Console.WriteLine("Term1 time: {0}", stopwatch.Elapsed);		
 			
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
-			usrItmProduct = lambdaU * userFeature[feature, userId];
+				usrItmProduct = lambdaU * userFeature[feature, userId];
 			stopwatch.Stop();
 			Console.WriteLine("Term2 time: {0}", stopwatch.Elapsed);
 			
-			gradient += v1 - 1.0 + usrItmProduct;
+			gradient += v1 + usrItmProduct;
 			
 			v1 = 0.0;
 			v2 = 0.0;
 			
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
-			numNghbr = trustNormUserDict[userId].Count;
-			trustuv = trustNormUserDict[userId].ElementAt(0);
-			
-			foreach (int v in trustUserDict[userId]) {
-				v1 += trustuv * userFeature[feature, v];
-				trustvw = trustNormUserDict[v].ElementAt(0);				
-				v3 = 0.0;
-				foreach (int w in trustUserDict[v]) {
-						v3 += trustvw * userFeature[feature, w];
+				numNghbr = trustNormUserDict[userId].Count;
+				trustuv = trustNormUserDict[userId].ElementAt(0);
+				
+				foreach (int v in trustUserDict[userId]) {
+					v1 += trustuv * userFeature[feature, v];
+					trustvw = trustNormUserDict[v].ElementAt(0);				
+					v3 = 0.0;
+					foreach (int w in trustUserDict[v]) {
+							v3 += trustvw * userFeature[feature, w];
+					}
+					v2 += trustuv * (userFeature[feature, v] - v3);
 				}
-				v2 += trustuv * (userFeature[feature, v] - v3);
-			}
 			stopwatch.Stop();
 			Console.WriteLine("Term3 n term4 time: {0}", stopwatch.Elapsed);
 			
@@ -259,10 +285,12 @@ namespace socialmf
 		/* 
 		 * Calculate the gradient of objective function wrt itemfeature
 		 */
-		public double gradientItem(double[,] userFeature,
+		public double gradientItem(double[,] userFeature,		                           
 		                           double[,] itemFeature,
 		                           int feature,
-		                           int itemId)
+		                           int itemId,
+		                           Dictionary<int, List<int>> userToIndxInList,
+		                           Dictionary<int, List<int>> itemToIndxInList)
 		{
 			double v1;
 			double gradient;
@@ -277,7 +305,7 @@ namespace socialmf
 			
 			return gradient;
 		}
-		
+				
 		public void socialmf(ref double[,] userFeature,
 		                     ref double[,] itemFeature,
 		                     Dictionary<int, List<int>> userToIndxInList,
@@ -285,33 +313,35 @@ namespace socialmf
 		{
 			int userId;
 			int itemId;
-			int numEntries;	
-			double uv;
+			int numEntries;			
 			double err;
 			double errPerEpoch;
 			double usrItmProduct;			
 			
-			numEntries = trainRatingsList.Count;
+			numEntries = trainRatingsList.Count;			
 			Console.WriteLine("\t- numEntries: {0}", numEntries);
 			
 			for (int itr = 0; itr < this.numEpochs; itr++) {
 				Console.WriteLine("\t- Epoch: {0}", itr);
 				err = 0.0;
 				errPerEpoch = 0.0;
-				//for (int q = 0; q < numEntries/1000; q++) {
+				
+				//for (int q = 0; q < numEntries/1000; q++) {  
 				for (int q = 0; q < 5; q++) {
 					if (q % 10 == 0) {
 						Console.WriteLine("\t\t- #Entry: {0}", q);
 					}
+					
 					userId = trainUsersList[q];
-					itemId = trainItemsList[q];
+					itemId = trainItemsList[q];		
 					usrItmProduct = dotProduct(userFeature, itemFeature, userId, itemId);
-					err = 1.0 - usrItmProduct;
-					errPerEpoch += err * err;
-					for (int f = 0; f < numFeatures; f++) {
-						uv = userFeature[f, userId];
-						userFeature[f, userId] += lrate * gradientUser(userFeature, itemFeature, f, userId);
-						itemFeature[f, itemId] += lrate * gradientItem(userFeature, itemFeature, f, itemId);
+					err =  mapDownRating(trainRatingsList[q]) - usrItmProduct;
+					errPerEpoch += err * err;	
+					
+					for (int f = 0; f < numFeatures; f++) {						
+						userFeature[f, userId] += lrate * gradientUser(userFeature, itemFeature, f, userId, userToIndxInList, itemToIndxInList);
+						itemFeature[f, itemId] += lrate * gradientItem(userFeature, itemFeature, f, itemId, userToIndxInList, itemToIndxInList);
+						Console.WriteLine();
 					}										
 				}
 				errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);
@@ -368,13 +398,22 @@ namespace socialmf
 		             userToIndxInList,
 		             itemToIndxInList);
 			
+			writeToLognConsole("Hash calculation");			
+		
+			string s ="286 56";
+			string str = "286 56";
+			int hash1 = s.GetHashCode();
+			int hash2 = str.GetHashCode();
+			if (hash1 == hash2) {
+				Console.WriteLine("Hash are same");
+			} else {
+				Console.WriteLine("Hash different! Hash1: {0}, \nHash2: {1}", hash1, hash2);
+			}
+										
 			Console.WriteLine ("Done!");			
 		}
 	}
 }
-
-
-
 
 // Since trust is normalized, so neighbour effect calculated directly
 // neighbrUsrItmProduct = trustNormUserDict[userId].ElementAt(0) * usrItmProduct * trustNormUserDict[userId].Count;					
