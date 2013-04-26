@@ -7,25 +7,28 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using ProtoBuf;
 
+// TODO: Uniq(#User) in Trust > Uniq(#User) in UserList
+
 namespace socialmf
 {
 	class MainClass
 	{		
-		public int numEpochs {get; set;}
-		public double lrate {get; set;}
-		public double lambdaU {get; set;}
-		public double lambdaV {get; set;}
-		public double lambdaT {get; set;}
-		public double trustEffect {get; set;}
-		public int numUsers {get; set;}
-		public int numItems {get; set;}
-		public int numFeatures {get; set;}
-		public List<int> trainUsersList {get; set;}
-        public List<int> trainItemsList {get; set;}
-		public List<int> trainRatingsList {get; set;}	
-		public Dictionary<int, List<int>> trustUserDict {get; set;}
-		public Dictionary<int, List<double>> trustNormUserDict {get; set;}
-		
+		private int numEpochs;
+		private double lrate;
+		private double lambdaU;
+		private double lambdaV;
+		private double lambdaT;		
+		private int numUsers;
+		private int numItems;
+		private int numFeatures;
+		private int[] trainUsersArray;
+        private int[] trainItemsArray;
+		private double[] trainRatingsArray;
+		private double[,] userFeature;
+		private double[,] itemFeature;
+		private Dictionary<int, int[]> trustUserDict;
+		private Dictionary<int, int> trustNumNghbr;
+	
 		/*
 		 * Constructor which initializes:
 		 * 	-TrainUsersList
@@ -40,35 +43,47 @@ namespace socialmf
 			this.lrate = 0.01;
 			this.lambdaU = 0.0025;
 			this.lambdaV = 0.0025;
-			this.lambdaT = 0.0025;
-			this.trustEffect = 0.0025;
-			this.numEpochs = 1;
-			this.numFeatures = 1;
-			this.trainUsersList = ratingObj.usersList;
-			this.trainItemsList = ratingObj.itemsList;
-			this.trainRatingsList = ratingObj.ratingsList;	
+			this.lambdaT = 0.0025;			
+			this.numEpochs = 10;
+			this.numFeatures = 10;
+			this.trainUsersArray = ratingObj.usersList.ToArray();
+			this.trainItemsArray = ratingObj.itemsList.ToArray();
+		//	this.trainRatingsArray = ratingObj.ratingsList.ToArray();	
 			
-			this.trustUserDict = new Dictionary<int, List<int>>();
+			Dictionary<int, List<int>> trustUserDictTmp = new Dictionary<int, List<int>>();
+			trustUserDict = new Dictionary<int, int[]>();
 			int[] trustUserArray2 = trustObj.trustUserList2.ToArray();
 			
 			foreach (int user1 in trustObj.trustUserList1) {
-				if (trustUserDict.ContainsKey(user1)) {
-					trustUserDict[user1].Add(trustUserArray2[indx]);					
+				if (trustUserDictTmp.ContainsKey(user1)) {
+					trustUserDictTmp[user1].Add(trustUserArray2[indx]);					
 				} else {
 					List<int> tmp = new List<int>();
 					tmp.Add(trustUserArray2[indx]);
-					trustUserDict.Add(user1, tmp);					
+					trustUserDictTmp.Add(user1, tmp);					
 				}
 				
-				if (trustUserDict.ContainsKey(trustUserArray2[indx])) {
-					trustUserDict[trustUserArray2[indx]].Add(user1);
+				if (trustUserDictTmp.ContainsKey(trustUserArray2[indx])) {
+					trustUserDictTmp[trustUserArray2[indx]].Add(user1);
 				} else {
 					List<int> tmp = new List<int>();
 					tmp.Add(user1);
-					trustUserDict.Add(trustUserArray2[indx], tmp);
+					trustUserDictTmp.Add(trustUserArray2[indx], tmp);
 				}
 				indx++;
-			}			
+			}
+			
+			// Convert Dictionary<int, List<int>> => Dictionary<int, int[]>			
+			foreach (KeyValuePair<int, List<int>> trustRelation in trustUserDictTmp) {
+				trustUserDict.Add(trustRelation.Key, trustRelation.Value.ToArray());
+			}			 
+			
+			// Count Uniq(numUsers) and Uniq(numItems)
+			numUsers = trustUserDict.Count;
+			numItems = trainItemsArray.Distinct().ToArray().Length;
+			userFeature = new double[numFeatures,numUsers];
+			itemFeature = new double[numFeatures,numItems];				
+			GC.Collect();
 		}		
 				
 		/*
@@ -78,72 +93,15 @@ namespace socialmf
 		{
 			Console.WriteLine("\t- " + mssg + " ...");
 			File.AppendAllText("log.txt", "\t- " + mssg + " ...\n");
-		}				
-		
-		/*
-		 * Normalize the trust values per user
-		 * Dictionary: User1-> trustValUser1, trustValUser2, trustValUser3 ....
-		 * 			   User2-> trustValUser1, trustValUser2, trustValUser3 ....
-		 */
-		public void normalizeTrust() 
-		{
-			int listSize;
-			double trust;
-			this.trustNormUserDict = new Dictionary<int, List<double>>();
-			
-			foreach (KeyValuePair<int, List<int>> userTrust in this.trustUserDict) {
-				listSize = userTrust.Value.Count;
-				trust = 1.0/(double)listSize;
-				List<double> tmp = new List<double>();
-				for (int i = 0; i < listSize; i++) {
-					tmp.Add(trust);
-				}
-				this.trustNormUserDict.Add(userTrust.Key, tmp);
-			}
-		}
-				
-		/*
-		 * Map each parameter to the index in list where its info is present
-		 * parameter: user, item
-		 */
-		public void learnMapping(List<int> trainUsersList, 
-		                         List<int> trainItemsList,		                       		                         		                   
-		                         ref Dictionary<int, List<int>> userToIndxInList,
-		                         ref Dictionary<int, List<int>> itemToIndxInList)
-		{				
-			int indx = 0;
-			int[] trainItemsArray = trainItemsList.ToArray();			
-			
-			foreach (int user in trainUsersList) {
-				if (userToIndxInList.ContainsKey(user)) {
-					userToIndxInList[user].Add(indx);
-				} else {
-					List<int> tmp = new List<int>();
-					tmp.Add(indx);
-					userToIndxInList.Add(user, tmp);
-				}
-				
-				if (itemToIndxInList.ContainsKey(trainItemsArray[indx])) {
-					itemToIndxInList[trainItemsArray[indx]].Add(indx);
-				} else {
-					List<int> tmp = new List<int>();
-					tmp.Add(indx);
-					itemToIndxInList.Add(trainItemsArray[indx], tmp);
-				}
-				indx++;
-			}
-		}		
+		}									
 		
 		/*
 		 * Initialise the user and item feature vectors
 		 */
-		public void initFeatures(ref double[,] userFeature, 
-			             		 ref double[,] itemFeature)
+		public void initFeatures()
 		{
 			int i;
 			int j;
-			int numUsers = this.numUsers;
-			int numItems = this.numItems;		
 			
 			for (i = 0; i < this.numFeatures; i++) {
 				for (j = 0; j < numUsers; j++) {
@@ -161,9 +119,7 @@ namespace socialmf
 		/* 
 		 * Calculates the dot product of user and item feature vectors
 		 */
-		public double dotProduct(double[,] userFeature, 
-		                         double[,] itemFeature, 		                         
-		                         int userId,
+		public double dotProduct(int userId,
 		                         int itemId)
 		{
 			double dotProduct = 0.0;
@@ -193,132 +149,118 @@ namespace socialmf
 		{
 			double sigmoidDerv = Math.Exp(-x) / (double)(Math.Pow( (1.0 + Math.Exp(-x)), 2.0));
 			return sigmoidDerv;
-		}
-		
-		/*
-		 * Maps R(0-1) => R(0-5)
-		 */
-		public double mapUpRating(double r) {
-			return (r * 5);
-		}
+		}			
 		
 		/* 
 		 * Maps R(0-5) => R(0-1)
 		 */
-		public double mapDownRating(double r) {
-			return g(r);
-		}			
+		public void mapDownRatings(Rating ratingObj) 
+		{			
+			int[] trainRatingsArrayTmp = ratingObj.ratingsList.ToArray();
+			int arrayL = trainRatingsArrayTmp.Length;
+			trainRatingsArray = new double[arrayL];
+			
+			for (int i = 0; i < arrayL; i++) {
+				trainRatingsArray[i] = g(trainRatingsArrayTmp[i]);
+			}
+			GC.Collect();
+		}		
+		
+		/*
+		 * Count trust neighbours per user
+		 */
+		public void countNghbr() 
+		{
+			trustNumNghbr = new Dictionary<int, int>();
+			
+			foreach (KeyValuePair<int, int[]> userTrust in trustUserDict) {				
+				trustNumNghbr.Add(userTrust.Key, userTrust.Value.Length);	
+			}		
+		}
 		
 		/* 
-		 * Calculates the gradient of objective function wrt userfeature
-		 * Assume binary rating(u,i)
+		 * Calculates the gradient of loss function wrt userfeature		 
 		 */
-		public double gradientUser(double[,] userFeature,
-		                           double[,] itemFeature,
+		public double gradientUser(int userId,
+		                           int itemId,
 		                           int feature,
-		                           int userId,
-		                           Dictionary<int, List<int>> userToIndxInList,
-		                           Dictionary<int, List<int>> itemToIndxInList)
+		                           double rating)
 		{
-			int numNghbr;
+			int numNghbrU;
+			int numNghbrV;			
+			double t1;
+			double t2;
+			double t3;
+			double t4;
 			double trustuv;
 			double trustvw;
-			double v1;
-			double v2;
-			double v3;
 			double usrItmProduct;
-			double gradient;
+			double sumTrustFeatureProductUV;
+			double sumTrustFeatureProductVW;
 						
-			gradient = v1 = 0.0;
+			t1 = t2 = t3 = t4 = 0.0;
 			
-			Stopwatch stopwatch = new Stopwatch();
-			stopwatch.Start();
-				for (int i = 0; i < numItems; i++) {
-					usrItmProduct = dotProduct(userFeature, itemFeature, userId, i);
-//					var indxVar = userToIndxInList[userId].Intersect(itemToIndxInList[i]);
-//				//	int intersectSize = (int)indxVar.Count;
-//					foreach (int indx in indxVar) {		
-//						if (indx >= 0) {
-//							if(userToIndxInList[userId][indx] != itemToIndxInList[i][indx]){
-//								Console.WriteLine("GradientUser:Not matching");
-//							}
-//						}
-//					}
-					v1 += itemFeature[feature, i] * gDerv(usrItmProduct) * (g(usrItmProduct) - 1.0);
-				}
-			stopwatch.Stop();
-			Console.WriteLine("Term1 time: {0}", stopwatch.Elapsed);		
+			usrItmProduct = dotProduct(userId, itemId);
+			t1 = itemFeature[feature,itemId] * gDerv(usrItmProduct) * (g(usrItmProduct) - rating);
+			t2 = lambdaU * userFeature[feature, userId];
 			
-			stopwatch = new Stopwatch();
-			stopwatch.Start();
-				usrItmProduct = lambdaU * userFeature[feature, userId];
-			stopwatch.Stop();
-			Console.WriteLine("Term2 time: {0}", stopwatch.Elapsed);
-			
-			gradient += v1 + usrItmProduct;
-			
-			v1 = 0.0;
-			v2 = 0.0;
-			
-			stopwatch = new Stopwatch();
-			stopwatch.Start();
-				numNghbr = trustNormUserDict[userId].Count;
-				trustuv = trustNormUserDict[userId].ElementAt(0);
+			numNghbrU = trustNumNghbr[userId];
+			trustuv = 1.0 / (double)numNghbrU;
+			sumTrustFeatureProductUV = 0.0;
 				
-				foreach (int v in trustUserDict[userId]) {
-					v1 += trustuv * userFeature[feature, v];
-					trustvw = trustNormUserDict[v].ElementAt(0);				
-					v3 = 0.0;
-					foreach (int w in trustUserDict[v]) {
-							v3 += trustvw * userFeature[feature, w];
-					}
-					v2 += trustuv * (userFeature[feature, v] - v3);
+			foreach (int userV in trustUserDict[userId]) {
+				sumTrustFeatureProductUV += trustuv * userFeature[feature,userV];
+				
+				numNghbrV = trustNumNghbr[userV]; 
+				trustvw = 1.0 / (double)numNghbrV;
+				sumTrustFeatureProductVW = 0.0;
+				
+				foreach (int userW in trustUserDict[userV]) {
+					sumTrustFeatureProductVW += trustvw * userFeature[feature,userW];
 				}
-			stopwatch.Stop();
-			Console.WriteLine("Term3 n term4 time: {0}", stopwatch.Elapsed);
+				
+				t4 += trustvw * (userFeature[feature,userV] - sumTrustFeatureProductVW);								
+			}
 			
-			gradient += (lambdaT * (userFeature[feature, userId] - v1)) - (lambdaT * v2);
+			t3 = lambdaT * (userFeature[feature,userId] - sumTrustFeatureProductUV);
+			t4 = -1 * lambdaT * t4;
 			
-			return gradient;
+			return (t1 + t2 + t3 + t4);													
 		}
 		
 		/* 
 		 * Calculate the gradient of objective function wrt itemfeature
 		 */
-		public double gradientItem(double[,] userFeature,		                           
-		                           double[,] itemFeature,
-		                           int feature,
+		public double gradientItem(int userId,
 		                           int itemId,
-		                           Dictionary<int, List<int>> userToIndxInList,
-		                           Dictionary<int, List<int>> itemToIndxInList)
+		                           int feature,		                           
+		                           double rating)
 		{
-			double v1;
-			double gradient;
+			double t1;
+			double t2;
 			double usrItmProduct;			
 			
-			gradient = v1 = 0.0;
-			for (int u = 0; u < numUsers; u++) {
-				usrItmProduct = dotProduct(userFeature, itemFeature, u, itemId);				
-				v1 += userFeature[feature, u] * gDerv(usrItmProduct) * (g(usrItmProduct) - 1.0);
-			}
-			gradient += v1 + (lambdaV * itemFeature[feature, itemId]);
+			t1 = t2 = 0.0;
+			usrItmProduct = dotProduct(userId, itemId);
+			t1 = userFeature[feature,userId] * gDerv(usrItmProduct) * (g(usrItmProduct) - rating);
+			t2 = lambdaV * itemFeature[feature,itemId];
 			
-			return gradient;
+			return (t1 + t2);			
 		}
 				
-		public void socialmf(ref double[,] userFeature,
-		                     ref double[,] itemFeature,
-		                     Dictionary<int, List<int>> userToIndxInList,
-		                     Dictionary<int, List<int>> itemToIndxInList) 
+		public void socialmf() 
 		{
 			int userId;
 			int itemId;
-			int numEntries;			
+			int numEntries;	
+			double gU;
+			double gI;
 			double err;
+		//	double ratingScaledDown;
 			double errPerEpoch;
 			double usrItmProduct;			
 			
-			numEntries = trainRatingsList.Count;			
+			numEntries = trainRatingsArray.Length;
 			Console.WriteLine("\t- numEntries: {0}", numEntries);
 			
 			for (int itr = 0; itr < this.numEpochs; itr++) {
@@ -326,26 +268,30 @@ namespace socialmf
 				err = 0.0;
 				errPerEpoch = 0.0;
 				
-				//for (int q = 0; q < numEntries/1000; q++) {  
-				for (int q = 0; q < 5; q++) {
-					if (q % 10 == 0) {
-						Console.WriteLine("\t\t- #Entry: {0}", q);
+				Stopwatch stopwatch = new Stopwatch();
+				stopwatch.Start();
+				for (int q = 0; q < numEntries; q++) {  				
+					if (q % 1000 == 0) {
+						Console.WriteLine("\t\t- Time: {0}, #Epoch: {1}, #Tuple: {2}", stopwatch.Elapsed, itr, q);
 					}
 					
-					userId = trainUsersList[q];
-					itemId = trainItemsList[q];		
-					usrItmProduct = dotProduct(userFeature, itemFeature, userId, itemId);
-					err =  mapDownRating(trainRatingsList[q]) - usrItmProduct;
+					userId = trainUsersArray[q];
+					itemId = trainItemsArray[q];		
+					usrItmProduct = dotProduct(userId, itemId);
+					//ratingScaledDown = mapDownRating(trainRatingsArray[q]);
+					err = trainRatingsArray[q] - usrItmProduct;
 					errPerEpoch += err * err;	
 					
-					for (int f = 0; f < numFeatures; f++) {						
-						userFeature[f, userId] += lrate * gradientUser(userFeature, itemFeature, f, userId, userToIndxInList, itemToIndxInList);
-						itemFeature[f, itemId] += lrate * gradientItem(userFeature, itemFeature, f, itemId, userToIndxInList, itemToIndxInList);
-						Console.WriteLine();
+					for (int f = 0; f < numFeatures; f++) {	
+						gU = gradientUser(userId, itemId, f, trainRatingsArray[q]);
+						gI = gradientItem(userId, itemId, f, trainRatingsArray[q]);
+						userFeature[f, userId] += lrate * gU;
+						itemFeature[f, itemId] += lrate * gI;						
 					}										
 				}
 				errPerEpoch = Math.Sqrt(errPerEpoch/numEntries);
-				Console.WriteLine("\t- Epoch: {0}, Err: {1}", itr, errPerEpoch);
+				stopwatch.Stop();
+				Console.WriteLine("\t- Time: {0}, Epoch: {1}, Err: {2}", stopwatch.Elapsed, itr, errPerEpoch);
 			}			
 		}			
 		
@@ -353,8 +299,6 @@ namespace socialmf
 		{						
 			Trust trustObj;
 			Rating ratingObj;
-			Dictionary<int, List<int>> userToIndxInList = new Dictionary<int, List<int>>();
-			Dictionary<int, List<int>> itemToIndxInList = new Dictionary<int, List<int>>();
 			File.Open("log.txt", FileMode.Create).Close();
 			
 			writeToLognConsole("Loading trust.bin");
@@ -371,44 +315,20 @@ namespace socialmf
 						
 			writeToLognConsole("Constructor call");
 			MainClass mainclass = new MainClass(trustObj, ratingObj);		
-			writeToLognConsole("Normalizing trust data");
-			mainclass.normalizeTrust();
+					
+			writeToLognConsole("Count neighbour per user");
+			mainclass.countNghbr();	
 			
-			writeToLognConsole("Mapping user and item to index in list");
-			mainclass.learnMapping(mainclass.trainUsersList,
-			                       mainclass.trainItemsList,			                       
-			                       ref userToIndxInList, 
-			                       ref itemToIndxInList);
-									
-			mainclass.numUsers = mainclass.trustUserDict.Count;
-			mainclass.numItems = itemToIndxInList.Count;
-			Console.WriteLine("\t- #Users: {0}, #Items: {1}", mainclass.numUsers, mainclass.numItems);
-
+			writeToLognConsole("Map down ratings R(1-5) -> R(0-1)");
+			mainclass.mapDownRatings(ratingObj);
 			
-			double[,] userFeature = new double[mainclass.numFeatures,mainclass.numUsers];
-			double[,] itemFeature = new double[mainclass.numFeatures,mainclass.numItems];	
+			Console.WriteLine("\t- Uniq(#Users): {0}, Uniq(#Items): {1}", mainclass.numUsers, mainclass.numItems);
 				
 			writeToLognConsole("Initialize feature vectors");						
-			mainclass.initFeatures(ref userFeature, 
-			             		   ref itemFeature);					
+			mainclass.initFeatures();					
 						
-			writeToLognConsole("Social MF");			
-			mainclass.socialmf(ref userFeature,
-		             ref itemFeature,
-		             userToIndxInList,
-		             itemToIndxInList);
-			
-			writeToLognConsole("Hash calculation");			
-		
-			string s ="286 56";
-			string str = "286 56";
-			int hash1 = s.GetHashCode();
-			int hash2 = str.GetHashCode();
-			if (hash1 == hash2) {
-				Console.WriteLine("Hash are same");
-			} else {
-				Console.WriteLine("Hash different! Hash1: {0}, \nHash2: {1}", hash1, hash2);
-			}
+			writeToLognConsole("Initiate social mF");			
+			mainclass.socialmf();						
 										
 			Console.WriteLine ("Done!");			
 		}
@@ -418,3 +338,14 @@ namespace socialmf
 // Since trust is normalized, so neighbour effect calculated directly
 // neighbrUsrItmProduct = trustNormUserDict[userId].ElementAt(0) * usrItmProduct * trustNormUserDict[userId].Count;					
 //	predictRating = g( (trustEffect * usrItmProduct) + ( (1 - trustEffect) * neighbrUsrItmProduct) );
+//			writeToLognConsole("Hash calculation");			
+//		
+//			string s ="286 56";
+//			string str = "286 56";
+//			int hash1 = s.GetHashCode();
+//			int hash2 = str.GetHashCode();
+//			if (hash1 == hash2) {
+//				Console.WriteLine("Hash are same");
+//			} else {
+//				Console.WriteLine("Hash different! Hash1: {0}, \nHash2: {1}", hash1, hash2);
+//			}

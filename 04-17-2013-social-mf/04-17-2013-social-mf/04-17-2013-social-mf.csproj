@@ -38,6 +38,9 @@
       <HintPath>..\..\protobufnet-dll\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\04-15-2013-protobufnet-dll\protobuf-net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
