@@ -171,11 +171,16 @@ namespace socialmf
 		 */
 		public void countNghbr() 
 		{
+			double avgUsers = 0.0;
 			trustNumNghbr = new Dictionary<int, int>();
 			
 			foreach (KeyValuePair<int, int[]> userTrust in trustUserDict) {				
 				trustNumNghbr.Add(userTrust.Key, userTrust.Value.Length);	
+				avgUsers += userTrust.Value.Length;
 			}		
+			
+			avgUsers = avgUsers / trustUserDict.Count;			
+			Console.WriteLine("\t- Avg num-nghbr/user: {0}", avgUsers);
 		}
 		
 		/* 
@@ -204,28 +209,30 @@ namespace socialmf
 			t1 = itemFeature[feature,itemId] * gDerv(usrItmProduct) * (g(usrItmProduct) - rating);
 			t2 = lambdaU * userFeature[feature, userId];
 			
-			numNghbrU = trustNumNghbr[userId];
-			trustuv = 1.0 / (double)numNghbrU;
-			sumTrustFeatureProductUV = 0.0;
-				
-			foreach (int userV in trustUserDict[userId]) {
-				sumTrustFeatureProductUV += trustuv * userFeature[feature,userV];
-				
-				numNghbrV = trustNumNghbr[userV]; 
-				trustvw = 1.0 / (double)numNghbrV;
-				sumTrustFeatureProductVW = 0.0;
-				
-				foreach (int userW in trustUserDict[userV]) {
-					sumTrustFeatureProductVW += trustvw * userFeature[feature,userW];
-				}
-				
-				t4 += trustvw * (userFeature[feature,userV] - sumTrustFeatureProductVW);								
-			}
+//			numNghbrU = trustNumNghbr[userId];
+//			trustuv = 1.0 / (double)numNghbrU;
+//			sumTrustFeatureProductUV = 0.0;
+//				
+//			foreach (int userV in trustUserDict[userId]) {
+//				sumTrustFeatureProductUV += trustuv * userFeature[feature,userV];
+//				
+//				numNghbrV = trustNumNghbr[userV]; 
+//				trustvw = 1.0 / (double)numNghbrV;
+//				sumTrustFeatureProductVW = 0.0;
+//				
+//				foreach (int userW in trustUserDict[userV]) {
+//					sumTrustFeatureProductVW += trustvw * userFeature[feature,userW];
+//				}
+//				
+//				t4 += trustvw * (userFeature[feature,userV] - sumTrustFeatureProductVW);								
+//			}
+//			
+//			t3 = lambdaT * (userFeature[feature,userId] - sumTrustFeatureProductUV);
+//			t4 = -1 * lambdaT * t4;
+//			
+//			return (t1 + t2 + t3 + t4);		
 			
-			t3 = lambdaT * (userFeature[feature,userId] - sumTrustFeatureProductUV);
-			t4 = -1 * lambdaT * t4;
-			
-			return (t1 + t2 + t3 + t4);													
+			return t1 + t2;
 		}
 		
 		/* 
@@ -271,9 +278,9 @@ namespace socialmf
 				Stopwatch stopwatch = new Stopwatch();
 				stopwatch.Start();
 				for (int q = 0; q < numEntries; q++) {  				
-					if (q % 1000 == 0) {
-						Console.WriteLine("\t\t- Time: {0}, #Epoch: {1}, #Tuple: {2}", stopwatch.Elapsed, itr, q);
-					}
+//					if (q % 1000 == 0) {
+//						Console.WriteLine("\t\t- Time: {0}, #Epoch: {1}, #Tuple: {2}", stopwatch.Elapsed, itr, q);
+//					}
 					
 					userId = trainUsersArray[q];
 					itemId = trainItemsArray[q];		
@@ -348,4 +355,26 @@ namespace socialmf
 //				Console.WriteLine("Hash are same");
 //			} else {
 //				Console.WriteLine("Hash different! Hash1: {0}, \nHash2: {1}", hash1, hash2);
+//			}
+
+			// Replace foreach with for in gradientUser
+//			int lenz = trustUserDict[userId].Length;
+//			int lenv;
+//			int userV;
+//			int userW;
+//			for (int z = 0; z < lenz; z++) {
+//				userV = trustUserDict[userId][z];
+//				sumTrustFeatureProductUV += trustuv * userFeature[feature, userV];
+//				
+//				numNghbrV = trustNumNghbr[userV]; 
+//				trustvw = 1.0 / (double)numNghbrV;
+//				sumTrustFeatureProductVW = 0.0;
+//				
+//				lenv = trustUserDict[userV].Length;
+//				for (int v = 0; v < lenv; v++) {
+//					userW = trustUserDict[userV][v];
+//					sumTrustFeatureProductVW += trustvw * userFeature[feature,userW];
+//				}
+//				
+//				t4 += trustvw * (userFeature[feature,userV] - sumTrustFeatureProductVW);	
 //			}
