@@ -41,11 +41,11 @@ namespace socialmf
 		{
 			int indx = 0;		
 			this.lrate = 0.01;
-			this.lambdaU = 0.0025;
-			this.lambdaV = 0.0025;
-			this.lambdaT = 0.0025;			
+			this.lambdaU = 0.0093;
+			this.lambdaV = 0.0094;
+			this.lambdaT = 1.2;			
 			this.numEpochs = 10;
-			this.numFeatures = 10;
+			this.numFeatures = 50;
 			this.trainUsersArray = ratingObj.usersList.ToArray();
 			this.trainItemsArray = ratingObj.itemsList.ToArray();
 		//	this.trainRatingsArray = ratingObj.ratingsList.ToArray();	
@@ -271,7 +271,7 @@ namespace socialmf
 			Console.WriteLine("\t- numEntries: {0}", numEntries);
 			
 			for (int itr = 0; itr < this.numEpochs; itr++) {
-				Console.WriteLine("\t- Epoch: {0}", itr);
+				//Console.WriteLine("\t- Epoch: {0}", itr);
 				err = 0.0;
 				errPerEpoch = 0.0;
 				
