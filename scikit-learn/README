@@ -1,0 +1,17 @@
+Author:	Shivani Maheshwari
+
+In order to use this utility to create train test split:
+
+# Use file kfold.py
+# touch files train1, train2 ... test1, test2..probe1, probe2.. in extra/
+# Set parameters like: 
+	shape of sparse matrix(line 11)
+		Calculate number of unique users and movies using :
+			sort -n users | uniq | wc -l
+			sort -n movies | uniq | wc -l
+	datatype of elements(line 11)
+	n_folds(line 13)
+
+# Run make in directory of scikit-learn
+# Run this file using "python kfold.py"
+# Dataset is created in extra/
