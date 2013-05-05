@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using System.Linq; /* Add System.Core in References to use this */
+using System.Linq; // Add System.Core in References
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -46,8 +46,8 @@ namespace bprsocialnetwork
 		{
 			int indx = 0;		
 			this.lrate = 0.01;			
-			this.lambdaU = 0.0025;
-			this.lambdaI = 0.0025;
+			this.lambdaU = 8;
+			this.lambdaI = 8;
 			this.numEpochs = 10;
 			this.numFeatures = 50;
 			this.trainUsersArray = ratingObj.usersList.ToArray();
@@ -198,25 +198,22 @@ namespace bprsocialnetwork
 			return ( 1.0 / ( 1.0 + Math.Exp(-x) ) );
 		}
 		
+		/*
+		 * Multirelational Bayesian Personalised Ranking for Social Network Data
+		 */
 		public void bprSocialNetwork() 
 		{
 			int numRelation;
 			int numUserTargetRel;
-			int randUserUF;
-			int randPostvRelUF;			
-			int randNegtvRelUF;
-			int randUserIF;
-			int randPostvRelIF;
-			int randNegtvRelIF;			
+			int randUser;
+			int randPostvRel;			
+			int randNegtvRel;					
 			int numEntries = trainItemsArray.Length;
 			double bprOpt;
 			double userValue;
-			double xuPostvUF;
-			double xuNegtvUF;
-			double xuPostvNegtvUF;
-			double xuPostvIF;
-			double xuNegtvIF;
-			double xuPostvNegtvIF;
+			double xuPostv;
+			double xuNegtv;
+			double xuPostvNegtv;			
 			double dervxuPostvNegtv;
 			
 			Console.WriteLine("\t\t- #Entries: {0}", numEntries);
@@ -225,69 +222,72 @@ namespace bprsocialnetwork
 			Random r3 = new Random();
 			
 			for (int epoch = 1; epoch <= numEpochs; epoch++) {
-				bprOpt = 0.0;	
-				xuPostvNegtvUF = xuPostvNegtvIF = 0.0;
-				for (int n = 0; n < numEntries/100; n++) {
-					// Init for User-features
-					randUserUF = frndsPerUser.Keys.ElementAt(r1.Next(0, numUsers));
-					numRelation = frndsPerUser[randUserUF].Length;
-					randPostvRelUF = frndsPerUser[randUserUF][r2.Next(0, numRelation)];
-					randNegtvRelUF = uniqueUsersArray[r3.Next(0, numUsers)];							
-					while (frndsPerUser[randUserUF].Contains(randNegtvRelUF)) {
-						randNegtvRelUF = uniqueUsersArray[r3.Next(0, numUsers)];
+				bprOpt = 0.0;					
+				
+				// User-features
+				for (int n = 0; n < numEntries; n++) {					
+					randUser = frndsPerUser.Keys.ElementAt(r1.Next(0, numUsers));
+					numRelation = frndsPerUser[randUser].Length;
+					randPostvRel = frndsPerUser[randUser][r2.Next(0, numRelation)];
+					randNegtvRel = uniqueUsersArray[r3.Next(0, numUsers)];	
+					
+					while (frndsPerUser[randUser].Contains(randNegtvRel)) {
+						randNegtvRel = uniqueUsersArray[r3.Next(0, numUsers)];
 					}					
-					xuPostvUF = dotProductUser(randUserUF, randPostvRelUF);
-					xuNegtvUF = dotProductUser(randUserUF, randNegtvRelUF);
-					xuPostvNegtvUF = xuPostvUF - xuNegtvUF;
+					
+					xuPostv = dotProductUser(randUser, randPostvRel);
+					xuNegtv = dotProductUser(randUser, randNegtvRel);
+					xuPostvNegtv = xuPostv - xuNegtv;
 									
-					for (int f = 0; f < numFeatures; f++) {
-						// User-feature updation
-						userValue = userFeature[f, randUserUF];
-						dervxuPostvNegtv = userFeature[f, randPostvRelUF] - userFeature[f, randNegtvRelUF];
-						userFeature[f, randUserUF] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtvUF))) * dervxuPostvNegtv - 
+					for (int f = 0; f < numFeatures; f++) {					
+						userValue = userFeature[f, randUser];
+						dervxuPostvNegtv = userFeature[f, randPostvRel] - userFeature[f, randNegtvRel];
+						userFeature[f, randUser] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
 						                                     lambdaU * userValue);
 						
 						dervxuPostvNegtv = userValue;
-						userFeature[f, randPostvRelUF] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtvUF))) * dervxuPostvNegtv - 
-						                                              lambdaU * userFeature[f, randPostvRelUF]);
+						userFeature[f, randPostvRel] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
+						                                              lambdaU * userFeature[f, randPostvRel]);
 						
 						dervxuPostvNegtv = -userValue;
-						userFeature[f, randNegtvRelUF] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtvUF))) * dervxuPostvNegtv - 
-						                                              lambdaU * userFeature[f, randNegtvRelUF]);											
+						userFeature[f, randNegtvRel] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv - 
+						                                              lambdaU * userFeature[f, randNegtvRel]);											
 					}
-					bprOpt += Math.Log(sigmoid(xuPostvNegtvUF));
-				}
-					
-				for (int n = 0; n < numEntries/100; n++) {
-					// Init for Item-features
+					bprOpt += Math.Log(sigmoid(xuPostvNegtv));
+//				}
+//					
+//				// Item-features
+//				for (int n = 0; n < numEntries/100; n++) {					
 					numUserTargetRel = ratedItemsPerUser.Keys.Count;
-					randUserIF = ratedItemsPerUser.Keys.ElementAt(r1.Next(0, numUserTargetRel));
-					numRelation = ratedItemsPerUser[randUserIF].Length;
-					randPostvRelIF = ratedItemsPerUser[randUserIF][r2.Next(0, numRelation)];
-					randNegtvRelIF = uniqueItemsArray[r3.Next(0, numItems)];					
-					while (ratedItemsPerUser[randUserIF].Contains(randNegtvRelIF)) {
-						randNegtvRelIF = uniqueItemsArray[r3.Next(0, numItems)];
+					randUser = ratedItemsPerUser.Keys.ElementAt(r1.Next(0, numUserTargetRel));
+					numRelation = ratedItemsPerUser[randUser].Length;
+					randPostvRel = ratedItemsPerUser[randUser][r2.Next(0, numRelation)];
+					randNegtvRel = uniqueItemsArray[r3.Next(0, numItems)];					
+					
+					while (ratedItemsPerUser[randUser].Contains(randNegtvRel)) {
+						randNegtvRel = uniqueItemsArray[r3.Next(0, numItems)];
 					}
-					xuPostvIF = dotProduct(randUserIF, randPostvRelIF);
-					xuNegtvIF = dotProduct(randUserIF, randNegtvRelIF);
-					xuPostvNegtvIF = xuPostvIF - xuNegtvIF;		
+					
+					xuPostv = dotProduct(randUser, randPostvRel);
+					xuNegtv = dotProduct(randUser, randNegtvRel);
+					xuPostvNegtv = xuPostv - xuNegtv;		
 					
 					for (int f = 0; f < numFeatures; f++) {						
 						// Item-feature updation
-						userValue = userFeature[f, randUserIF];
-						dervxuPostvNegtv = itemFeature[f, randPostvRelIF] - itemFeature[f, randNegtvRelIF];
-						userFeature[f, randUserIF] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtvIF))) * dervxuPostvNegtv - 
+						userValue = userFeature[f, randUser];
+						dervxuPostvNegtv = itemFeature[f, randPostvRel] - itemFeature[f, randNegtvRel];
+						userFeature[f, randUser] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
 						                                     lambdaU * userValue);
 						
 						dervxuPostvNegtv = userValue;
-						itemFeature[f, randPostvRelIF] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtvIF))) * dervxuPostvNegtv - 
-						                                              lambdaI * itemFeature[f, randPostvRelIF]);
+						itemFeature[f, randPostvRel] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
+						                                              lambdaI * itemFeature[f, randPostvRel]);
 						
 						dervxuPostvNegtv = -userValue;
-						itemFeature[f, randNegtvRelIF] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtvIF))) * dervxuPostvNegtv - 
-						                                              lambdaI * itemFeature[f, randNegtvRelIF]);						
+						itemFeature[f, randNegtvRel] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
+						                                              lambdaI * itemFeature[f, randNegtvRel]);						
 					}	
-					bprOpt += Math.Log(sigmoid(xuPostvNegtvIF));
+					bprOpt += Math.Log(sigmoid(xuPostvNegtv));
 				}										
 				Console.WriteLine("\t\t- Epoch: {0}, Bpr-Opt: {1}", epoch, bprOpt);
 			}			
