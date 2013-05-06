@@ -16,7 +16,7 @@ namespace bprsocialnetwork
     }
 
     [ProtoContract]
-    class Rating
+    class Train
     {
         [ProtoMember(1)]
         public List<int> usersList {get; set;}
@@ -25,5 +25,12 @@ namespace bprsocialnetwork
 		[ProtoMember(3)]
 		public List<int> ratingsList {get; set;}
     }
+	
+	[ProtoContract]
+	class Test
+	{
+		[ProtoMember(1)]
+		public List<string> testUserItem {get; set;}
+	}
 
 }

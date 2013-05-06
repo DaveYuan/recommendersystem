@@ -124,7 +124,9 @@ namespace lastfmsndatamanipulation
 		}
 		
 		static void ratingDataManipulation(ref Dictionary<string, int> userIdToIndx,
-		                                   ref Dictionary<string, int> movieIdToIndx)
+		                                   ref Dictionary<string, int> movieIdToIndx,
+		                                   ref List<int> uniqueItemList,
+		                                   ref Dictionary<int, List<int>> itemsRatedPerUser)
 		{
 			Rating rating = new Rating();
 			rating.usersList = new List<int>();
@@ -133,6 +135,7 @@ namespace lastfmsndatamanipulation
 			
 			writeToConsole("train.txt data loading");
 			
+			int user = 0;
 			int rowIndexCounter;
 			int removedEntriesCount = 0;
 			int movieIdIndx = 0;
@@ -147,18 +150,30 @@ namespace lastfmsndatamanipulation
 				{						
 					if (rowIndexCounter == 0) {					
 						if (userIdToIndx.ContainsKey(s)) {
+							user = userIdToIndx[s];
 							rating.usersList.Add(userIdToIndx[s]);
 						} else {
+							// TODO: right now removing users who are in train but not in trust
 							removedEntriesCount++;
 							break;
 						}
 					} 
-					if (rowIndexCounter == 1) {
+					if (rowIndexCounter == 1) {						
 						if (!movieIdToIndx.ContainsKey(s)) {
 							movieIdToIndx.Add(s, movieIdIndx);
 							movieIdIndx++;							
 						}
 						rating.itemsList.Add(movieIdToIndx[s]);
+						if (!uniqueItemList.Contains(movieIdToIndx[s])) {
+							uniqueItemList.Add(movieIdToIndx[s]);
+						}
+						if (itemsRatedPerUser.ContainsKey(user)) {
+							itemsRatedPerUser[user].Add(movieIdToIndx[s]);
+						} else {
+							List<int> tmp = new List<int>();
+							tmp.Add(movieIdToIndx[s]);
+							itemsRatedPerUser.Add(user, tmp);
+						}
 					}
 					if (rowIndexCounter == 2) {
 						rating.ratingsList.Add(Convert.ToInt32(s));
@@ -195,18 +210,165 @@ namespace lastfmsndatamanipulation
 			Console.WriteLine("OrigRating => Rating[0]: {0}, Rating[end]: {1}", rating.ratingsList[0] , rating.ratingsList[rating.ratingsList.Count-1]);			
 			Console.WriteLine("ActRating => Rating[0]: {0}, Rating[end]: {1}", r1.ratingsList[0] , r1.ratingsList[r1.ratingsList.Count-1]);	
 		}
+
+		static void testDataManipulation(ref Dictionary<string, int> userIdToIndx,
+		                                 ref Dictionary<string, int> movieIdToIndx,
+		                                 ref List<int> uniqueItemList,
+		                                 ref Dictionary<int, List<int>> itemsRatedPerUser)
+		{						
+			Test test = new Test();
+			test.testUserItem = new List<string>();
+				
+			writeToConsole("test.txt data loading");
+			
+			int user = -1;
+			int ratedItem = -1;
+			int flag;
+			int rowIndexCounter;
+			int removedEntriesCount = 0;
+			string[] ratings = readAllLines("test.txt");			
+			
+			//Rated items per user from test data			
+			foreach (string line in ratings) {
+				string[] stringSeparator = new string[] { "\t" };			
+				string[] result = line.Split(stringSeparator, StringSplitOptions.None);
+				rowIndexCounter = 0;
+				flag = 1;
+				foreach (string s in result)
+				{						
+					if (rowIndexCounter == 0) {					
+						if (userIdToIndx.ContainsKey(s)) {
+							user = userIdToIndx[s];						
+						} else {
+							// TODO: right now removing users who are in train but not in trust
+							removedEntriesCount++;							
+							break;
+						}
+					} 
+					if (rowIndexCounter == 1) {	
+						if (movieIdToIndx.ContainsKey(s)) {
+							if (itemsRatedPerUser.ContainsKey(user)) {
+								itemsRatedPerUser[user].Add(movieIdToIndx[s]);
+							} else {
+								List<int> tmp = new List<int>();
+								tmp.Add(movieIdToIndx[s]);
+								itemsRatedPerUser.Add(user, tmp);
+							}
+						} else {							
+							break;
+						}
+					}										
+					rowIndexCounter++;
+				}								
+			}		
+			
+			//test_mapped will have id->indx of user and item
+			File.Open("test_mapped.txt", FileMode.Create).Close();
+			
+			foreach (string line in ratings) {
+				string[] stringSeparator = new string[] { "\t" };			
+				string[] result = line.Split(stringSeparator, StringSplitOptions.None);
+				rowIndexCounter = 0;
+				flag = 1;
+				foreach (string s in result)
+				{						
+					if (rowIndexCounter == 0) {					
+						if (userIdToIndx.ContainsKey(s)) {
+							user = userIdToIndx[s];						
+						} else {
+							// TODO: right now removing users who are in train but not in trust
+							removedEntriesCount++;		
+							flag = 0;
+							break;
+						}
+					} 
+					if (rowIndexCounter == 1) {	
+						if (movieIdToIndx.ContainsKey(s)) {
+							ratedItem = movieIdToIndx[s];
+						} else {	
+							flag = 0;
+							break;
+						}
+					}										
+					rowIndexCounter++;
+				}		
+				if (flag == 1) {
+					File.AppendAllText("test_mapped.txt", user + "\t" + ratedItem);		
+					string str;
+					str = user + "\t" + ratedItem;
+					//testList.Add(user);
+					//testList.Add(ratedItem);
+					
+					int len = uniqueItemList.Count;
+					int cnt = 0;
+					int pseudoNonRatedItem;
+					for (int i = 0; i < len; i++) {
+						pseudoNonRatedItem = uniqueItemList[i];
+						if (!itemsRatedPerUser[user].Contains(pseudoNonRatedItem)) {
+							if (cnt < 1000) {
+								File.AppendAllText("test_mapped.txt", "\t" + pseudoNonRatedItem);								
+					//			testList.Add(pseudoNonRatedItem);
+								str = str + "\t" + pseudoNonRatedItem;
+								cnt++;
+							} else {
+								File.AppendAllText("test_mapped.txt", "\n");
+								break;
+							}
+						}
+					}
+					test.testUserItem.Add(str);
+				}
+			}		
+			
+			writeToConsole("test_mapped.txt data loaded");						           		
+			Console.WriteLine("\nNum entries removed from test dataset: {0}\n", removedEntriesCount);
+			writeToConsole("test.bin creation in progress");
+			
+			using (FileStream file = File.Create("test.bin"))
+			{
+				Serializer.Serialize(file, test);
+			}
+			
+			writeToConsole("test.bin creation completed");			
+			writeToConsole("test.bin data loading");
+			
+			Test t1;
+			using (FileStream file = File.OpenRead("test.bin")) 
+			{
+				t1 = Serializer.Deserialize<Test>(file);
+			}
+			
+			writeToConsole("test.bin data loaded");
+			if (test.testUserItem[0].Equals(t1.testUserItem[0])){
+				Console.WriteLine("Serialization properly completed");
+			} else {
+				Console.WriteLine("Problem with serialization");
+			}
+					
+			//Console.WriteLine("OrigUser => User[0]: {0}, User[end]: {1}", test.testUserItem[0][0], test.testUserItem[test.testUserItem.Count-1]);
+			//Console.WriteLine("ActUser => User[0]: {0}, User[end]: {1}", t1.testUserItem[0][0], t1.testUserItem[t1.testUserItem.Count-1]);			
+		}
 		
 		static void Main(string[] args)
         {			
 			Dictionary<string, int> userIdToIndx = new Dictionary<string, int>();
 			Dictionary<string, int> movieIdToIndx = new Dictionary<string, int>();
+			Dictionary<int, List<int>> itemsRatedPerUser = new Dictionary<int, List<int>>();
+			List<int> uniqueItemList = new List<int>();
 			
 //			mapRatings("rating.txt");
 			
 			trustDataManipulation(ref userIdToIndx);
 			
 			ratingDataManipulation(ref userIdToIndx,
-			                       ref movieIdToIndx);
+			                       ref movieIdToIndx,
+			                       ref uniqueItemList,
+			                       ref itemsRatedPerUser);
+			
+			testDataManipulation(ref userIdToIndx,
+			                     ref movieIdToIndx,
+			                     ref uniqueItemList,
+			                     ref itemsRatedPerUser);
 			
 			Console.WriteLine("Done!");
         }

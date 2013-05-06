@@ -13,6 +13,10 @@ namespace bprsocialnetwork
 		private double lrate;
 		private double lambdaU;
 		private double lambdaI;
+		private double alphaTarget;
+		private double alphaAuxillary;
+		private int minNRcllPrcsn;
+		private int maxNRcllPrcsn;
 		private int numEpochs;
 		private int numUsers;
 		private int numItems;
@@ -23,6 +27,7 @@ namespace bprsocialnetwork
 		private int[] uniqueItemsArray;
 		private double[,] userFeature;
 		private double[,] itemFeature;
+		private string[] testUserItems;
 		private Dictionary<int, int[]> frndsPerUser;
 		private Dictionary<int, int[]> ratedItemsPerUser;
 		
@@ -42,16 +47,21 @@ namespace bprsocialnetwork
 		 * 	-frndsPerUser : User1-> trustUser1, trustUser2, trustUser3 ....
 		 *		 		    User2-> trustUser1, trustUser2, trustUser3 ....		 
 		 */
-		public MainClass(Trust trustObj, Rating ratingObj)
+		public MainClass(Trust trustObj, Train trainObj, Test testObj)
 		{
 			int indx = 0;		
 			this.lrate = 0.01;			
-			this.lambdaU = 8;
-			this.lambdaI = 8;
+			this.lambdaU = 0.01;
+			this.lambdaI = 0.01;
+			this.alphaTarget = 0.80;
+			this.alphaAuxillary = 1 - alphaTarget;
+			this.minNRcllPrcsn = 8;
+			this.maxNRcllPrcsn = 35;
 			this.numEpochs = 10;
-			this.numFeatures = 50;
-			this.trainUsersArray = ratingObj.usersList.ToArray();
-			this.trainItemsArray = ratingObj.itemsList.ToArray();
+			this.numFeatures = 40;
+			this.trainUsersArray = trainObj.usersList.ToArray();
+			this.trainItemsArray = trainObj.itemsList.ToArray();
+			this.testUserItems = testObj.testUserItem.ToArray();			
 		
 			double avgNumFrndsPerUser = 0.0;			
 			frndsPerUser = new Dictionary<int, int[]>();
@@ -242,22 +252,20 @@ namespace bprsocialnetwork
 					for (int f = 0; f < numFeatures; f++) {					
 						userValue = userFeature[f, randUser];
 						dervxuPostvNegtv = userFeature[f, randPostvRel] - userFeature[f, randNegtvRel];
-						userFeature[f, randUser] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
+						userFeature[f, randUser] += lrate * (alphaAuxillary * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
 						                                     lambdaU * userValue);
 						
 						dervxuPostvNegtv = userValue;
-						userFeature[f, randPostvRel] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
+						userFeature[f, randPostvRel] += lrate * (alphaAuxillary * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
 						                                              lambdaU * userFeature[f, randPostvRel]);
 						
 						dervxuPostvNegtv = -userValue;
-						userFeature[f, randNegtvRel] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv - 
+						userFeature[f, randNegtvRel] += lrate * (alphaAuxillary * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv - 
 						                                              lambdaU * userFeature[f, randNegtvRel]);											
 					}
+				
 					bprOpt += Math.Log(sigmoid(xuPostvNegtv));
-//				}
-//					
-//				// Item-features
-//				for (int n = 0; n < numEntries/100; n++) {					
+				
 					numUserTargetRel = ratedItemsPerUser.Keys.Count;
 					randUser = ratedItemsPerUser.Keys.ElementAt(r1.Next(0, numUserTargetRel));
 					numRelation = ratedItemsPerUser[randUser].Length;
@@ -275,16 +283,16 @@ namespace bprsocialnetwork
 					for (int f = 0; f < numFeatures; f++) {						
 						// Item-feature updation
 						userValue = userFeature[f, randUser];
-						dervxuPostvNegtv = itemFeature[f, randPostvRel] - itemFeature[f, randNegtvRel];
-						userFeature[f, randUser] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
-						                                     lambdaU * userValue);
+//						dervxuPostvNegtv = itemFeature[f, randPostvRel] - itemFeature[f, randNegtvRel];
+//						userFeature[f, randUser] += lrate * (alphaTarget * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
+//						                                     lambdaU * userValue);
 						
 						dervxuPostvNegtv = userValue;
-						itemFeature[f, randPostvRel] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
+						itemFeature[f, randPostvRel] += lrate * (alphaTarget * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
 						                                              lambdaI * itemFeature[f, randPostvRel]);
 						
 						dervxuPostvNegtv = -userValue;
-						itemFeature[f, randNegtvRel] += lrate * ((1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
+						itemFeature[f, randNegtvRel] += lrate * (alphaTarget * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
 						                                              lambdaI * itemFeature[f, randNegtvRel]);						
 					}	
 					bprOpt += Math.Log(sigmoid(xuPostvNegtv));
@@ -293,10 +301,122 @@ namespace bprsocialnetwork
 			}			
 		}
 		
+		/*
+		 * Calculates the number of hits
+		 */
+		public int calcItemHitInSortedList(int N, int rankedItem, Dictionary<int, double> itemRatingMapping)
+		{
+			int count = 0;
+			
+			/*
+			 * Sort Avg Rating List
+			 */		
+			
+			var sortedItemRatingMapping = from pair in itemRatingMapping
+								orderby pair.Value descending
+								select pair;						
+			
+			foreach (KeyValuePair<int, double> pair in sortedItemRatingMapping)
+			{
+				count++;						
+				if (count == N+1) break;
+				if (pair.Key == rankedItem) {
+					return 1;
+				}				
+			}	
+			
+			return 0;
+		}	
+		
+		public void recallPrecision(int N,
+		                            ref Dictionary<int, double> recallData,
+		                            ref Dictionary<int, double> precisionData)
+		{
+			int T = 0; 
+			int hits = 0;
+			int user = -1;			
+			int intVal;
+			int rankedItem = -1;			
+			int rowIndexCounter;		
+			double recall;
+			double precision;
+			double testPredictRating;							
+			
+			string[] stringSeparator = new string[] { "\t" };
+			
+			foreach (string line in testUserItems) {
+				T++;
+				string[] result = line.Split(stringSeparator, StringSplitOptions.None);
+				Dictionary<int, double> itemRatingMapping = new Dictionary<int, double>();						
+				rowIndexCounter = 0;
+				
+				foreach (string s in result)
+				{	
+					intVal = Convert.ToInt32(s);
+					if (rowIndexCounter == 0) {
+						user = intVal;
+					}					
+					if (rowIndexCounter == 1) {
+						rankedItem = intVal;
+					}
+						
+					if (rowIndexCounter >= 1) {
+						testPredictRating = dotProduct(user, intVal);												
+						if (!itemRatingMapping.ContainsKey(intVal)) {
+							itemRatingMapping.Add(intVal, testPredictRating);																												
+						} 
+					}
+					rowIndexCounter++;
+				}					
+				hits += calcItemHitInSortedList(N, rankedItem, itemRatingMapping);											
+			}
+			
+			Console.WriteLine("\n\t- #Test: {0}",T);
+			Console.WriteLine("\t- #Hits: {0}", hits);
+			recall = (double)hits / (double)T;
+			precision = (double)recall / (double)N;
+			
+			Console.WriteLine("\t- Recall: {0}, Precision: {1}\n", recall, precision);	
+			recallData.Add(N, recall);
+			precisionData.Add(N, precision);
+		}
+		
+		/*
+		 * Write the recall v/s n, precision v/s N, and precision v/s recall values to the file
+		 */
+		public void writeRcllPrcsnToFile(Dictionary<int, double> recallData,
+		                                 Dictionary<int, double> precisionData)
+		{
+			int itr = 0;
+			int numLines = maxNRcllPrcsn - minNRcllPrcsn + 1;
+			string[] recallPerN = new string[numLines];		
+			string[] precisionPerN = new string[numLines];	
+			string[] precisionPerRecall = new string[numLines];	
+			
+			foreach (KeyValuePair<int, double> recall in recallData)
+            {
+				string tmp = recall.Key + " " + recall.Value;
+				recallPerN[itr] = tmp;
+				tmp = recall.Key + " " + precisionData.Values.ElementAt(itr);
+				precisionPerN[itr] = tmp;
+				tmp = precisionData.Values.ElementAt(itr) + " " + recall.Value;
+				precisionPerRecall[itr] = tmp;
+				itr++;                
+            }			
+			
+			System.IO.File.WriteAllLines("recall_per_n.txt", recallPerN);	
+			System.IO.File.WriteAllLines("precision_per_n.txt", precisionPerN);
+			System.IO.File.WriteAllLines("precision_per_recall.txt", precisionPerRecall);		
+		}
+		                            		
 		public static void Main (string[] args)
 		{
 			Trust trustObj;
-			Rating ratingObj;
+			Train trainObj;
+			Test testObj;
+			Dictionary<int, double> recallData = new Dictionary<int, double>();	
+			Dictionary<int, double> precisionData = new Dictionary<int, double>();	
+			
 			File.Open("log.txt", FileMode.Create).Close();
 			
 			writeToLognConsole("Loading trust.bin");
@@ -308,11 +428,17 @@ namespace bprsocialnetwork
 			writeToLognConsole("Loading train.bin");
 			using (FileStream file = File.OpenRead("train.bin"))
 			{
-				ratingObj = Serializer.Deserialize<Rating>(file);
+				trainObj = Serializer.Deserialize<Train>(file);
+			}
+			
+			writeToLognConsole("Loading test.bin");
+			using (FileStream file = File.OpenRead("test.bin"))
+			{
+				testObj = Serializer.Deserialize<Test>(file);
 			}
 						
 			writeToLognConsole("Constructor call");
-			MainClass mainclass = new MainClass(trustObj, ratingObj);
+			MainClass mainclass = new MainClass(trustObj, trainObj, testObj);
 		
 			writeToLognConsole("Find: RatedItemsPerUser");
 			mainclass.calRatedItemsPerUser();
@@ -325,6 +451,17 @@ namespace bprsocialnetwork
 			
 			writeToLognConsole("Bpr for social network data");
 			mainclass.bprSocialNetwork();
+			
+			writeToLognConsole("Recall and precision");
+			for (int N = mainclass.minNRcllPrcsn; N <= mainclass.maxNRcllPrcsn; N++) {
+				mainclass.recallPrecision(N,
+				                          ref recallData,
+				                          ref precisionData);
+			}
+			
+			writeToLognConsole("Writing recall and precision values to file");
+			mainclass.writeRcllPrcsnToFile(recallData,
+			                      precisionData);
 			
 			Console.WriteLine ("Done!");
 		}

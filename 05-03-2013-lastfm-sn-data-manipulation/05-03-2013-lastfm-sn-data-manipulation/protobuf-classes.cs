@@ -25,5 +25,12 @@ namespace lastfmsndatamanipulation
 		[ProtoMember(3)]
 		public List<int> ratingsList {get; set;}
     }
+	
+	[ProtoContract]
+	class Test
+	{
+		[ProtoMember(1)]
+		public List<string> testUserItem {get; set;}
+	}
 
 }
