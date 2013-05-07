@@ -3,6 +3,8 @@
 hetrec2011-lastfm-2k
 ====================
 
+Test_mapped.txt: Contains the test dataset as needed by PureSVD for Top-N recommender system. User-id and Item-id are mapped to indexes as used by program
+
 -------
 Version
 -------

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="/home/lucas/frameworks/trove-2.1.0/lib/trove-src-2.1.0.jar"/>
+	<classpathentry kind="lib" path="/home/lucas/frameworks/trove-2.1.0/lib/trove-2.1.0.jar"/>
+	<classpathentry kind="lib" path="/home/lucas/svn/software/andre/tags/Bootstrap-0.4.1/output/bootstrap-0.4.1.jar"/>
+	<classpathentry kind="lib" path="/home/lucas/frameworks/kd.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

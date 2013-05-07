@@ -51,8 +51,8 @@ namespace bprsocialnetwork
 		{
 			int indx = 0;		
 			this.lrate = 0.01;			
-			this.lambdaU = 0.01;
-			this.lambdaI = 0.01;
+			this.lambdaU = 0.065;
+			this.lambdaI = 0.065;
 			this.alphaTarget = 0.80;
 			this.alphaAuxillary = 1 - alphaTarget;
 			this.minNRcllPrcsn = 8;

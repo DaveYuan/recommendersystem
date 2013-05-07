@@ -1,0 +1,37 @@
+#########################################################
+Compiling the program
+
+ 1 - Download and install the OPT library. You can get it at
+
+        http://www.decompile.com/not_invented_here/opt/index.htm
+
+ 2 - Compile it with g++:
+        g++ *.cpp -o kdd2011 -lopt
+
+     NOTE: I've just tested this with g++ and it works fine for me. Any other
+C++ compiler should also work (at least I hope so :) )
+
+#########################################################
+Running the program
+
+Example:
+
+./kdd2011 -i 50 -l 0.0001 -b 0.00001 -r 0.00001 -f 40 -d 1 -o <results_file>
+
+You can type 
+
+./kdd2011 --help 
+
+for an explanation of all the command line options.
+
+
+Notes about loading the data:
+
+The program assumes that it is in the same directory of the data (changing this is on my TODO list). So first make sure that you have in your working directory these files: 
+
+  - trainIdx1.txt
+  - validationIdx1.txt
+  - testIdx1.txt
+  - stats1.txt
+
+The program will load these files and save them in a binary format (so it will be faster to read in the future). Once you have the binary (.dat) version of these files on your working directory, you don't need the text versions anymore!

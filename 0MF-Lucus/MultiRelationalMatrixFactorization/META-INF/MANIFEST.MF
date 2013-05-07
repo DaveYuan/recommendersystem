@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Rsrc-Class-Path: ./ trove-2.1.0.jar bootstrap-0.2.jar
+Class-Path: .
+Rsrc-Main-Class: main.FactorizationMain
+Main-Class: org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader
+
