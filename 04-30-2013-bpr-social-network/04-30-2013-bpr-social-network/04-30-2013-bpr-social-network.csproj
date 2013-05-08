@@ -9,6 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>bprsocialnetwork</RootNamespace>
     <AssemblyName>04-30-2013-bpr-social-network</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,6 +37,10 @@
       <HintPath>..\..\04-15-2013-protobufnet-dll\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="protobuf-net, Version=1.0.0.282, Culture=neutral, PublicKeyToken=257b51d87d2e4d67">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>protobuf-net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />

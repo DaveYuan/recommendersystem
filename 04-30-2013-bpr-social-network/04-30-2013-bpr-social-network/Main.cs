@@ -11,8 +11,8 @@ namespace bprsocialnetwork
 	class MainClass
 	{
 		private double lrate;
-		private double lambdaU;
-		private double lambdaI;
+		private double lambdaPostv;
+		private double lambdaNegtv;
 		private double alphaTarget;
 		private double alphaAuxillary;
 		private int minNRcllPrcsn;
@@ -31,33 +31,45 @@ namespace bprsocialnetwork
 		private Dictionary<int, int[]> frndsPerUser;
 		private Dictionary<int, int[]> ratedItemsPerUser;
 		
-		/*
-		 * Write message to the Console and log.txt
-		 */
+		/// <summary>
+		/// Write message to the Console and log.txt 
+		/// </summary>
+		/// <param name="mssg">
+		/// A <see cref="System.String"/>
+		/// </param>
 		public static void writeToLognConsole(string mssg) 
 		{
 			Console.WriteLine("\t- " + mssg + " ...");
 			File.AppendAllText("log.txt", "\t- " + mssg + " ...\n");
 		}	
 		
-		/*
-		 * Constructor which initializes:
-		 * 	-trainUsersArray
-		 * 	-trainItemsArray
-		 * 	-frndsPerUser : User1-> trustUser1, trustUser2, trustUser3 ....
-		 *		 		    User2-> trustUser1, trustUser2, trustUser3 ....		 
-		 */
+		/// <summary>
+		/// Constructor which initializes:
+		///  	-trainUsersArray
+		/// 	-trainItemsArray
+		///  	-frndsPerUser : User1-> trustUser1, trustUser2, trustUser3 ....
+		///			 		    User2-> trustUser1, trustUser2, trustUser3 ....		 
+		/// </summary>
+		/// <param name="trustObj">
+		/// A <see cref="Trust"/>
+		/// </param>
+		/// <param name="trainObj">
+		/// A <see cref="Train"/>
+		/// </param>
+		/// <param name="testObj">
+		/// A <see cref="Test"/>
+		/// </param>
 		public MainClass(Trust trustObj, Train trainObj, Test testObj)
 		{
 			int indx = 0;		
-			this.lrate = 0.01;			
-			this.lambdaU = 0.065;
-			this.lambdaI = 0.065;
-			this.alphaTarget = 0.80;
-			this.alphaAuxillary = 1 - alphaTarget;
+			this.lrate = 0.05;			
+			this.lambdaPostv = 0.0025;
+			this.lambdaNegtv = 0.00025;
+			this.alphaTarget = 1;
+			this.alphaAuxillary = 1;// - alphaTarget;
 			this.minNRcllPrcsn = 8;
 			this.maxNRcllPrcsn = 35;
-			this.numEpochs = 10;
+			this.numEpochs = 20;
 			this.numFeatures = 40;
 			this.trainUsersArray = trainObj.usersList.ToArray();
 			this.trainItemsArray = trainObj.itemsList.ToArray();
@@ -98,12 +110,55 @@ namespace bprsocialnetwork
 							
 			GC.Collect();
 		}	
-				
-		/*
-		 * Finds the items being rated by a user
-		 * -ratedItemsPerUser : User1-> Item1, Item2, Item3 ....
-		 *						User2-> Item1, Item2, Item3 ....
-		 */
+		
+		/// <summary>
+		/// Initialise the user and item feature vectors 
+		/// </summary>		
+		public void initFeatures()
+		{			
+			userFeature = new double[numFeatures,numUsers];
+			itemFeature = new double[numFeatures,numItems];													
+			
+			for (int i = 0; i < this.numFeatures; i++) {
+				for (int j = 0; j < numUsers; j++) {
+					userFeature[i,j] = 0.1;
+				}
+			}
+			
+			for (int i = 0; i < this.numFeatures; i++) {
+				for (int j = 0; j < numItems; j++) {
+					itemFeature[i,j] = 0.1;
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Calculates the dot product of user and item feature vectors 
+		/// </summary>
+		/// <param name="userId">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <param name="itemId">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Double"/>
+		/// </returns>
+		public double dotProduct(int userId,
+		                         int itemId)
+		{
+			double dotProduct = 0.0;			
+			for (int i = 0; i < this.numFeatures; ++i) {
+				dotProduct += userFeature[i,userId] * itemFeature[i,itemId];		
+			}			
+			return dotProduct;
+		}		
+		
+		/// <summary>
+		/// Finds the items being rated by a user
+		/// -ratedItemsPerUser : User1-> Item1, Item2, Item3 ....
+		///						User2-> Item1, Item2, Item3 .... 
+		/// </summary>
 		public void calRatedItemsPerUser()
 		{
 			int user;
@@ -135,10 +190,10 @@ namespace bprsocialnetwork
 			GC.Collect();
 		}
 		
-		/*
-		 * -Finds the uniqueUsers and uniqueItems from the dataset
-		 * -numUsers and numItems
-		 */
+		/// <summary>
+		/// -Finds the uniqueUsers and uniqueItems from the dataset
+		/// -numUsers and numItems 
+		/// </summary>
 		public void calUniqueUsersnItems() 
 		{
 			// Create a HashSet of uniqueItems and uniqueUsers
@@ -153,44 +208,19 @@ namespace bprsocialnetwork
 			
 			Console.WriteLine("\t\t- Uniq(#Users): {0}, Uniq(#Items): {1}", numUsers, numItems);			
 		}		
-		
-		/*
-		 * Initialise the user and item feature vectors
-		 */
-		public void initFeatures()
-		{			
-			userFeature = new double[numFeatures,numUsers];
-			itemFeature = new double[numFeatures,numItems];													
-			
-			for (int i = 0; i < this.numFeatures; i++) {
-				for (int j = 0; j < numUsers; j++) {
-					userFeature[i,j] = 0.1;
-				}
-			}
-			
-			for (int i = 0; i < this.numFeatures; i++) {
-				for (int j = 0; j < numItems; j++) {
-					itemFeature[i,j] = 0.1;
-				}
-			}
-		}
-		
-		/* 
-		 * Calculates the dot product of user and item feature vectors
-		 */
-		public double dotProduct(int userId,
-		                         int itemId)
-		{
-			double dotProduct = 0.0;			
-			for (int i = 0; i < this.numFeatures; ++i) {
-				dotProduct += userFeature[i,userId] * itemFeature[i,itemId];		
-			}			
-			return dotProduct;
-		}
-		
-		/*
-		 * Calculates the dot product of user-user feature vectors
-		 */
+				
+		/// <summary>
+		/// Calculates the dot product of user-user feature vectors
+		/// </summary>
+		/// <param name="user1">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <param name="user2">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Double"/>
+		/// </returns>
 		public double dotProductUser(int user1, int user2)
 		{
 			double dotProduct = 0.0;
@@ -199,18 +229,38 @@ namespace bprsocialnetwork
 			}
 			return dotProduct;
 		}
-		
-		/*
-		 * Calculates the sigmoid 
-		 */
+			
+		/// <summary>
+		/// Calculates the sigmoid 
+		/// </summary>
+		/// <param name="x">
+		/// A <see cref="System.Double"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Double"/>
+		/// </returns>
 		public double sigmoid(double x)
 		{
-			return ( 1.0 / ( 1.0 + Math.Exp(-x) ) );
+			return (1.0 / ( 1.0 + Math.Exp(-x)));
 		}
 		
-		/*
-		 * Multirelational Bayesian Personalised Ranking for Social Network Data
-		 */
+		/// <summary>
+		/// Calculates 1/(1+exp(x))
+		/// </summary>
+		/// <param name="x">
+		/// A <see cref="System.Double"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Double"/>
+		/// </returns>
+		public double oneByOnePlusExpX(double x) 
+		{
+			return (1.0 / (1.0 + Math.Exp(x)));
+		}
+		
+		/// <summary>
+		/// Multirelational Bayesian Personalised Ranking for Social Network Data 
+		/// </summary>		
 		public void bprSocialNetwork() 
 		{
 			int numRelation;
@@ -219,12 +269,19 @@ namespace bprsocialnetwork
 			int randPostvRel;			
 			int randNegtvRel;					
 			int numEntries = trainItemsArray.Length;
-			double bprOpt;
+			double bprOptUser;
+			double bprOptItem;
 			double userValue;
 			double xuPostv;
 			double xuNegtv;
 			double xuPostvNegtv;			
 			double dervxuPostvNegtv;
+			
+			// temp var
+			double maxUserFeature;
+			double maxItemFeature;
+			string userRelType = null;
+			string itemRelType = null;
 			
 			Console.WriteLine("\t\t- #Entries: {0}", numEntries);
 			Random r1 = new Random();
@@ -232,7 +289,10 @@ namespace bprsocialnetwork
 			Random r3 = new Random();
 			
 			for (int epoch = 1; epoch <= numEpochs; epoch++) {
-				bprOpt = 0.0;					
+				bprOptUser = 0.0;	
+				bprOptItem = 0.0;
+				maxUserFeature = Double.MinValue;
+				maxItemFeature = Double.MinValue;
 				
 				// User-features
 				for (int n = 0; n < numEntries; n++) {					
@@ -252,19 +312,33 @@ namespace bprsocialnetwork
 					for (int f = 0; f < numFeatures; f++) {					
 						userValue = userFeature[f, randUser];
 						dervxuPostvNegtv = userFeature[f, randPostvRel] - userFeature[f, randNegtvRel];
-						userFeature[f, randUser] += lrate * (alphaAuxillary * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
-						                                     lambdaU * userValue);
+						userFeature[f, randUser] += lrate * (alphaAuxillary * oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv -
+						                                     lambdaPostv * userValue);
+						
+						if (userFeature[f, randUser] > maxUserFeature) {
+							maxUserFeature = userFeature[f, randUser];
+							userRelType = "randUsr";
+						}
 						
 						dervxuPostvNegtv = userValue;
-						userFeature[f, randPostvRel] += lrate * (alphaAuxillary * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
-						                                              lambdaU * userFeature[f, randPostvRel]);
+						userFeature[f, randPostvRel] += lrate * (alphaAuxillary * oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv -
+						                                              lambdaPostv * userFeature[f, randPostvRel]);
+						
+						if (userFeature[f, randPostvRel] > maxUserFeature) {
+							maxUserFeature = userFeature[f, randPostvRel];
+							userRelType = "+Rel";
+						}
 						
 						dervxuPostvNegtv = -userValue;
-						userFeature[f, randNegtvRel] += lrate * (alphaAuxillary * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv - 
-						                                              lambdaU * userFeature[f, randNegtvRel]);											
+						userFeature[f, randNegtvRel] += lrate * (alphaAuxillary * oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv - 
+						                                              lambdaNegtv * userFeature[f, randNegtvRel]);		
+						if (userFeature[f, randNegtvRel] > maxUserFeature) {
+							maxUserFeature = userFeature[f, randNegtvRel];
+							userRelType = "-Rel";
+						}
 					}
 				
-					bprOpt += Math.Log(sigmoid(xuPostvNegtv));
+					bprOptUser += Math.Log(sigmoid(xuPostvNegtv));
 				
 					numUserTargetRel = ratedItemsPerUser.Keys.Count;
 					randUser = ratedItemsPerUser.Keys.ElementAt(r1.Next(0, numUserTargetRel));
@@ -280,38 +354,58 @@ namespace bprsocialnetwork
 					xuNegtv = dotProduct(randUser, randNegtvRel);
 					xuPostvNegtv = xuPostv - xuNegtv;		
 					
-					for (int f = 0; f < numFeatures; f++) {						
-						// Item-feature updation
+					for (int f = 0; f < numFeatures; f++) {											
 						userValue = userFeature[f, randUser];
+						// TODO: Check if this is needed or not
 //						dervxuPostvNegtv = itemFeature[f, randPostvRel] - itemFeature[f, randNegtvRel];
-//						userFeature[f, randUser] += lrate * (alphaTarget * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
-//						                                     lambdaU * userValue);
-						
+//						userFeature[f, randUser] += lrate * (alphaTarget * oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv -
+//						                                     lambdaPostv * userValue);
+//						
 						dervxuPostvNegtv = userValue;
-						itemFeature[f, randPostvRel] += lrate * (alphaTarget * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
-						                                              lambdaI * itemFeature[f, randPostvRel]);
+						itemFeature[f, randPostvRel] += lrate * (alphaTarget * oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv -
+						                                              lambdaPostv * itemFeature[f, randPostvRel]);
+						if (itemFeature[f, randPostvRel] > maxItemFeature) {
+							maxItemFeature = itemFeature[f, randPostvRel];
+							itemRelType = "+Rel";
+						}
 						
 						dervxuPostvNegtv = -userValue;
-						itemFeature[f, randNegtvRel] += lrate * (alphaTarget * (1.0 / (1.0 + Math.Exp(-xuPostvNegtv))) * dervxuPostvNegtv -
-						                                              lambdaI * itemFeature[f, randNegtvRel]);						
+						itemFeature[f, randNegtvRel] += lrate * (alphaTarget * (1.0 / (1.0 + Math.Exp(xuPostvNegtv))) * dervxuPostvNegtv -
+						                                              lambdaNegtv * itemFeature[f, randNegtvRel]);						
+						if (itemFeature[f, randNegtvRel] > maxItemFeature) {
+							maxItemFeature = itemFeature[f, randNegtvRel];
+							itemRelType = "-Rel";
+						}
 					}	
-					bprOpt += Math.Log(sigmoid(xuPostvNegtv));
+					bprOptItem += Math.Log(sigmoid(xuPostvNegtv));
 				}										
-				Console.WriteLine("\t\t- Epoch: {0}, Bpr-Opt: {1}", epoch, bprOpt);
+				Console.WriteLine("\t\t- {0}: Opt(Usr): {1}, Opt(Itm): {2}, MaxUF({3}): {4}, MaxIF({5}): {6}", 
+				                  epoch, bprOptUser, bprOptItem, userRelType, maxUserFeature, itemRelType, maxItemFeature);
 			}			
 		}
 		
-		/*
-		 * Calculates the number of hits
-		 */
+		/// <summary>
+		/// Calculates the number of hits 
+		/// </summary>
+		/// <param name="N">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <param name="rankedItem">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <param name="itemRatingMapping">
+		/// A <see cref="Dictionary<System.Int32, System.Double>"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Int32"/>
+		/// </returns>
 		public int calcItemHitInSortedList(int N, int rankedItem, Dictionary<int, double> itemRatingMapping)
 		{
 			int count = 0;
 			
 			/*
 			 * Sort Avg Rating List
-			 */		
-			
+			 */														
 			var sortedItemRatingMapping = from pair in itemRatingMapping
 								orderby pair.Value descending
 								select pair;						
@@ -328,6 +422,18 @@ namespace bprsocialnetwork
 			return 0;
 		}	
 		
+		/// <summary>
+		/// Calculate recall and precision from Testdata for N items
+		/// </summary>
+		/// <param name="N">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <param name="recallData">
+		/// A <see cref="Dictionary<System.Int32, System.Double>"/>
+		/// </param>
+		/// <param name="precisionData">
+		/// A <see cref="Dictionary<System.Int32, System.Double>"/>
+		/// </param>
 		public void recallPrecision(int N,
 		                            ref Dictionary<int, double> recallData,
 		                            ref Dictionary<int, double> precisionData)
@@ -371,8 +477,9 @@ namespace bprsocialnetwork
 				hits += calcItemHitInSortedList(N, rankedItem, itemRatingMapping);											
 			}
 			
-			Console.WriteLine("\n\t- #Test: {0}",T);
-			Console.WriteLine("\t- #Hits: {0}", hits);
+			
+			Console.WriteLine("\n\t- N: {0}", N);
+			Console.WriteLine("\t- #Hits/#Tests: {0}/{1}", hits, T);
 			recall = (double)hits / (double)T;
 			precision = (double)recall / (double)N;
 			
@@ -381,9 +488,15 @@ namespace bprsocialnetwork
 			precisionData.Add(N, precision);
 		}
 		
-		/*
-		 * Write the recall v/s n, precision v/s N, and precision v/s recall values to the file
-		 */
+		/// <summary>
+		/// Write the recall v/s n, precision v/s N, and precision v/s recall values to the file 
+		/// </summary>
+		/// <param name="recallData">
+		/// A <see cref="Dictionary<System.Int32, System.Double>"/>
+		/// </param>
+		/// <param name="precisionData">
+		/// A <see cref="Dictionary<System.Int32, System.Double>"/>
+		/// </param>
 		public void writeRcllPrcsnToFile(Dictionary<int, double> recallData,
 		                                 Dictionary<int, double> precisionData)
 		{
