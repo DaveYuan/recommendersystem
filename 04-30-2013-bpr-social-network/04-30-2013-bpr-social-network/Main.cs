@@ -62,14 +62,14 @@ namespace bprsocialnetwork
 		public MainClass(Trust trustObj, Train trainObj, Test testObj)
 		{
 			int indx = 0;		
-			this.lrate = 0.05;			
+			this.lrate = 0.09;			
 			this.lambdaPostv = 0.0025;
 			this.lambdaNegtv = 0.00025;
 			this.alphaTarget = 1;
 			this.alphaAuxillary = 1;// - alphaTarget;
 			this.minNRcllPrcsn = 8;
 			this.maxNRcllPrcsn = 35;
-			this.numEpochs = 20;
+			this.numEpochs = 25;
 			this.numFeatures = 40;
 			this.trainUsersArray = trainObj.usersList.ToArray();
 			this.trainItemsArray = trainObj.itemsList.ToArray();
@@ -360,7 +360,7 @@ namespace bprsocialnetwork
 //						dervxuPostvNegtv = itemFeature[f, randPostvRel] - itemFeature[f, randNegtvRel];
 //						userFeature[f, randUser] += lrate * (alphaTarget * oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv -
 //						                                     lambdaPostv * userValue);
-//						
+						
 						dervxuPostvNegtv = userValue;
 						itemFeature[f, randPostvRel] += lrate * (alphaTarget * oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv -
 						                                              lambdaPostv * itemFeature[f, randPostvRel]);
@@ -379,8 +379,8 @@ namespace bprsocialnetwork
 					}	
 					bprOptItem += Math.Log(sigmoid(xuPostvNegtv));
 				}										
-				Console.WriteLine("\t\t- {0}: Opt(Usr): {1}, Opt(Itm): {2}, MaxUF({3}): {4}, MaxIF({5}): {6}", 
-				                  epoch, bprOptUser, bprOptItem, userRelType, maxUserFeature, itemRelType, maxItemFeature);
+				Console.WriteLine("\t\t- {0}: Opt(Usr+Itm): {1}, MaxUF({2}): {3}, MaxIF({4}): {5}", 
+				                  epoch, bprOptUser+bprOptItem, userRelType, maxUserFeature, itemRelType, maxItemFeature);
 			}			
 		}
 		

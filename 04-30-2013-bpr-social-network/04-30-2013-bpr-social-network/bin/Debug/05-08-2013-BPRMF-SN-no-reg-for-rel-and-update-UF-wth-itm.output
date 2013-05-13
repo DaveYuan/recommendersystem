@@ -1,0 +1,180 @@
+	- Loading trust.bin ...
+	- Loading train.bin ...
+	- Loading test.bin ...
+	- Constructor call ...
+		- Avg(friendsPerUser): 26.8858350951374
+	- Find: RatedItemsPerUser ...
+		- Avg(itemRatedPerUser): 39.3160402329275
+	- Find: uniqueUsers and uniqueItems ...
+		- Uniq(#Users): 1892, Uniq(#Items): 15403
+	- Initialize features ...
+	- Bpr for social network data ...
+		- #Entries: 74268
+		- 1: Opt(Usr+Itm): -81076.0274618489, MaxUF(+Rel): 0.727857431353439, MaxIF(+Rel): 0.628981801150824
+		- 2: Opt(Usr+Itm): -66397.0485541185, MaxUF(+Rel): 0.713189602979554, MaxIF(+Rel): 0.645432950123464
+		- 3: Opt(Usr+Itm): -63687.4199588781, MaxUF(+Rel): 0.721901237624026, MaxIF(+Rel): 0.639941537627029
+		- 4: Opt(Usr+Itm): -62790.3569172986, MaxUF(+Rel): 0.695335774030778, MaxIF(+Rel): 0.622063230728912
+		- 5: Opt(Usr+Itm): -62106.8941522249, MaxUF(+Rel): 0.686302016132217, MaxIF(+Rel): 0.601880317853384
+		- 6: Opt(Usr+Itm): -62067.7229446056, MaxUF(+Rel): 0.697881259800975, MaxIF(+Rel): 0.609405966553854
+		- 7: Opt(Usr+Itm): -61899.265173063, MaxUF(+Rel): 0.71212207160925, MaxIF(+Rel): 0.600189106603858
+		- 8: Opt(Usr+Itm): -61729.6052158401, MaxUF(+Rel): 0.688885452530956, MaxIF(+Rel): 0.608950907913351
+		- 9: Opt(Usr+Itm): -61527.5235456681, MaxUF(+Rel): 0.693194316650116, MaxIF(+Rel): 0.607324993054952
+		- 10: Opt(Usr+Itm): -61534.9092998907, MaxUF(+Rel): 0.672568287425657, MaxIF(+Rel): 0.619126865809785
+		- 11: Opt(Usr+Itm): -61697.8901536911, MaxUF(+Rel): 0.67929168806903, MaxIF(+Rel): 0.646219406394864
+		- 12: Opt(Usr+Itm): -60966.3022694903, MaxUF(+Rel): 0.68335368841512, MaxIF(+Rel): 0.651385254497638
+		- 13: Opt(Usr+Itm): -61251.8291699673, MaxUF(+Rel): 0.687582339681673, MaxIF(+Rel): 0.642669831528555
+		- 14: Opt(Usr+Itm): -61171.3985598799, MaxUF(+Rel): 0.683129721375225, MaxIF(+Rel): 0.643533408984927
+		- 15: Opt(Usr+Itm): -61385.8591166378, MaxUF(+Rel): 0.71078879476905, MaxIF(+Rel): 0.625550551141349
+		- 16: Opt(Usr+Itm): -60940.9925817499, MaxUF(+Rel): 0.683636091224155, MaxIF(+Rel): 0.635695935799142
+		- 17: Opt(Usr+Itm): -61264.6220488775, MaxUF(+Rel): 0.686441125725818, MaxIF(+Rel): 0.617659717557531
+		- 18: Opt(Usr+Itm): -60874.8318826317, MaxUF(+Rel): 0.717305395571008, MaxIF(+Rel): 0.619601036524877
+		- 19: Opt(Usr+Itm): -60937.2051055243, MaxUF(+Rel): 0.695082068060144, MaxIF(+Rel): 0.634445109435363
+		- 20: Opt(Usr+Itm): -61237.9086037436, MaxUF(+Rel): 0.675355447184428, MaxIF(+Rel): 0.626198720955233
+		- 21: Opt(Usr+Itm): -60838.5540121458, MaxUF(+Rel): 0.674797786027539, MaxIF(+Rel): 0.6407520959978
+		- 22: Opt(Usr+Itm): -61338.0388752694, MaxUF(+Rel): 0.658093144158325, MaxIF(+Rel): 0.641441907392041
+		- 23: Opt(Usr+Itm): -61089.5984411936, MaxUF(+Rel): 0.721946604068621, MaxIF(+Rel): 0.63225540233355
+		- 24: Opt(Usr+Itm): -60677.5163031722, MaxUF(+Rel): 0.69534682769112, MaxIF(+Rel): 0.645337186162143
+		- 25: Opt(Usr+Itm): -61150.5816965883, MaxUF(+Rel): 0.720757480000692, MaxIF(+Rel): 0.628908299768935
+	- Recall and precision ...
+
+	- N: 8
+	- #Hits/#Tests: 310/2639
+	- Recall: 0.117468738158393, Precision: 0.0146835922697992
+
+
+	- N: 9
+	- #Hits/#Tests: 326/2639
+	- Recall: 0.12353164077302, Precision: 0.0137257378636689
+
+
+	- N: 10
+	- #Hits/#Tests: 345/2639
+	- Recall: 0.130731337627889, Precision: 0.0130731337627889
+
+
+	- N: 11
+	- #Hits/#Tests: 359/2639
+	- Recall: 0.136036377415688, Precision: 0.0123669434014262
+
+
+	- N: 12
+	- #Hits/#Tests: 375/2639
+	- Recall: 0.142099280030315, Precision: 0.0118416066691929
+
+
+	- N: 13
+	- #Hits/#Tests: 405/2639
+	- Recall: 0.15346722243274, Precision: 0.0118051709563646
+
+
+	- N: 14
+	- #Hits/#Tests: 426/2639
+	- Recall: 0.161424782114437, Precision: 0.0115303415796027
+
+
+	- N: 15
+	- #Hits/#Tests: 443/2639
+	- Recall: 0.167866616142478, Precision: 0.0111911077428319
+
+
+	- N: 16
+	- #Hits/#Tests: 461/2639
+	- Recall: 0.174687381583933, Precision: 0.0109179613489958
+
+
+	- N: 17
+	- #Hits/#Tests: 475/2639
+	- Recall: 0.179992421371732, Precision: 0.0105877894924548
+
+
+	- N: 18
+	- #Hits/#Tests: 484/2639
+	- Recall: 0.183402804092459, Precision: 0.0101890446718033
+
+
+	- N: 19
+	- #Hits/#Tests: 494/2639
+	- Recall: 0.187192118226601, Precision: 0.00985221674876847
+
+
+	- N: 20
+	- #Hits/#Tests: 507/2639
+	- Recall: 0.192118226600985, Precision: 0.00960591133004926
+
+
+	- N: 21
+	- #Hits/#Tests: 509/2639
+	- Recall: 0.192876089427814, Precision: 0.00918457568703874
+
+
+	- N: 22
+	- #Hits/#Tests: 513/2639
+	- Recall: 0.19439181508147, Precision: 0.00883599159461228
+
+
+	- N: 23
+	- #Hits/#Tests: 513/2639
+	- Recall: 0.19439181508147, Precision: 0.00845181804702044
+
+
+	- N: 24
+	- #Hits/#Tests: 520/2639
+	- Recall: 0.197044334975369, Precision: 0.00821018062397373
+
+
+	- N: 25
+	- #Hits/#Tests: 534/2639
+	- Recall: 0.202349374763168, Precision: 0.00809397499052671
+
+
+	- N: 26
+	- #Hits/#Tests: 542/2639
+	- Recall: 0.205380826070481, Precision: 0.00789926254117236
+
+
+	- N: 27
+	- #Hits/#Tests: 550/2639
+	- Recall: 0.208412277377795, Precision: 0.00771897323621462
+
+
+	- N: 28
+	- #Hits/#Tests: 558/2639
+	- Recall: 0.211443728685108, Precision: 0.00755156173875386
+
+
+	- N: 29
+	- #Hits/#Tests: 565/2639
+	- Recall: 0.214096248579007, Precision: 0.00738262926134508
+
+
+	- N: 30
+	- #Hits/#Tests: 572/2639
+	- Recall: 0.216748768472906, Precision: 0.00722495894909688
+
+
+	- N: 31
+	- #Hits/#Tests: 582/2639
+	- Recall: 0.220538082607048, Precision: 0.00711413169700155
+
+
+	- N: 32
+	- #Hits/#Tests: 594/2639
+	- Recall: 0.225085259568018, Precision: 0.00703391436150057
+
+
+	- N: 33
+	- #Hits/#Tests: 600/2639
+	- Recall: 0.227358848048503, Precision: 0.00688966206207586
+
+
+	- N: 34
+	- #Hits/#Tests: 609/2639
+	- Recall: 0.230769230769231, Precision: 0.00678733031674208
+
+
+	- N: 35
+	- #Hits/#Tests: 625/2639
+	- Recall: 0.236832133383858, Precision: 0.00676663238239593
+
+	- Writing recall and precision values to file ...
+Done!
