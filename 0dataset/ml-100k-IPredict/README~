@@ -1,0 +1,6 @@
+This folder contains the dataset as needed for item-prediction procedure of recall and precision
+
+The u1.test.bin contains the entries as 
+	user -> ranteditem, nonrated item1, nonrated item2,..
+
+TEST-1000 means the number of nonrated items against each user

@@ -1,0 +1,725 @@
+Binary file ./Tests/obj/Debug/Tests.dll matches
+Binary file ./Tests/obj/Debug/Tests.dll.mdb matches
+./Tests/Eval/ItemsTest.cs:33:		ItemRecommender recommender;
+./Tests/Eval/ItemsTest.cs:47:			recommender = new MostPopular() { Feedback = training_data };
+./Tests/Eval/ItemsTest.cs:48:			recommender.Train();
+./Tests/Eval/ItemsTest.cs:62:			var results = Items.Evaluate(recommender, test_data, training_data);
+./Tests/Eval/ItemsTest.cs:71:			var results = Items.Evaluate(recommender, test_data, training_data, all_users, candidate_items);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:37:					var recommender = type.CreateRatingPredictor();
+./Tests/RatingPrediction/RatingPredictorsTest.cs:39:						recommender.ToString().Contains(","),
+./Tests/RatingPrediction/RatingPredictorsTest.cs:40:						string.Format("ToString() output of {0} contains commas: '{1}'", type.Name, recommender.ToString())
+./Tests/RatingPrediction/RatingPredictorsTest.cs:43:						recommender.ToString().StartsWith(type.Name),
+./Tests/RatingPrediction/RatingPredictorsTest.cs:44:						string.Format("ToString() output of {0} does not start with class name: '{1}'", type.Name, recommender.ToString ())
+./Tests/RatingPrediction/RatingPredictorsTest.cs:61:						var recommender = SetUpRecommender(type);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:65:						var rated_items = ((IFoldInRatingPredictor) recommender).ScoreItems(items_rated_by_user, items_to_rate);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:70:						Assert.Fail("Exception while testing recommender {0}: {1}\n{2}", type.Name, e.Message, e.StackTrace);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:91:						var recommender = SetUpRecommender(type);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:95:							results[i] = recommender.Predict(0, i);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:97:						recommender.SaveModel("tmp.model");
+./Tests/RatingPrediction/RatingPredictorsTest.cs:98:						recommender.LoadModel("tmp.model");
+./Tests/RatingPrediction/RatingPredictorsTest.cs:100:							Assert.AreEqual(results[i], recommender.Predict(0, i), 0.0001);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:104:						Assert.Fail("Exception while testing recommender {0}: {1}\n{2}", type.Name, e.Message, e.StackTrace);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:112:			var recommender = type.CreateRatingPredictor();
+./Tests/RatingPrediction/RatingPredictorsTest.cs:113:			if (recommender is ITimeAwareRatingPredictor)
+./Tests/RatingPrediction/RatingPredictorsTest.cs:114:				recommender.Ratings = TestUtils.CreateRandomTimedRatings(5, 5, 10);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:116:				recommender.Ratings = TestUtils.CreateRandomRatings(5, 5, 10);
+./Tests/RatingPrediction/RatingPredictorsTest.cs:118:				((IUserAttributeAwareRecommender) recommender).UserAttributes = new SparseBooleanMatrix();
+./Tests/RatingPrediction/RatingPredictorsTest.cs:120:				((IItemAttributeAwareRecommender) recommender).ItemAttributes = new SparseBooleanMatrix();
+./Tests/RatingPrediction/RatingPredictorsTest.cs:122:			recommender.Train();
+./Tests/RatingPrediction/RatingPredictorsTest.cs:124:			return recommender;
+./Tests/RatingPrediction/SlopeOneTest.cs:31:			var recommender = new SlopeOne();
+./Tests/RatingPrediction/SlopeOneTest.cs:38:			recommender.Ratings = training_data;
+./Tests/RatingPrediction/SlopeOneTest.cs:39:			recommender.Train();
+./Tests/RatingPrediction/SlopeOneTest.cs:41:			Assert.AreEqual( 3.0f, recommender.Predict(0, 2) );
+./Tests/RatingPrediction/SlopeOneTest.cs:47:			var recommender = new SlopeOne();
+./Tests/RatingPrediction/SlopeOneTest.cs:54:			recommender.Ratings = training_data;
+./Tests/RatingPrediction/SlopeOneTest.cs:55:			recommender.Train();
+./Tests/RatingPrediction/SlopeOneTest.cs:57:			Assert.AreEqual( 3.0, recommender.Predict(2, 1) );
+./Tests/RatingPrediction/ExternalRatingPredictorTest.cs:36:			var recommender = new ExternalRatingPredictor() { PredictionFile = filename, UserMapping = mapping, ItemMapping = mapping };
+./Tests/RatingPrediction/ExternalRatingPredictorTest.cs:37:			recommender.Train();
+./Tests/RatingPrediction/ExternalRatingPredictorTest.cs:39:				Assert.AreEqual(ratings[i], recommender.Predict(ratings.Users[i], ratings.Items[i]));
+./Tests/RatingPrediction/BiPolarSlopeOneTest.cs:31:			var recommender = new BiPolarSlopeOne();
+./Tests/RatingPrediction/BiPolarSlopeOneTest.cs:38:			recommender.Ratings = training_data;
+./Tests/RatingPrediction/BiPolarSlopeOneTest.cs:39:			recommender.Train();
+./Tests/RatingPrediction/BiPolarSlopeOneTest.cs:41:			Assert.AreEqual( 3.0f, recommender.Predict(0, 2) );
+./Tests/RatingPrediction/BiPolarSlopeOneTest.cs:47:			var recommender = new BiPolarSlopeOne();
+./Tests/RatingPrediction/BiPolarSlopeOneTest.cs:54:			recommender.Ratings = training_data;
+./Tests/RatingPrediction/BiPolarSlopeOneTest.cs:55:			recommender.Train();
+./Tests/RatingPrediction/BiPolarSlopeOneTest.cs:57:			Assert.AreEqual( 3.0f, recommender.Predict(2, 1) );
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:33:			var recommender = new MatrixFactorization();
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:34:			recommender.Ratings = training_data;
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:35:			recommender.NumFactors = 4;
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:36:			recommender.NumIter = 5;
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:37:			recommender.Train();
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:39:			return recommender;
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:52:			IFoldInRatingPredictor recommender = CreateRecommender();
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:54:			var result = recommender.RecommendItems(rated_items, candidate_items, 3);
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:72:			IFoldInRatingPredictor recommender = CreateRecommender();
+./Tests/RatingPrediction/FoldInRatingPredictorExtensionsTest.cs:74:			var result = recommender.RecommendItems(rated_items, 3);
+Binary file ./Tests/Tests.pidb matches
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:35:					var recommender = type.CreateItemRecommender();
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:37:						recommender.ToString().Contains(","),
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:38:						string.Format("ToString() output of {0} contains commas: '{1}'", type.Name, recommender.ToString())
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:41:						recommender.ToString().StartsWith(type.Name),
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:42:						string.Format("ToString() output of {0} does not start with class name: '{1}'", type.Name, recommender.ToString ())
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:53:					var recommender = SetUpRecommender(type);
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:57:					var scored_items = ((IFoldInItemRecommender) recommender).ScoreItems(items_accessed_by_user, items_to_score);
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:77:						var recommender = SetUpRecommender(type);
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:81:							results[i] = recommender.Predict(0, i);
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:83:						recommender.SaveModel("tmp.model");
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:84:						recommender.LoadModel("tmp.model");
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:86:							Assert.AreEqual(results[i], recommender.Predict(0, i), 0.0001);
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:90:						Assert.Fail("Exception while testing recommender {0}: {1}\n{2}", type.Name, e.Message, e.StackTrace);
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:97:			var recommender = (ItemRecommender) type.CreateItemRecommender();
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:98:			recommender.Feedback = TestUtils.CreatePosOnlyFeedback();
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:100:				((IUserAttributeAwareRecommender) recommender).UserAttributes = new SparseBooleanMatrix();
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:102:				((IItemAttributeAwareRecommender) recommender).ItemAttributes = new SparseBooleanMatrix();
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:104:			recommender.Train();
+./Tests/ItemRecommendation/ItemRecommendersTest.cs:105:			return recommender;
+Binary file ./Tests/bin/Debug/MyMediaLite.dll.mdb matches
+Binary file ./Tests/bin/Debug/Tests.dll matches
+Binary file ./Tests/bin/Debug/Tests.dll.mdb matches
+Binary file ./Tests/bin/Debug/MyMediaLite.dll matches
+Binary file ./Programs/RatingPrediction/obj/Debug/rating_prediction.exe.mdb matches
+Binary file ./Programs/RatingPrediction/obj/Debug/rating_prediction.exe matches
+./Programs/RatingPrediction/RatingPrediction.cs:75: usage:  rating_prediction --training-file=FILE --recommender=METHOD [OPTIONS]
+./Programs/RatingPrediction/RatingPrediction.cs:77:  recommenders (plus options and their defaults):");
+./Programs/RatingPrediction/RatingPrediction.cs:85:   --recommender=METHOD             set recommender method (default BiasedMatrixFactorization)
+./Programs/RatingPrediction/RatingPrediction.cs:86:   --recommender-options=OPTIONS    use OPTIONS as recommender options
+./Programs/RatingPrediction/RatingPrediction.cs:161:			recommender = (RatingPredictor) Model.Load(load_model_file);
+./Programs/RatingPrediction/RatingPrediction.cs:163:			recommender = method.CreateRatingPredictor();
+./Programs/RatingPrediction/RatingPrediction.cs:165:			recommender = "BiasedMatrixFactorization".CreateRatingPredictor();
+./Programs/RatingPrediction/RatingPrediction.cs:187:			"ratings range: [{0}, {1}]", recommender.MinRating, recommender.MaxRating));
+./Programs/RatingPrediction/RatingPrediction.cs:192:			recommender.Ratings = training_data = split.Train[0];
+./Programs/RatingPrediction/RatingPrediction.cs:201:			recommender.Ratings = training_data = split.Train[0];
+./Programs/RatingPrediction/RatingPrediction.cs:213:			if ( !(recommender is IIterativeModel) )
+./Programs/RatingPrediction/RatingPrediction.cs:214:				Abort("Only iterative recommenders (interface IIterativeModel) support --find-iter=N.");
+./Programs/RatingPrediction/RatingPrediction.cs:216:			var iterative_recommender = recommender as IIterativeModel;
+./Programs/RatingPrediction/RatingPrediction.cs:217:			iterative_recommender.NumIter = num_iter;
+./Programs/RatingPrediction/RatingPrediction.cs:218:			Console.WriteLine(recommender);
+./Programs/RatingPrediction/RatingPrediction.cs:222:				recommender.DoIterativeCrossValidation(cross_validation, max_iter, find_iter);
+./Programs/RatingPrediction/RatingPrediction.cs:229:					recommender.Train();
+./Programs/RatingPrediction/RatingPrediction.cs:232:					Console.WriteLine("fit {0} iteration {1}", Render(recommender.Evaluate(training_data)), iterative_recommender.NumIter);
+./Programs/RatingPrediction/RatingPrediction.cs:234:				Console.WriteLine("{0} iteration {1}", Render(Evaluate()), iterative_recommender.NumIter);
+./Programs/RatingPrediction/RatingPrediction.cs:236:				for (int it = (int) iterative_recommender.NumIter + 1; it <= max_iter; it++)
+./Programs/RatingPrediction/RatingPrediction.cs:239:						iterative_recommender.Iterate();
+./Programs/RatingPrediction/RatingPrediction.cs:248:								Console.WriteLine("fit {0} iteration {1}", recommender.Evaluate(training_data), it);
+./Programs/RatingPrediction/RatingPrediction.cs:259:						Model.Save(recommender, save_model_file, it);
+./Programs/RatingPrediction/RatingPrediction.cs:261:							recommender.WritePredictions(test_data, prediction_file + "-it-" + it, user_mapping, item_mapping, prediction_line, prediction_header);
+./Programs/RatingPrediction/RatingPrediction.cs:282:			Console.Write(recommender + " ");
+./Programs/RatingPrediction/RatingPrediction.cs:297:						double result = NelderMead.FindMinimum("RMSE", recommender);
+./Programs/RatingPrediction/RatingPrediction.cs:301:					seconds = Wrap.MeasureTime( delegate() { recommender.Train(); } );
+./Programs/RatingPrediction/RatingPrediction.cs:309:					seconds = Wrap.MeasureTime(delegate() { Console.Write(Render(recommender.EvaluateOnline(test_data))); });
+./Programs/RatingPrediction/RatingPrediction.cs:319:						Console.Write(Render(recommender.Evaluate(training_data)));
+./Programs/RatingPrediction/RatingPrediction.cs:329:					recommender.WritePredictions(test_data, prediction_file, user_mapping, item_mapping, prediction_line, prediction_header);
+./Programs/RatingPrediction/RatingPrediction.cs:336:		Model.Save(recommender, save_model_file);
+./Programs/RatingPrediction/RatingPrediction.cs:344:		if (online_eval && !(recommender is IIncrementalRatingPredictor))
+./Programs/RatingPrediction/RatingPrediction.cs:345:			Abort(string.Format("Recommender {0} does not support incremental updates, which are necessary for an online experiment.", recommender.GetType().Name));
+./Programs/RatingPrediction/RatingPrediction.cs:391:			if ((recommender is TimeAwareRatingPredictor || chronological_split != null) && file_format != RatingFileFormat.MOVIELENS_1M)
+./Programs/RatingPrediction/RatingPrediction.cs:410:			recommender.Ratings = training_data;
+./Programs/RatingPrediction/RatingPrediction.cs:416:				if (recommender is TimeAwareRatingPredictor && file_format != RatingFileFormat.MOVIELENS_1M)
+./Programs/RatingPrediction/RatingPrediction.cs:425:				if (recommender is ITransductiveRatingPredictor)
+./Programs/RatingPrediction/RatingPrediction.cs:426:					((ITransductiveRatingPredictor) recommender).AdditionalFeedback = test_data;
+./Programs/RatingPrediction/RatingPrediction.cs:436:		return recommender.Evaluate(test_data, training_data);
+./Programs/RatingPrediction/RatingPrediction.cs:441:		return recommender.DoCrossValidation(cross_validation, compute_fit, true);
+Binary file ./Programs/RatingPrediction/bin/Debug/rating_prediction.exe.mdb matches
+Binary file ./Programs/RatingPrediction/bin/Debug/MyMediaLite.dll.mdb matches
+Binary file ./Programs/RatingPrediction/bin/Debug/rating_prediction.exe matches
+Binary file ./Programs/RatingPrediction/bin/Debug/CommandLineProgram.dll matches
+Binary file ./Programs/RatingPrediction/bin/Debug/MyMediaLite.dll matches
+Binary file ./Programs/RatingBasedRanking/obj/Debug/rating_based_ranking.exe matches
+Binary file ./Programs/RatingBasedRanking/bin/Debug/rating_prediction.exe.mdb matches
+Binary file ./Programs/RatingBasedRanking/bin/Debug/MyMediaLite.dll.mdb matches
+Binary file ./Programs/RatingBasedRanking/bin/Debug/rating_prediction.exe matches
+Binary file ./Programs/RatingBasedRanking/bin/Debug/CommandLineProgram.dll matches
+Binary file ./Programs/RatingBasedRanking/bin/Debug/rating_based_ranking.exe matches
+Binary file ./Programs/RatingBasedRanking/bin/Debug/MyMediaLite.dll matches
+./Programs/RatingBasedRanking/RatingBasedRanking.cs:108:		return recommender.Evaluate(
+./Programs/RatingBasedRanking/RatingBasedRanking.cs:118:		return recommender.DoRatingBasedRankingCrossValidation(cross_validation, candidate_items, CandidateItems.UNION);
+Binary file ./Programs/ItemRecommendation/obj/Debug/item_recommendation.exe.mdb matches
+Binary file ./Programs/ItemRecommendation/obj/Debug/item_recommendation.exe matches
+./Programs/ItemRecommendation/ItemRecommendation.cs:81: usage:   item_recommendation --training-file=FILE --recommender=METHOD [OPTIONS]
+./Programs/ItemRecommendation/ItemRecommendation.cs:91:   --recommender=METHOD             use METHOD for recommendations (default: MostPopular)
+./Programs/ItemRecommendation/ItemRecommendation.cs:92:   --recommender-options=OPTIONS    use OPTIONS as recommender options
+./Programs/ItemRecommendation/ItemRecommendation.cs:182:			recommender = Model.Load(load_model_file);
+./Programs/ItemRecommendation/ItemRecommendation.cs:184:			recommender = method.CreateItemRecommender();
+./Programs/ItemRecommendation/ItemRecommendation.cs:186:			recommender = "MostPopular".CreateItemRecommender();
+./Programs/ItemRecommendation/ItemRecommendation.cs:205:			if ( !(recommender is IIterativeModel) )
+./Programs/ItemRecommendation/ItemRecommendation.cs:206:				Abort("Only iterative recommenders (interface IIterativeModel) support --find-iter=N.");
+./Programs/ItemRecommendation/ItemRecommendation.cs:208:			var iterative_recommender = recommender as IIterativeModel;
+./Programs/ItemRecommendation/ItemRecommendation.cs:209:			iterative_recommender.NumIter = num_iter;
+./Programs/ItemRecommendation/ItemRecommendation.cs:210:			Console.WriteLine(recommender);
+./Programs/ItemRecommendation/ItemRecommendation.cs:216:				recommender.DoIterativeCrossValidation(
+./Programs/ItemRecommendation/ItemRecommendation.cs:224:					recommender.Train();
+./Programs/ItemRecommendation/ItemRecommendation.cs:227:					Console.WriteLine("fit: {0} iteration {1} ", ComputeFit(), iterative_recommender.NumIter);
+./Programs/ItemRecommendation/ItemRecommendation.cs:230:				Console.WriteLine("{0} iteration {1}", Render(results), iterative_recommender.NumIter);
+./Programs/ItemRecommendation/ItemRecommendation.cs:232:				for (int it = (int) iterative_recommender.NumIter + 1; it <= max_iter; it++)
+./Programs/ItemRecommendation/ItemRecommendation.cs:235:						iterative_recommender.Iterate();
+./Programs/ItemRecommendation/ItemRecommendation.cs:254:						Model.Save(recommender, save_model_file, it);
+./Programs/ItemRecommendation/ItemRecommendation.cs:275:			Console.WriteLine(recommender + " ");
+./Programs/ItemRecommendation/ItemRecommendation.cs:281:					var results = recommender.DoCrossValidation(cross_validation, test_users, candidate_items, eval_item_mode, compute_fit, true);
+./Programs/ItemRecommendation/ItemRecommendation.cs:287:					time_span = Wrap.MeasureTime( delegate() { recommender.Train(); } );
+./Programs/ItemRecommendation/ItemRecommendation.cs:303:						var results = recommender.EvaluateOnline(test_data, training_data, test_users, candidate_items, eval_item_mode);
+./Programs/ItemRecommendation/ItemRecommendation.cs:312:		Model.Save(recommender, save_model_file);
+./Programs/ItemRecommendation/ItemRecommendation.cs:323:		if (online_eval && !(recommender is IIncrementalItemRecommender))
+./Programs/ItemRecommendation/ItemRecommendation.cs:324:			Abort(string.Format("Recommender {0} does not support incremental updates, which are necessary for an online experiment.", recommender.GetType().Name));
+./Programs/ItemRecommendation/ItemRecommendation.cs:343:			if (recommender is IUserAttributeAwareRecommender || recommender is IItemAttributeAwareRecommender ||
+./Programs/ItemRecommendation/ItemRecommendation.cs:344:			    recommender is IUserRelationAwareRecommender  || recommender is IItemRelationAwareRecommender)
+./Programs/ItemRecommendation/ItemRecommendation.cs:345:				Abort("--user-prediction is not (yet) supported in combination with attribute- or relation-aware recommenders.");
+./Programs/ItemRecommendation/ItemRecommendation.cs:398:			if (recommender is MyMediaLite.ItemRecommendation.ItemRecommender)
+./Programs/ItemRecommendation/ItemRecommendation.cs:399:				((ItemRecommender)recommender).Feedback = training_data;
+./Programs/ItemRecommendation/ItemRecommendation.cs:444:		return recommender.Evaluate(training_data, training_data, test_users, candidate_items, eval_item_mode, RepeatedEvents.Yes, predict_items_number);
+./Programs/ItemRecommendation/ItemRecommendation.cs:450:		return recommender.Evaluate(test_data, training_data, test_users, candidate_items, eval_item_mode, repeated_events, predict_items_number);
+./Programs/ItemRecommendation/ItemRecommendation.cs:471:			recommender.WritePredictions(
+Binary file ./Programs/ItemRecommendation/bin/Debug/MyMediaLite.dll.mdb matches
+Binary file ./Programs/ItemRecommendation/bin/Debug/CommandLineProgram.dll matches
+Binary file ./Programs/ItemRecommendation/bin/Debug/item_recommendation.exe.mdb matches
+Binary file ./Programs/ItemRecommendation/bin/Debug/item_recommendation.exe matches
+Binary file ./Programs/ItemRecommendation/bin/Debug/MyMediaLite.dll matches
+Binary file ./Programs/CommandLineProgram/obj/Debug/CommandLineProgram.dll matches
+Binary file ./Programs/CommandLineProgram/bin/Debug/MyMediaLite.dll.mdb matches
+Binary file ./Programs/CommandLineProgram/bin/Debug/CommandLineProgram.dll matches
+Binary file ./Programs/CommandLineProgram/bin/Debug/MyMediaLite.dll matches
+Binary file ./Programs/CommandLineProgram/CommandLineProgram.pidb matches
+./Programs/CommandLineProgram/CommandLineProgram.cs:33:	protected T recommender;
+./Programs/CommandLineProgram/CommandLineProgram.cs:58:	// recommender arguments
+./Programs/CommandLineProgram/CommandLineProgram.cs:60:	protected string recommender_options = string.Empty;
+./Programs/CommandLineProgram/CommandLineProgram.cs:127:		if (recommender == null && method != null)
+./Programs/CommandLineProgram/CommandLineProgram.cs:128:			Usage(string.Format("Unknown recommender: '{0}'", method));
+./Programs/CommandLineProgram/CommandLineProgram.cs:129:		if (recommender == null && load_model_file != null)
+./Programs/CommandLineProgram/CommandLineProgram.cs:132:		recommender.Configure(recommender_options, (string msg) => { Console.Error.WriteLine(msg); Environment.Exit(-1); });
+./Programs/CommandLineProgram/CommandLineProgram.cs:134:		if (recommender is INeedsMappings)
+./Programs/CommandLineProgram/CommandLineProgram.cs:136:			((INeedsMappings) recommender).UserMapping = user_mapping;
+./Programs/CommandLineProgram/CommandLineProgram.cs:137:			((INeedsMappings) recommender).ItemMapping = item_mapping;
+./Programs/CommandLineProgram/CommandLineProgram.cs:158:		if (recommender is IUserAttributeAwareRecommender && user_attributes_file == null)
+./Programs/CommandLineProgram/CommandLineProgram.cs:161:		if (recommender is IItemAttributeAwareRecommender && item_attributes_file == null)
+./Programs/CommandLineProgram/CommandLineProgram.cs:164:		if (recommender is IUserRelationAwareRecommender && user_relations_file == null)
+./Programs/CommandLineProgram/CommandLineProgram.cs:167:		if (recommender is IItemRelationAwareRecommender && user_relations_file == null)
+./Programs/CommandLineProgram/CommandLineProgram.cs:195:			{ "recommender=",         v              => method               = v },
+./Programs/CommandLineProgram/CommandLineProgram.cs:196:			{ "recommender-options=", v              => recommender_options += " " + v },
+./Programs/CommandLineProgram/CommandLineProgram.cs:279:		if (recommender is IUserAttributeAwareRecommender)
+./Programs/CommandLineProgram/CommandLineProgram.cs:280:			((IUserAttributeAwareRecommender)recommender).UserAttributes = user_attributes;
+./Programs/CommandLineProgram/CommandLineProgram.cs:285:		if (recommender is IItemAttributeAwareRecommender)
+./Programs/CommandLineProgram/CommandLineProgram.cs:286:			((IItemAttributeAwareRecommender)recommender).ItemAttributes = item_attributes;
+./Programs/CommandLineProgram/CommandLineProgram.cs:289:		if (recommender is IUserRelationAwareRecommender)
+./Programs/CommandLineProgram/CommandLineProgram.cs:291:			((IUserRelationAwareRecommender)recommender).UserRelation = RelationData.Read(Path.Combine(data_dir, user_relations_file), user_mapping);
+./Programs/CommandLineProgram/CommandLineProgram.cs:292:			Console.WriteLine("relation over {0} users", ((IUserRelationAwareRecommender)recommender).NumUsers);
+./Programs/CommandLineProgram/CommandLineProgram.cs:296:		if (recommender is IItemRelationAwareRecommender)
+./Programs/CommandLineProgram/CommandLineProgram.cs:298:			((IItemRelationAwareRecommender)recommender).ItemRelation = RelationData.Read(Path.Combine(data_dir, item_relations_file), item_mapping);
+./Programs/CommandLineProgram/CommandLineProgram.cs:299:			Console.WriteLine("relation over {0} items", ((IItemRelationAwareRecommender)recommender).NumItems);
+./Programs/MovieDemo/MainWindow.cs:109:		BiasedMatrixFactorization recommender = new BiasedMatrixFactorization();
+./Programs/MovieDemo/MainWindow.cs:113:			recommender.Ratings = RatingData.Read(ratings_file, user_mapping, item_mapping);
+./Programs/MovieDemo/MainWindow.cs:121:		foreach (var indices_for_item in recommender.Ratings.ByItem)
+./Programs/MovieDemo/MainWindow.cs:123:				movies_by_frequency.Add(new Tuple<int, float>(recommender.Ratings.Items[indices_for_item[0]], indices_for_item.Count));
+./Programs/MovieDemo/MainWindow.cs:129:		recommender.UpdateUsers = true;
+./Programs/MovieDemo/MainWindow.cs:130:		recommender.UpdateItems = false;
+./Programs/MovieDemo/MainWindow.cs:131:		recommender.BiasReg = 0.001f;
+./Programs/MovieDemo/MainWindow.cs:132:		recommender.Regularization = 0.045f;
+./Programs/MovieDemo/MainWindow.cs:133:		recommender.NumIter = 60;
+./Programs/MovieDemo/MainWindow.cs:135:			recommender.LoadModel(model_file);
+./Programs/MovieDemo/MainWindow.cs:139:		rating_predictor = recommender;
+./MyMediaLite/Ensemble/Ensemble.cs:24: *  \brief This namespace contains recommender ensembles.
+./MyMediaLite/Ensemble/Ensemble.cs:31:		/// <summary>list of recommenders</summary>
+./MyMediaLite/Ensemble/Ensemble.cs:32:		public IList<IRecommender> recommenders = new List<IRecommender>();
+./MyMediaLite/Ensemble/Ensemble.cs:56:				foreach (var recommender in recommenders)
+./MyMediaLite/Ensemble/Ensemble.cs:57:					if (recommender is RatingPredictor)
+./MyMediaLite/Ensemble/Ensemble.cs:58:						((RatingPredictor)recommender).MaxRating = value;
+./MyMediaLite/Ensemble/Ensemble.cs:69:				foreach (var recommender in recommenders)
+./MyMediaLite/Ensemble/Ensemble.cs:70:					if (recommender is RatingPredictor)
+./MyMediaLite/Ensemble/Ensemble.cs:71:						((RatingPredictor)recommender).MinRating = value;
+./MyMediaLite/Ensemble/Ensemble.cs:81:			foreach (var recommender in recommenders)
+./MyMediaLite/Ensemble/Ensemble.cs:82:				if (!recommender.CanPredict(user_id, item_id))
+./MyMediaLite/Ensemble/Ensemble.cs:95:			foreach (var recommender in recommenders)
+./MyMediaLite/Ensemble/Ensemble.cs:96:				recommender.Train();
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:31:	/// This recommender does NOT support incremental updates.
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:44:			foreach (var recommender in this.recommenders)
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:45:				recommender.Train();
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:55:			for (int i = 0; i < recommenders.Count; i++)
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:56:				result += weights[i] * recommenders[i].Predict(user_id, item_id);
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:67:			//var component_results = new IList<Tuple<int, float>>[recommenders.Count];
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:68:			//for (int i = 0; i < recommenders.Count; i++)
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:69:			//	component_results = recommenders[i].PredictItems(user_id, n, candidate_items);
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:78:				writer.WriteLine(recommenders.Count);
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:79:				for (int i = 0; i < recommenders.Count; i++)
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:81:					recommenders[i].SaveModel("model-" + i + ".txt");
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:82:					writer.WriteLine(recommenders[i].GetType() + " " + weights[i].ToString(CultureInfo.InvariantCulture));
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:95:				var recommenders = new List<IRecommender>();
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:102:					recommenders.Add( (IRecommender) Activator.CreateInstance(t) );
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:103:					recommenders[i].LoadModel("model-" + i + ".txt");
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:105:					// TODO make sure the recommenders get their data?
+./MyMediaLite/Ensemble/WeightedEnsemble.cs:111:				this.recommenders = recommenders;
+Binary file ./MyMediaLite/obj/Debug/MyMediaLite.dll.mdb matches
+Binary file ./MyMediaLite/obj/Debug/MyMediaLite.dll matches
+./MyMediaLite/Eval/ItemsOnline.cs:36:		/// <param name="recommender">the item recommender to be evaluated</param>
+./MyMediaLite/Eval/ItemsOnline.cs:38:		/// <param name="training">training data (must be connected to the recommender's training data)</param>
+./MyMediaLite/Eval/ItemsOnline.cs:44:			this IRecommender recommender,
+./MyMediaLite/Eval/ItemsOnline.cs:49:			var incremental_recommender = recommender as IIncrementalItemRecommender;
+./MyMediaLite/Eval/ItemsOnline.cs:50:			if (incremental_recommender == null)
+./MyMediaLite/Eval/ItemsOnline.cs:51:				throw new ArgumentException("recommender must be of type IIncrementalItemRecommender");
+./MyMediaLite/Eval/ItemsOnline.cs:67:				var current_result = Items.Evaluate(recommender, current_test_data, training, current_test_data.AllUsers, candidate_items, CandidateItems.EXPLICIT);
+./MyMediaLite/Eval/ItemsOnline.cs:70:				// update recommender
+./MyMediaLite/Eval/ItemsOnline.cs:74:				incremental_recommender.AddFeedback(tuples);
+./MyMediaLite/Eval/Ratings.cs:54:		///     If the recommender can take time into account, and the rating dataset provides rating times,
+./MyMediaLite/Eval/Ratings.cs:69:		/// <param name="recommender">rating predictor</param>
+./MyMediaLite/Eval/Ratings.cs:73:		static public RatingPredictionEvaluationResults Evaluate(this IRatingPredictor recommender, IRatings test_ratings, IRatings training_ratings = null)
+./MyMediaLite/Eval/Ratings.cs:75:			if (recommender == null)
+./MyMediaLite/Eval/Ratings.cs:76:				throw new ArgumentNullException("recommender");
+./MyMediaLite/Eval/Ratings.cs:81:			var results = new RatingPredictionEvaluationResults(Evaluate(recommender, test_ratings, all_indices));
+./MyMediaLite/Eval/Ratings.cs:87:				results.NewUserResults = Evaluate(recommender, test_ratings, new_user_indices);
+./MyMediaLite/Eval/Ratings.cs:90:				results.NewItemResults = Evaluate(recommender, test_ratings, new_item_indices);
+./MyMediaLite/Eval/Ratings.cs:91:				results.NewUserNewItemResults = Evaluate(recommender, test_ratings, Enumerable.Intersect(new_user_indices, new_item_indices).ToArray());
+./MyMediaLite/Eval/Ratings.cs:96:		static Dictionary<string, float> Evaluate(IRatingPredictor recommender, IRatings ratings, IList<int> indices)
+./MyMediaLite/Eval/Ratings.cs:105:			if (recommender is ITimeAwareRatingPredictor && ratings is ITimedRatings)
+./MyMediaLite/Eval/Ratings.cs:107:				var time_aware_recommender = recommender as ITimeAwareRatingPredictor;
+./MyMediaLite/Eval/Ratings.cs:111:					float prediction = time_aware_recommender.Predict(timed_ratings.Users[index], timed_ratings.Items[index], timed_ratings.Times[index]);
+./MyMediaLite/Eval/Ratings.cs:122:					float prediction = recommender.Predict(ratings.Users[index], ratings.Items[index]);
+./MyMediaLite/Eval/Ratings.cs:136:			result["NMAE"] = (float) mae / (recommender.MaxRating - recommender.MinRating);
+./MyMediaLite/Eval/Ratings.cs:164:		/// <summary>Computes the RMSE fit of a recommender on the training data</summary>
+./MyMediaLite/Eval/Ratings.cs:166:		/// <param name='recommender'>the rating predictor to evaluate</param>
+./MyMediaLite/Eval/Ratings.cs:167:		public static double ComputeFit(this RatingPredictor recommender)
+./MyMediaLite/Eval/Ratings.cs:169:			return recommender.Evaluate(recommender.Ratings)["RMSE"];
+./MyMediaLite/Eval/Items.cs:48:		/// An item recommender is better than another according to one of those measures its score is higher.
+./MyMediaLite/Eval/Items.cs:108:		/// <param name="recommender">item recommender</param>
+./MyMediaLite/Eval/Items.cs:118:			this IRecommender recommender,
+./MyMediaLite/Eval/Items.cs:154:					var prediction = recommender.Recommend(user_id, candidate_items:candidate_items, n:n, ignore_items:ignore_items_for_this_user);
+./MyMediaLite/Eval/Items.cs:201:		/// <summary>Computes the AUC fit of a recommender on the training data</summary>
+./MyMediaLite/Eval/Items.cs:203:		/// <param name='recommender'>the item recommender to evaluate</param>
+./MyMediaLite/Eval/Items.cs:208:			this ItemRecommender recommender,
+./MyMediaLite/Eval/Items.cs:213:			return recommender.Evaluate(
+./MyMediaLite/Eval/Items.cs:214:				recommender.Feedback, recommender.Feedback,
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:31:		/// <param name="recommender">an item recommender</param>
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:39:			this RatingPredictor recommender,
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:46:			var split = new RatingCrossValidationSplit(recommender.Ratings, num_folds);
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:47:			return recommender.DoRatingBasedRankingCrossValidation(split, candidate_items, candidate_item_mode, compute_fit, show_results);
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:51:		/// <param name="recommender">an item recommender</param>
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:59:			this RatingPredictor recommender,
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:72:					var split_recommender = (RatingPredictor) recommender.Clone(); // avoid changes in recommender
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:73:					split_recommender.Ratings = split.Train[fold];
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:74:					split_recommender.Train();
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:79:					var fold_results = Items.Evaluate(split_recommender, test_data_posonly, training_data_posonly, test_users, candidate_items, candidate_item_mode);
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:81:						fold_results["fit"] = (float) split_recommender.ComputeFit();
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:109:		/// <summary>Evaluate an iterative recommender on the folds of a dataset split, display results on STDOUT</summary>
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:110:		/// <param name="recommender">an item recommender</param>
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:120:			this RatingPredictor recommender,
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:130:			var split = new RatingCrossValidationSplit(recommender.Ratings, num_folds);
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:131:			recommender.DoRatingBasedRankingIterativeCrossValidation(split, test_users, candidate_items, candidate_item_mode, repeated_events, max_iter, find_iter);
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:134:		/// <summary>Evaluate an iterative recommender on the folds of a dataset split, display results on STDOUT</summary>
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:135:		/// <param name="recommender">an item recommender</param>
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:145:			this RatingPredictor recommender,
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:155:			if (!(recommender is IIterativeModel))
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:156:				throw new ArgumentException("recommender must be of type IIterativeModel");
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:158:			var split_recommenders     = new RatingPredictor[split.NumberOfFolds];
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:159:			var iterative_recommenders = new IIterativeModel[split.NumberOfFolds];
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:167:					split_recommenders[i] = (RatingPredictor) recommender.Clone(); // to avoid changes in recommender
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:168:					split_recommenders[i].Ratings = split.Train[i];
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:169:					split_recommenders[i].Train();
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:170:					iterative_recommenders[i] = (IIterativeModel) split_recommenders[i];
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:174:					fold_results[i] = Items.Evaluate(split_recommenders[i], test_data_posonly, training_data_posonly, test_users, candidate_items, candidate_item_mode, repeated_events);
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:176:						Console.WriteLine("fold {0} {1} iteration {2}", i, fold_results, iterative_recommenders[i].NumIter);
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:184:			Console.WriteLine("{0} iteration {1}", new ItemRecommendationEvaluationResults(fold_results), iterative_recommenders[0].NumIter);
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:187:			for (int it = (int) iterative_recommenders[0].NumIter + 1; it <= max_iter; it++)
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:193:						iterative_recommenders[i].Iterate();
+./MyMediaLite/Eval/RatingBasedRankingCrossValidation.cs:200:							fold_results[i] = Items.Evaluate(split_recommenders[i], test_data_posonly, training_data_posonly, test_users, candidate_items, candidate_item_mode, repeated_events);
+./MyMediaLite/Eval/CandidateItems.cs:21:	/// <summary>Different modes for choosing candiate items in item recommender evaluation</summary>
+./MyMediaLite/Eval/RatingsCrossValidation.cs:31:		/// <param name="recommender">a rating predictor</param>
+./MyMediaLite/Eval/RatingsCrossValidation.cs:37:			this RatingPredictor recommender,
+./MyMediaLite/Eval/RatingsCrossValidation.cs:42:			var split = new RatingCrossValidationSplit(recommender.Ratings, num_folds);
+./MyMediaLite/Eval/RatingsCrossValidation.cs:43:			return recommender.DoCrossValidation(split, compute_fit, show_fold_results);
+./MyMediaLite/Eval/RatingsCrossValidation.cs:47:		/// <param name="recommender">a rating predictor</param>
+./MyMediaLite/Eval/RatingsCrossValidation.cs:53:			this RatingPredictor recommender,
+./MyMediaLite/Eval/RatingsCrossValidation.cs:64:					var split_recommender = (RatingPredictor) recommender.Clone(); // to avoid changes in recommender
+./MyMediaLite/Eval/RatingsCrossValidation.cs:65:					split_recommender.Ratings = split.Train[i];
+./MyMediaLite/Eval/RatingsCrossValidation.cs:66:					if (recommender is ITransductiveRatingPredictor)
+./MyMediaLite/Eval/RatingsCrossValidation.cs:67:						((ITransductiveRatingPredictor) split_recommender).AdditionalFeedback = split.Test[i];
+./MyMediaLite/Eval/RatingsCrossValidation.cs:68:					split_recommender.Train();
+./MyMediaLite/Eval/RatingsCrossValidation.cs:69:					fold_results[i] = Ratings.Evaluate(split_recommender, split.Test[i]);
+./MyMediaLite/Eval/RatingsCrossValidation.cs:71:						fold_results[i]["fit"] = (float) split_recommender.ComputeFit();
+./MyMediaLite/Eval/RatingsCrossValidation.cs:86:		/// <summary>Evaluate an iterative recommender on the folds of a dataset split, display results on STDOUT</summary>
+./MyMediaLite/Eval/RatingsCrossValidation.cs:87:		/// <param name="recommender">a rating predictor</param>
+./MyMediaLite/Eval/RatingsCrossValidation.cs:93:			this RatingPredictor recommender,
+./MyMediaLite/Eval/RatingsCrossValidation.cs:99:			var split = new RatingCrossValidationSplit(recommender.Ratings, num_folds);
+./MyMediaLite/Eval/RatingsCrossValidation.cs:100:			recommender.DoIterativeCrossValidation(split, max_iter, find_iter, show_fold_results);
+./MyMediaLite/Eval/RatingsCrossValidation.cs:103:		/// <summary>Evaluate an iterative recommender on the folds of a dataset split, display results on STDOUT</summary>
+./MyMediaLite/Eval/RatingsCrossValidation.cs:104:		/// <param name="recommender">a rating predictor</param>
+./MyMediaLite/Eval/RatingsCrossValidation.cs:110:			this RatingPredictor recommender,
+./MyMediaLite/Eval/RatingsCrossValidation.cs:116:			if (!(recommender is IIterativeModel))
+./MyMediaLite/Eval/RatingsCrossValidation.cs:117:				throw new ArgumentException("recommender must be of type IIterativeModel");
+./MyMediaLite/Eval/RatingsCrossValidation.cs:119:			var split_recommenders     = new RatingPredictor[split.NumberOfFolds];
+./MyMediaLite/Eval/RatingsCrossValidation.cs:120:			var iterative_recommenders = new IIterativeModel[split.NumberOfFolds];
+./MyMediaLite/Eval/RatingsCrossValidation.cs:128:					split_recommenders[i] = (RatingPredictor) recommender.Clone(); // to avoid changes in recommender
+./MyMediaLite/Eval/RatingsCrossValidation.cs:129:					split_recommenders[i].Ratings = split.Train[i];
+./MyMediaLite/Eval/RatingsCrossValidation.cs:130:					if (recommender is ITransductiveRatingPredictor)
+./MyMediaLite/Eval/RatingsCrossValidation.cs:131:						((ITransductiveRatingPredictor) split_recommenders[i]).AdditionalFeedback = split.Test[i];
+./MyMediaLite/Eval/RatingsCrossValidation.cs:132:					split_recommenders[i].Train();
+./MyMediaLite/Eval/RatingsCrossValidation.cs:133:					iterative_recommenders[i] = (IIterativeModel) split_recommenders[i];
+./MyMediaLite/Eval/RatingsCrossValidation.cs:134:					fold_results[i] = Ratings.Evaluate(split_recommenders[i], split.Test[i]);
+./MyMediaLite/Eval/RatingsCrossValidation.cs:137:						Console.Error.WriteLine("fold {0} {1} iteration {2}", i, fold_results[i], iterative_recommenders[i].NumIter);
+./MyMediaLite/Eval/RatingsCrossValidation.cs:145:			Console.WriteLine("{0} iteration {1}", new RatingPredictionEvaluationResults(fold_results), iterative_recommenders[0].NumIter);
+./MyMediaLite/Eval/RatingsCrossValidation.cs:148:			for (int it = (int) iterative_recommenders[0].NumIter + 1; it <= max_iter; it++)
+./MyMediaLite/Eval/RatingsCrossValidation.cs:154:						iterative_recommenders[i].Iterate();
+./MyMediaLite/Eval/RatingsCrossValidation.cs:158:							fold_results[i] = Ratings.Evaluate(split_recommenders[i], split.Test[i]);
+./MyMediaLite/Eval/FoldIn.cs:31:		/// <param name='recommender'>a rating predictor capable of performing a user fold-in</param>
+./MyMediaLite/Eval/FoldIn.cs:34:		static public RatingPredictionEvaluationResults EvaluateFoldIn(this IFoldInRatingPredictor recommender, IRatings update_data, IRatings eval_data)
+./MyMediaLite/Eval/FoldIn.cs:49:					var predicted_ratings = recommender.ScoreItems(known_ratings, items_to_rate);
+./MyMediaLite/Eval/FoldIn.cs:59:						cbd  += Eval.Ratings.ComputeCBD(actual_rating, prediction, recommender.MinRating, recommender.MaxRating);
+./MyMediaLite/Eval/FoldIn.cs:72:			result["NMAE"] = (float) mae / (recommender.MaxRating - recommender.MinRating);
+./MyMediaLite/Eval/FoldIn.cs:82:		/// <param name='recommender'>a rating predictor capable of performing a user fold-in</param>
+./MyMediaLite/Eval/FoldIn.cs:85:		static public RatingPredictionEvaluationResults EvaluateFoldInCompleteRetraining(this RatingPredictor recommender, IRatings update_data, IRatings eval_data)
+./MyMediaLite/Eval/FoldIn.cs:95:					var local_recommender = (RatingPredictor) recommender.Clone();
+./MyMediaLite/Eval/FoldIn.cs:98:					local_recommender.Ratings = new CombinedRatings(recommender.Ratings, known_ratings);
+./MyMediaLite/Eval/FoldIn.cs:99:					local_recommender.Train();
+./MyMediaLite/Eval/FoldIn.cs:102:					var predicted_ratings = recommender.Recommend(user_id, candidate_items:items_to_rate);
+./MyMediaLite/Eval/FoldIn.cs:112:						cbd  += Eval.Ratings.ComputeCBD(actual_rating, prediction, recommender.MinRating, recommender.MaxRating);
+./MyMediaLite/Eval/FoldIn.cs:125:			result["NMAE"] = (float) mae / (recommender.MaxRating - recommender.MinRating);
+./MyMediaLite/Eval/FoldIn.cs:134:		/// <param name='recommender'>a rating predictor capable of performing a user fold-in</param>
+./MyMediaLite/Eval/FoldIn.cs:137:		static public RatingPredictionEvaluationResults EvaluateFoldInIncrementalTraining(this IncrementalRatingPredictor recommender, IRatings update_data, IRatings eval_data)
+./MyMediaLite/Eval/FoldIn.cs:147:					var local_recommender = (IncrementalRatingPredictor) recommender.Clone();
+./MyMediaLite/Eval/FoldIn.cs:151:					local_recommender.AddRatings(user_ratings);
+./MyMediaLite/Eval/FoldIn.cs:154:					var predicted_ratings = recommender.Recommend(user_id, candidate_items:items_to_rate);
+./MyMediaLite/Eval/FoldIn.cs:164:						cbd  += Eval.Ratings.ComputeCBD(actual_rating, prediction, recommender.MinRating, recommender.MaxRating);
+./MyMediaLite/Eval/FoldIn.cs:169:					local_recommender.RemoveRatings(user_ratings);
+./MyMediaLite/Eval/FoldIn.cs:181:			result["NMAE"] = (float) mae / (recommender.MaxRating - recommender.MinRating);
+./MyMediaLite/Eval/ItemsCrossValidation.cs:31:		/// <param name="recommender">an item recommender</param>
+./MyMediaLite/Eval/ItemsCrossValidation.cs:40:			this IRecommender recommender,
+./MyMediaLite/Eval/ItemsCrossValidation.cs:48:			if (!(recommender is ItemRecommender))
+./MyMediaLite/Eval/ItemsCrossValidation.cs:49:				throw new ArgumentException("recommender must be of type ItemRecommender");
+./MyMediaLite/Eval/ItemsCrossValidation.cs:51:			var split = new PosOnlyFeedbackCrossValidationSplit<PosOnlyFeedback<SparseBooleanMatrix>>(((ItemRecommender) recommender).Feedback, num_folds);
+./MyMediaLite/Eval/ItemsCrossValidation.cs:52:			return recommender.DoCrossValidation(split, test_users, candidate_items, candidate_item_mode, compute_fit, show_results);
+./MyMediaLite/Eval/ItemsCrossValidation.cs:56:		/// <param name="recommender">an item recommender</param>
+./MyMediaLite/Eval/ItemsCrossValidation.cs:65:			this IRecommender recommender,
+./MyMediaLite/Eval/ItemsCrossValidation.cs:75:			if (!(recommender is ItemRecommender))
+./MyMediaLite/Eval/ItemsCrossValidation.cs:76:				throw new ArgumentException("recommender must be of type ItemRecommender");
+./MyMediaLite/Eval/ItemsCrossValidation.cs:82:					var split_recommender = (ItemRecommender) recommender.Clone(); // avoid changes in recommender
+./MyMediaLite/Eval/ItemsCrossValidation.cs:83:					split_recommender.Feedback = split.Train[fold];
+./MyMediaLite/Eval/ItemsCrossValidation.cs:84:					split_recommender.Train();
+./MyMediaLite/Eval/ItemsCrossValidation.cs:85:					var fold_results = Items.Evaluate(split_recommender, split.Test[fold], split.Train[fold], test_users, candidate_items, candidate_item_mode);
+./MyMediaLite/Eval/ItemsCrossValidation.cs:87:						fold_results["fit"] = (float) split_recommender.ComputeFit();
+./MyMediaLite/Eval/ItemsCrossValidation.cs:115:		/// <summary>Evaluate an iterative recommender on the folds of a dataset split, display results on STDOUT</summary>
+./MyMediaLite/Eval/ItemsCrossValidation.cs:116:		/// <param name="recommender">an item recommender</param>
+./MyMediaLite/Eval/ItemsCrossValidation.cs:126:			this IRecommender recommender,
+./MyMediaLite/Eval/ItemsCrossValidation.cs:136:			if (!(recommender is ItemRecommender))
+./MyMediaLite/Eval/ItemsCrossValidation.cs:137:				throw new ArgumentException("recommender must be of type ItemRecommender");
+./MyMediaLite/Eval/ItemsCrossValidation.cs:139:			var split = new PosOnlyFeedbackCrossValidationSplit<PosOnlyFeedback<SparseBooleanMatrix>>(((ItemRecommender) recommender).Feedback, num_folds);
+./MyMediaLite/Eval/ItemsCrossValidation.cs:140:			recommender.DoIterativeCrossValidation(split, test_users, candidate_items, candidate_item_mode, repeated_events, max_iter, find_iter);
+./MyMediaLite/Eval/ItemsCrossValidation.cs:143:		/// <summary>Evaluate an iterative recommender on the folds of a dataset split, display results on STDOUT</summary>
+./MyMediaLite/Eval/ItemsCrossValidation.cs:144:		/// <param name="recommender">an item recommender</param>
+./MyMediaLite/Eval/ItemsCrossValidation.cs:154:			this IRecommender recommender,
+./MyMediaLite/Eval/ItemsCrossValidation.cs:164:			if (!(recommender is IIterativeModel))
+./MyMediaLite/Eval/ItemsCrossValidation.cs:165:				throw new ArgumentException("recommender must be of type IIterativeModel");
+./MyMediaLite/Eval/ItemsCrossValidation.cs:166:			if (!(recommender is ItemRecommender))
+./MyMediaLite/Eval/ItemsCrossValidation.cs:167:				throw new ArgumentException("recommender must be of type ItemRecommender");
+./MyMediaLite/Eval/ItemsCrossValidation.cs:169:			var split_recommenders     = new ItemRecommender[split.NumberOfFolds];
+./MyMediaLite/Eval/ItemsCrossValidation.cs:170:			var iterative_recommenders = new IIterativeModel[split.NumberOfFolds];
+./MyMediaLite/Eval/ItemsCrossValidation.cs:178:					split_recommenders[i] = (ItemRecommender) recommender.Clone(); // to avoid changes in recommender
+./MyMediaLite/Eval/ItemsCrossValidation.cs:179:					split_recommenders[i].Feedback = split.Train[i];
+./MyMediaLite/Eval/ItemsCrossValidation.cs:180:					split_recommenders[i].Train();
+./MyMediaLite/Eval/ItemsCrossValidation.cs:181:					iterative_recommenders[i] = (IIterativeModel) split_recommenders[i];
+./MyMediaLite/Eval/ItemsCrossValidation.cs:182:					fold_results[i] = Items.Evaluate(split_recommenders[i], split.Test[i], split.Train[i], test_users, candidate_items, candidate_item_mode, repeated_events);
+./MyMediaLite/Eval/ItemsCrossValidation.cs:184:						Console.WriteLine("fold {0} {1} iteration {2}", i, fold_results, iterative_recommenders[i].NumIter);
+./MyMediaLite/Eval/ItemsCrossValidation.cs:192:			Console.WriteLine("{0} iteration {1}", new ItemRecommendationEvaluationResults(fold_results), iterative_recommenders[0].NumIter);
+./MyMediaLite/Eval/ItemsCrossValidation.cs:195:			for (int it = (int) iterative_recommenders[0].NumIter + 1; it <= max_iter; it++)
+./MyMediaLite/Eval/ItemsCrossValidation.cs:201:						iterative_recommenders[i].Iterate();
+./MyMediaLite/Eval/ItemsCrossValidation.cs:205:							fold_results[i] = Items.Evaluate(split_recommenders[i], split.Test[i], split.Train[i], test_users, candidate_items, candidate_item_mode, repeated_events);
+./MyMediaLite/Eval/Measures/MAE.cs:30:		/// <param name='recommender'>the recommender to make predictions with</param>
+./MyMediaLite/Eval/Measures/MAE.cs:32:		public static double ComputeAbsoluteErrorSum(this IRatingPredictor recommender, IRatings ratings)
+./MyMediaLite/Eval/Measures/MAE.cs:36:				sum += Math.Abs(recommender.Predict(ratings.Users[i], ratings.Items[i]) - ratings[i]);
+./MyMediaLite/Eval/Measures/RMSE.cs:30:		/// <param name='recommender'>the recommender to make predictions with</param>
+./MyMediaLite/Eval/Measures/RMSE.cs:32:		public static double ComputeSquaredErrorSum(this IRatingPredictor recommender, IRatings ratings)
+./MyMediaLite/Eval/Measures/RMSE.cs:36:				sum += Math.Pow(recommender.Predict(ratings.Users[i], ratings.Items[i]) - ratings[i], 2);
+./MyMediaLite/Eval/Measures/LogisticLoss.cs:30:		/// <param name='recommender'>the recommender to make predictions with</param>
+./MyMediaLite/Eval/Measures/LogisticLoss.cs:35:			this IRatingPredictor recommender,
+./MyMediaLite/Eval/Measures/LogisticLoss.cs:42:				double prediction = recommender.Predict(ratings.Users[i], ratings.Items[i]);
+./MyMediaLite/Eval/RatingsOnline.cs:32:		/// <param name="recommender">rating predictor</param>
+./MyMediaLite/Eval/RatingsOnline.cs:35:		static public RatingPredictionEvaluationResults EvaluateOnline(this IRatingPredictor recommender, IRatings ratings)
+./MyMediaLite/Eval/RatingsOnline.cs:37:			if (recommender == null)
+./MyMediaLite/Eval/RatingsOnline.cs:38:				throw new ArgumentNullException("recommender");
+./MyMediaLite/Eval/RatingsOnline.cs:42:			var incremental_recommender = recommender as IIncrementalRatingPredictor;
+./MyMediaLite/Eval/RatingsOnline.cs:43:			if (incremental_recommender == null)
+./MyMediaLite/Eval/RatingsOnline.cs:44:				throw new ArgumentException("recommender must be of type IIncrementalRatingPredictor");
+./MyMediaLite/Eval/RatingsOnline.cs:53:				float prediction = recommender.Predict(ratings.Users[index], ratings.Items[index]);
+./MyMediaLite/Eval/RatingsOnline.cs:58:				cbd  += Eval.Ratings.ComputeCBD(ratings[index], prediction, recommender.MinRating, recommender.MaxRating);
+./MyMediaLite/Eval/RatingsOnline.cs:60:				incremental_recommender.AddRatings(new RatingsProxy(ratings, new int[] { index }));
+./MyMediaLite/Eval/RatingsOnline.cs:69:			result["NMAE"] = (float) mae / (recommender.MaxRating - recommender.MinRating);
+./MyMediaLite/RatingPrediction/ExternalRatingPredictor.cs:25:	///   This recommender is for loading predictions made by external (non-MyMediaLite) recommenders,
+./MyMediaLite/RatingPrediction/ExternalRatingPredictor.cs:29:	///   This recommender does NOT support incremental updates.
+./MyMediaLite/RatingPrediction/GlobalAverage.cs:28:	/// This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/LatentFeatureLogLinearModel.cs:42:	///     This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/NaiveBayes.cs:30:	/// This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/IIncrementalRatingPredictor.cs:26:	/// By incremental training we mean that after each update, the recommender does not
+./MyMediaLite/RatingPrediction/Random.cs:25:	/// This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/ItemAverage.cs:26:	/// This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/TimeAwareBaselineWithFrequencies.cs:40:	/// This recommender does currently NOT support incremental updates.
+./MyMediaLite/RatingPrediction/FactorWiseMatrixFactorization.cs:44:	///      This recommender does NOT support incremental updates.
+./MyMediaLite/RatingPrediction/FactorWiseMatrixFactorization.cs:201:		/// If the user or the item are not known to the recommender, the global effects prediction is returned.
+./MyMediaLite/RatingPrediction/UserKNN.cs:52:		/// If the user or the item are not known to the recommender, a suitable average rating is returned.
+./MyMediaLite/RatingPrediction/UserAttributeKNN.cs:27:	/// <summary>Weighted kNN recommender based on user attributes</summary>
+./MyMediaLite/RatingPrediction/UserAttributeKNN.cs:29:	/// This recommender supports incremental updates, but it does not support fold-in.
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:42:		/// <param name='recommender'>the recommender to retrieve the data from</param>
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:43:		public static int[][] UsersWhoRated(this ITransductiveRatingPredictor recommender)
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:45:			var ratings             = recommender.Ratings;
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:46:			var additional_feedback = recommender.AdditionalFeedback;
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:62:		/// <param name='recommender'>the recommender to retrieve the data from</param>
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:63:		public static int[][] ItemsRatedByUser(this ITransductiveRatingPredictor recommender)
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:65:			var ratings             = recommender.Ratings;
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:66:			var additional_feedback = recommender.AdditionalFeedback;
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:82:		/// <param name='recommender'>the recommender to get the data from</param>
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:83:		public static int[] UserFeedbackCounts(this ITransductiveRatingPredictor recommender)
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:85:			int max_user_id = Math.Max(recommender.Ratings.MaxUserID, recommender.AdditionalFeedback.MaxUserID);
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:90:				if (user_id <= recommender.Ratings.MaxUserID)
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:91:					result[user_id] += recommender.Ratings.CountByUser[user_id];
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:92:				if (user_id <= recommender.AdditionalFeedback.MaxUserID)
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:93:					result[user_id] += recommender.AdditionalFeedback.CountByUser[user_id];
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:100:		/// <param name='recommender'>the recommender to get the data from</param>
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:101:		public static int[] ItemFeedbackCounts(this ITransductiveRatingPredictor recommender)
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:103:			int max_item_id = Math.Max(recommender.Ratings.MaxItemID, recommender.AdditionalFeedback.MaxItemID);
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:108:				if (item_id <= recommender.Ratings.MaxItemID)
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:109:					result[item_id] += recommender.Ratings.CountByItem[item_id];
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:110:				if (item_id <= recommender.AdditionalFeedback.MaxItemID)
+./MyMediaLite/RatingPrediction/ITransductiveRatingPredictor.cs:111:					result[item_id] += recommender.AdditionalFeedback.CountByItem[item_id];
+./MyMediaLite/RatingPrediction/CoClustering.cs:41:	/// This recommender does NOT support incremental updates.
+./MyMediaLite/RatingPrediction/ItemAttributeKNN.cs:24:	/// <summary>Attribute-aware weighted item-based kNN recommender</summary>
+./MyMediaLite/RatingPrediction/ItemAttributeKNN.cs:26:	/// This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/BiasedMatrixFactorization.cs:35:	///     If set to log likelihood and with binary ratings, the recommender
+./MyMediaLite/RatingPrediction/BiasedMatrixFactorization.cs:40:	///     This recommender makes use of multi-core machines if requested.
+./MyMediaLite/RatingPrediction/BiasedMatrixFactorization.cs:74:	///       This recommender supports incremental updates. See the paper by Rendle and Schmidt-Thieme.
+./MyMediaLite/RatingPrediction/Constant.cs:25:	/// This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/ItemKNN.cs:53:		/// If the user or the item are not known to the recommender, a suitable average is returned.
+./MyMediaLite/RatingPrediction/SlopeOne.cs:34:	/// This recommender does NOT support incremental updates. They would be easy to implement, though.
+./MyMediaLite/RatingPrediction/TimeAwareBaseline.cs:42:	/// This recommender does currently NOT support incremental updates.
+./MyMediaLite/RatingPrediction/Extensions.cs:30:		/// <param name="recommender">rating predictor</param>
+./MyMediaLite/RatingPrediction/Extensions.cs:38:			this IRecommender recommender,
+./MyMediaLite/RatingPrediction/Extensions.cs:58:						recommender.WritePredictions(
+./MyMediaLite/RatingPrediction/Extensions.cs:72:						recommender.Predict(ratings.Users[index], ratings.Items[index]).ToString(CultureInfo.InvariantCulture));
+./MyMediaLite/RatingPrediction/Extensions.cs:76:		/// <param name="recommender">rating predictor</param>
+./MyMediaLite/RatingPrediction/Extensions.cs:84:			this IRecommender recommender,
+./MyMediaLite/RatingPrediction/Extensions.cs:92:				WritePredictions(recommender, ratings, writer, user_mapping, item_mapping, line_format);
+./MyMediaLite/RatingPrediction/UserItemBaseline.cs:62:	///     This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:31:		/// <param name='recommender'>the IFoldInRatingPredictor recommender</param>
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:35:		public static IList<Tuple<int, float>> RecommendItems(this IFoldInRatingPredictor recommender, IList<Tuple<int, float>> rated_items, IList<int> candidate_items, int n)
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:37:			var scored_items = recommender.ScoreItems(rated_items, candidate_items);
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:43:		/// <param name='recommender'>the IFoldInRatingPredictor recommender</param>
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:46:		public static IList<Tuple<int, float>> RecommendItems(this IFoldInRatingPredictor recommender, IList<Tuple<int, float>> rated_items, int n)
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:48:			var candidate_items = Enumerable.Range(0, ((RatingPredictor)recommender).Ratings.MaxItemID - 1).ToArray();
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:49:			var scored_items = recommender.ScoreItems(rated_items, candidate_items);
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:55:		/// <param name='recommender'>the IFoldInRatingPredictor recommender</param>
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:57:		public static IList<Tuple<int, float>> ScoreItems(this IFoldInRatingPredictor recommender, IList<Tuple<int, float>> rated_items)
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:59:			var candidate_items = Enumerable.Range(0, ((RatingPredictor)recommender).Ratings.MaxItemID - 1).ToArray();
+./MyMediaLite/RatingPrediction/FoldInRatingPredictorExtensions.cs:60:			return recommender.ScoreItems(rated_items, candidate_items);
+./MyMediaLite/RatingPrediction/EntityAverage.cs:46:		/// <summary>Train the recommender according to the given entity type</summary>
+./MyMediaLite/RatingPrediction/EntityAverage.cs:77:		/// <summary>Retrain the recommender according to the given entity type</summary>
+./MyMediaLite/RatingPrediction/GSVDPlusPlus.cs:36:	///         gSVD++: supporting implicit feedback on recommender systems with metadata awareness.
+./MyMediaLite/RatingPrediction/UserAverage.cs:29:	/// This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/MatrixFactorization.cs:47:	///     This recommender supports incremental updates.
+./MyMediaLite/RatingPrediction/MatrixFactorization.cs:245:		/// If the user or the item are not known to the recommender, the global average is returned.
+./MyMediaLite/RatingPrediction/IFoldInRatingPredictor.cs:28:	///     and the existing recommender, without modifying the parameters of the existing recommender.
+./MyMediaLite/RatingPrediction/IFoldInRatingPredictor.cs:35:	///         Incremental singular value decomposition algorithms for highly scalable recommender systems.
+./MyMediaLite/RatingPrediction/BiPolarSlopeOne.cs:39:	/// This recommender does NOT support incremental updates. They would be easy to implement, though.
+./MyMediaLite/IUserAttributeAwareRecommender.cs:22:	/// <summary>Interface for recommenderss that take binary user attributes into account</summary>
+./MyMediaLite/INeedsMappings.cs:24:	/// Interface for classes that need user and item ID mappings, e.g. for recommenders that read data
+./MyMediaLite/IItemRelationAwareRecommender.cs:22:	/// <summary>Interface for recommenders that take a binary relation over items into account</summary>
+./MyMediaLite/ItemRecommendation/LeastSquareSLIM.cs:40:	///       X. Ning, G. Karypis: Slim: Sparse linear methods for top-n recommender systems.
+./MyMediaLite/ItemRecommendation/LeastSquareSLIM.cs:52:	///     This recommender supports incremental updates.
+./MyMediaLite/ItemRecommendation/WRMF.cs:50:	///     This recommender supports incremental updates.
+./MyMediaLite/ItemRecommendation/BPRSLIM.cs:43:	///     X. Ning, G. Karypis: Slim: Sparse linear methods for top-n recommender systems.
+./MyMediaLite/ItemRecommendation/BPRSLIM.cs:54:	/// This recommender supports incremental updates.
+./MyMediaLite/ItemRecommendation/SLIM.cs:38:	///         X. Ning, G. Karypis: Slim: Sparse linear methods for top-n recommender systems.
+./MyMediaLite/ItemRecommendation/Random.cs:20:	/// <summary>Random item recommender for use as experimental baseline</summary>
+./MyMediaLite/ItemRecommendation/MostPopular.cs:26:	/// <summary>Most-popular item recommender</summary>
+./MyMediaLite/ItemRecommendation/MostPopular.cs:35:	///     This recommender supports incremental updates.
+./MyMediaLite/ItemRecommendation/BPRLinear.cs:43:	///   This recommender does NOT support incremental updates.
+./MyMediaLite/ItemRecommendation/ItemRecommender.cs:24: *  \brief This namespace contains item recommenders and some helper classes for item recommendation.
+./MyMediaLite/ItemRecommendation/ItemRecommender.cs:29:	/// Abstract item recommender class that loads the (positive-only implicit feedback) training data into memory
+./MyMediaLite/ItemRecommendation/UserKNN.cs:28:	/// This recommender supports incremental updates for the BinaryCosine and Cooccurrence similarities.
+./MyMediaLite/ItemRecommendation/UserAttributeKNN.cs:24:	/// This recommender does NOT support incremental updates.
+./MyMediaLite/ItemRecommendation/BPRMF.cs:34:	///     The different variants (settings) of this recommender
+./MyMediaLite/ItemRecommendation/BPRMF.cs:70:	///     This recommender supports incremental updates.
+./MyMediaLite/ItemRecommendation/IFoldInItemRecommender.cs:24:	/// <summary>Item recommender that allows folding in new users</summary>
+./MyMediaLite/ItemRecommendation/IFoldInItemRecommender.cs:28:	///     and the existing recommender, without modifying the parameters of the existing recommender.
+./MyMediaLite/ItemRecommendation/IFoldInItemRecommender.cs:35:	///         Incremental singular value decomposition algorithms for highly scalable recommender systems.
+./MyMediaLite/ItemRecommendation/IIncrementalItemRecommender.cs:23:	/// <summary>Interface for item recommenders</summary>
+./MyMediaLite/ItemRecommendation/ItemAttributeKNN.cs:24:	/// This recommender does NOT support incremental updates.
+./MyMediaLite/ItemRecommendation/MultiCoreBPRMF.cs:28:	/// This recommender supports incremental updates, however they are currently not performed on multiple cores.
+./MyMediaLite/ItemRecommendation/ItemKNN.cs:29:	/// This recommender supports incremental updates for the BinaryCosine and Cooccurrence similarities.
+./MyMediaLite/ItemRecommendation/MostPopularByAttributes.cs:44:	///   This recommender does NOT support incremental updates.
+./MyMediaLite/ItemRecommendation/KNN.cs:27:	/// <summary>Base class for item recommenders that use some kind of k-nearest neighbors (kNN) model</summary>
+./MyMediaLite/ItemRecommendation/Extensions.cs:31:		/// <param name="recommender">the <see cref="IRecommender"/> to use for making the predictions</param>
+./MyMediaLite/ItemRecommendation/Extensions.cs:41:			this IRecommender recommender,
+./MyMediaLite/ItemRecommendation/Extensions.cs:51:				WritePredictions(recommender, train, candidate_items, num_predictions, writer, users, user_mapping, item_mapping, repeated_items);
+./MyMediaLite/ItemRecommendation/Extensions.cs:55:		/// <param name="recommender">the <see cref="IRecommender"/> to use for making the predictions</param>
+./MyMediaLite/ItemRecommendation/Extensions.cs:65:			this IRecommender recommender,
+./MyMediaLite/ItemRecommendation/Extensions.cs:82:				WritePredictions(recommender, user_id, candidate_items, ignore_items, num_predictions, writer, user_mapping, item_mapping);
+./MyMediaLite/ItemRecommendation/Extensions.cs:87:		/// <param name="recommender">the <see cref="IRecommender"/> to use for making the predictions</param>
+./MyMediaLite/ItemRecommendation/Extensions.cs:96:			this IRecommender recommender,
+./MyMediaLite/ItemRecommendation/Extensions.cs:111:			var ordered_items = recommender.Recommend(
+./MyMediaLite/ItemRecommendation/SoftMarginRankingMF.cs:50:	/// This recommender supports incremental updates.
+./MyMediaLite/ItemRecommendation/MF.cs:156:		/// If the user or the item are not known to the recommender, zero is returned.
+./MyMediaLite/ItemRecommendation/Zero.cs:20:	/// <summary>Constant item recommender for use as experimental baseline. Always predicts a score of zero</summary>
+./MyMediaLite/ItemRecommendation/Zero.cs:22:	/// This recommender can be used for debugging, e.g. to detect non-random orderings in item lists.
+./MyMediaLite/ItemRecommendation/ITransductiveItemRecommender.cs:22:	/// <summary>Interface for item recommenders that take into account some test data for training</summary>
+./MyMediaLite/ItemRecommendation/ExternalItemRecommender.cs:25:	///   This recommender is for loading predictions made by external (non-MyMediaLite) recommenders,
+./MyMediaLite/ItemRecommendation/ExternalItemRecommender.cs:29:	///   This recommender does NOT support incremental updates.
+./MyMediaLite/ItemRecommendation/IncrementalItemRecommender.cs:27:	/// Base class for item recommenders that support incremental updates
+Binary file ./MyMediaLite/MyMediaLite.pidb matches
+./MyMediaLite/Recommender.cs:26:	/// Abstract recommender class implementing default behaviors
+./MyMediaLite/HyperParameter/NelderMead.cs:50:		static double Run(RatingPredictor recommender, ISplit<IRatings> split, string hp_string, string evaluation_measure)
+./MyMediaLite/HyperParameter/NelderMead.cs:52:			recommender.Configure(hp_string);
+./MyMediaLite/HyperParameter/NelderMead.cs:54:			double result = recommender.DoCrossValidation(split)[evaluation_measure];
+./MyMediaLite/HyperParameter/NelderMead.cs:76:		/// <param name="recommender">a rating predictor (will be set to best hyperparameter combination)</param>
+./MyMediaLite/HyperParameter/NelderMead.cs:80:			RatingPredictor recommender)
+./MyMediaLite/HyperParameter/NelderMead.cs:82:			var split = new RatingsSimpleSplit(recommender.Ratings, split_ratio);
+./MyMediaLite/HyperParameter/NelderMead.cs:83:			//var split = new RatingCrossValidationSplit(recommender.Ratings, 5);
+./MyMediaLite/HyperParameter/NelderMead.cs:89:			if (recommender is UserItemBaseline)
+./MyMediaLite/HyperParameter/NelderMead.cs:102:			else if (recommender is BiasedMatrixFactorization)
+./MyMediaLite/HyperParameter/NelderMead.cs:116:			else if (recommender is MatrixFactorization)
+./MyMediaLite/HyperParameter/NelderMead.cs:129:				throw new Exception("not prepared for type " + recommender.GetType().ToString());
+./MyMediaLite/HyperParameter/NelderMead.cs:134:				hp_names, initial_hp_values, recommender, split);
+./MyMediaLite/HyperParameter/NelderMead.cs:138:		/// <remarks>The recommender will be set to the best parameter value after calling this method.</remarks>
+./MyMediaLite/HyperParameter/NelderMead.cs:142:		/// <param name="recommender">the recommender</param>
+./MyMediaLite/HyperParameter/NelderMead.cs:149:			RatingPredictor recommender, // TODO make more general?
+./MyMediaLite/HyperParameter/NelderMead.cs:159:				results[hp_string] = Run(recommender, split, hp_string, evaluation_measure);
+./MyMediaLite/HyperParameter/NelderMead.cs:190:				double ref_result = Run(recommender, split, ref_string, evaluation_measure);
+./MyMediaLite/HyperParameter/NelderMead.cs:205:					double exp_result = Run(recommender, split, exp_string, evaluation_measure);
+./MyMediaLite/HyperParameter/NelderMead.cs:223:				double con_result = Run(recommender, split, con_string, evaluation_measure);
+./MyMediaLite/HyperParameter/NelderMead.cs:241:					double red_result = Run(recommender, split, red_string, evaluation_measure);
+./MyMediaLite/HyperParameter/NelderMead.cs:259:			recommender.Configure(keys.First());
+./MyMediaLite/HyperParameter/IHyperParameterSearch.cs:36:		/// <summary>the recommender to find the hyperparameters for</summary>
+./MyMediaLite/HyperParameter/GridSearch.cs:33:		/// <remarks>The recommender will be set to the best parameter value after calling this method.</remarks>
+./MyMediaLite/HyperParameter/GridSearch.cs:37:		/// <param name="recommender">the recommender</param>
+./MyMediaLite/HyperParameter/GridSearch.cs:44:			RatingPredictor recommender,
+./MyMediaLite/HyperParameter/GridSearch.cs:52:				recommender.SetProperty(hyperparameter_name, hyperparameter_values[i].ToString(CultureInfo.InvariantCulture));
+./MyMediaLite/HyperParameter/GridSearch.cs:53:				double result = recommender.DoCrossValidation(split)[evaluation_measure];
+./MyMediaLite/HyperParameter/GridSearch.cs:61:			recommender.SetProperty(hyperparameter_name, hyperparameter_values[min_i].ToString(CultureInfo.InvariantCulture));
+./MyMediaLite/HyperParameter/GridSearch.cs:67:		/// <remarks>The recommender will be set to the best parameter value after calling this method.</remarks>
+./MyMediaLite/HyperParameter/GridSearch.cs:73:		/// <param name="recommender">the recommender</param>
+./MyMediaLite/HyperParameter/GridSearch.cs:80:			RatingPredictor recommender,
+./MyMediaLite/HyperParameter/GridSearch.cs:90:					recommender.SetProperty(hp_name1, hp_values1[i].ToString(CultureInfo.InvariantCulture));
+./MyMediaLite/HyperParameter/GridSearch.cs:91:					recommender.SetProperty(hp_name2, hp_values2[j].ToString(CultureInfo.InvariantCulture));
+./MyMediaLite/HyperParameter/GridSearch.cs:94:					double result = recommender.DoCrossValidation(split)[evaluation_measure];
+./MyMediaLite/HyperParameter/GridSearch.cs:104:			recommender.SetProperty(hp_name1, hp_values1[min_i].ToString(CultureInfo.InvariantCulture));
+./MyMediaLite/HyperParameter/GridSearch.cs:105:			recommender.SetProperty(hp_name2, hp_values2[min_j].ToString(CultureInfo.InvariantCulture));
+./MyMediaLite/HyperParameter/GridSearch.cs:111:		/// <remarks>The recommender will be set to the best parameter value after calling this method.</remarks>
+./MyMediaLite/HyperParameter/GridSearch.cs:118:		/// <param name="recommender">the recommender</param>
+./MyMediaLite/HyperParameter/GridSearch.cs:128:			RatingPrediction.RatingPredictor recommender,
+./MyMediaLite/HyperParameter/GridSearch.cs:139:			return FindMinimum(evaluation_measure, hp_name1, hp_name2, new_hp_values1, new_hp_values2, recommender, split);
+./MyMediaLite/HyperParameter/GridSearch.cs:143:		/// <remarks>The recommender will be set to the best parameter value after calling this method.</remarks>
+./MyMediaLite/HyperParameter/GridSearch.cs:148:		/// <param name="recommender">the recommender</param>
+./MyMediaLite/HyperParameter/GridSearch.cs:156:			RatingPrediction.RatingPredictor recommender,
+./MyMediaLite/HyperParameter/GridSearch.cs:164:			return FindMinimum(evaluation_measure, hp_name, new_hp_values, recommender, split);
+./MyMediaLite/HyperParameter/GridSearch.cs:168:		/// <remarks>The recommender will be set to the best parameter value after calling this method.</remarks>
+./MyMediaLite/HyperParameter/GridSearch.cs:172:		/// <param name="recommender">the recommender</param>
+./MyMediaLite/HyperParameter/GridSearch.cs:179:			RatingPrediction.RatingPredictor recommender,
+./MyMediaLite/HyperParameter/GridSearch.cs:182:			var data = recommender.Ratings;
+./MyMediaLite/HyperParameter/GridSearch.cs:184:			double result = FindMinimum(evaluation_measure, hyperparameter_name, hyperparameter_values, recommender, split);
+./MyMediaLite/HyperParameter/GridSearch.cs:185:			recommender.Ratings = data;
+Binary file ./MyMediaLite/bin/Debug/MyMediaLite.dll.mdb matches
+Binary file ./MyMediaLite/bin/Debug/MyMediaLite.dll matches
+./MyMediaLite/Data/RatingsSimpleSplit.cs:27:	///     recommender system algorithms.
+./MyMediaLite/Data/DataSet.cs:26: *  personalized recommenders.
+./MyMediaLite/Data/RatingCrossValidationSplit.cs:27:	///     recommender system algorithms.
+./MyMediaLite/IIncrementalRecommender.cs:22:	/// Interface for recommenders that support incremental model updates.
+./MyMediaLite/IRecommender.cs:31:	/// <summary>Generic interface for simple recommenders</summary>
+./MyMediaLite/IRecommender.cs:55:		/// It is up to the recommender implementor to decide when a prediction is useful,
+./MyMediaLite/IRecommender.cs:63:		/// <summary>Learn the model parameters of the recommender from the training data</summary>
+./MyMediaLite/IRecommender.cs:77:		/// <summary>Return a string representation of the recommender</summary>
+./MyMediaLite/IRecommender.cs:79:		/// The ToString() method of recommenders should list the class name and all hyperparameters, separated by space characters.
+./MyMediaLite/Extensions.cs:27:	/// <summary>Helper class with utility methods for handling recommenders</summary>
+./MyMediaLite/Extensions.cs:29:	/// Contains methods for creating and configuring recommender objects, as well as listing recommender classes.
+./MyMediaLite/Extensions.cs:41:		/// <summary>Configure a recommender</summary>
+./MyMediaLite/Extensions.cs:42:		/// <param name="recommender">the recommender to configure</param>
+./MyMediaLite/Extensions.cs:45:		/// <returns>the configured recommender</returns>
+./MyMediaLite/Extensions.cs:46:		public static T Configure<T>(this T recommender, string parameters, Action<string> report_error)
+./MyMediaLite/Extensions.cs:50:				Configure(recommender, new RecommenderParameters(parameters), report_error);
+./MyMediaLite/Extensions.cs:54:				report_error(e.Message + "\n\n" + recommender.ToString() + "\n");
+./MyMediaLite/Extensions.cs:56:			return recommender;
+./MyMediaLite/Extensions.cs:59:		/// <summary>Configure a recommender</summary>
+./MyMediaLite/Extensions.cs:60:		/// <param name="recommender">the recommender to configure</param>
+./MyMediaLite/Extensions.cs:62:		public static T Configure<T>(this T recommender, string parameters)
+./MyMediaLite/Extensions.cs:64:			return Configure(recommender, parameters, delegate(string s) { Console.Error.WriteLine(s); });
+./MyMediaLite/Extensions.cs:67:		/// <summary>Configure a recommender</summary>
+./MyMediaLite/Extensions.cs:68:		/// <param name="recommender">the recommender to configure</param>
+./MyMediaLite/Extensions.cs:71:		/// <returns>the configured recommender</returns>
+./MyMediaLite/Extensions.cs:72:		public static T Configure<T>(T recommender, Dictionary<string, string> parameters, Action<string> report_error)
+./MyMediaLite/Extensions.cs:78:					recommender.SetProperty(key, parameters[key], report_error);
+./MyMediaLite/Extensions.cs:84:				report_error(e.Message + "\n\n" + recommender.ToString()  + "\n");
+./MyMediaLite/Extensions.cs:86:			return recommender;
+./MyMediaLite/Extensions.cs:89:		/// <summary>Sets a property of a MyMediaLite recommender</summary>
+./MyMediaLite/Extensions.cs:90:		/// <param name="recommender">An <see cref="IRecommender"/></param>
+./MyMediaLite/Extensions.cs:93:		public static void SetProperty<T>(this T recommender, string key, string val)
+./MyMediaLite/Extensions.cs:95:			SetProperty(recommender, key, val, delegate(string s) { Console.Error.WriteLine(s); });
+./MyMediaLite/Extensions.cs:98:		/// <summary>Sets a property of a MyMediaLite recommender</summary>
+./MyMediaLite/Extensions.cs:99:		/// <param name="recommender">An <see cref="IRecommender"/></param>
+./MyMediaLite/Extensions.cs:103:		public static void SetProperty<T>(this T recommender, string key, string val, Action<string> report_error)
+./MyMediaLite/Extensions.cs:105:			Type type = recommender.GetType();
+./MyMediaLite/Extensions.cs:126:						property.GetSetMethod().Invoke(recommender, new Object[] { Enum.Parse(property.PropertyType, val) });
+./MyMediaLite/Extensions.cs:133:							property.GetSetMethod().Invoke(recommender, new Object[] { double.Parse(val, CultureInfo.InvariantCulture) });
+./MyMediaLite/Extensions.cs:136:							property.GetSetMethod().Invoke(recommender, new Object[] { float.Parse(val, CultureInfo.InvariantCulture) });
+./MyMediaLite/Extensions.cs:140:								property.GetSetMethod().Invoke(recommender, new Object[] { int.MaxValue });
+./MyMediaLite/Extensions.cs:142:								property.GetSetMethod().Invoke(recommender, new Object[] { int.Parse(val) });
+./MyMediaLite/Extensions.cs:146:								property.GetSetMethod().Invoke(recommender, new Object[] { uint.MaxValue });
+./MyMediaLite/Extensions.cs:148:								property.GetSetMethod().Invoke(recommender, new Object[] { uint.Parse(val) });
+./MyMediaLite/Extensions.cs:151:							property.GetSetMethod().Invoke(recommender, new Object[] { bool.Parse(val) });
+./MyMediaLite/Extensions.cs:154:							property.GetSetMethod().Invoke(recommender, new Object[] { val });
+./MyMediaLite/Extensions.cs:164:				report_error(string.Format("Recommender {0} does not have a parameter named '{1}'.\n{2}", type.ToString(), key, recommender));
+./MyMediaLite/Extensions.cs:169:		/// <returns>a rating recommender object of type typename if the recommender type is found, null otherwise</returns>
+./MyMediaLite/Extensions.cs:184:		/// <summary>Create recommender</summary>
+./MyMediaLite/Extensions.cs:186:		/// <returns>a recommender of the given type name</returns>
+./MyMediaLite/Extensions.cs:194:				throw new IOException(string.Format("Unknown recommender namespace in type name '{0}'", typename));
+./MyMediaLite/Extensions.cs:199:		/// <returns>a rating recommender object of type type</returns>
+./MyMediaLite/Extensions.cs:213:		/// <summary>Create an item recommender from the type name</summary>
+./MyMediaLite/Extensions.cs:215:		/// <returns>an item recommender object of type typename if the recommender type is found, null otherwise</returns>
+./MyMediaLite/Extensions.cs:230:		/// <summary>Create an item recommender from a type object</summary>
+./MyMediaLite/Extensions.cs:232:		/// <returns>an item recommender object of type type</returns>
+./MyMediaLite/Extensions.cs:246:		/// <summary>Describes the kind of data needed by this recommender</summary>
+./MyMediaLite/Extensions.cs:247:		/// <param name="recommender">a recommender</param>
+./MyMediaLite/Extensions.cs:248:		/// <returns>a string containing the additional data file arguments needed for training this recommender</returns>
+./MyMediaLite/Extensions.cs:249:		public static string Needs(this IRecommender recommender)
+./MyMediaLite/Extensions.cs:253:			if (recommender is IUserRelationAwareRecommender)
+./MyMediaLite/Extensions.cs:255:			if (recommender is IItemRelationAwareRecommender)
+./MyMediaLite/Extensions.cs:257:			if (recommender is IUserAttributeAwareRecommender)
+./MyMediaLite/Extensions.cs:259:			if (recommender is IItemAttributeAwareRecommender)
+./MyMediaLite/Extensions.cs:265:		/// <summary>Describes the kind of arguments supported by this recommender</summary>
+./MyMediaLite/Extensions.cs:266:		/// <param name="recommender">a recommender</param>
+./MyMediaLite/Extensions.cs:267:		/// <returns>a string containing the additional arguments supported by this recommender</returns>
+./MyMediaLite/Extensions.cs:268:		public static string Supports(this IRecommender recommender)
+./MyMediaLite/Extensions.cs:273:			if (recommender is IUserSimilarityProvider)
+./MyMediaLite/Extensions.cs:275:			if (recommender is IItemSimilarityProvider)
+./MyMediaLite/Extensions.cs:278:			if (recommender is IIterativeModel)
+./MyMediaLite/Extensions.cs:280:			if (recommender is IIncrementalItemRecommender)
+./MyMediaLite/Extensions.cs:282:			if (recommender is IIncrementalRatingPredictor)
+./MyMediaLite/Extensions.cs:289:		/// <summary>List all recommenders in a given namespace</summary>
+./MyMediaLite/Extensions.cs:291:		/// <returns>an array of strings containing the recommender descriptions</returns>
+./MyMediaLite/Extensions.cs:299:					IRecommender recommender = prefix.Equals("MyMediaLite.RatingPrediction") ? (IRecommender) type.CreateRatingPredictor() : (IRecommender) type.CreateItemRecommender();
+./MyMediaLite/Extensions.cs:301:					string description = recommender.ToString();
+./MyMediaLite/Extensions.cs:302:					string needs = recommender.Needs();
+./MyMediaLite/Extensions.cs:305:					string supports = recommender.Supports();
+./MyMediaLite/IItemAttributeAwareRecommender.cs:22:	/// <summary>Interface for recommenders that take binary item attributes into account</summary>
+./MyMediaLite/IO/FileFormat.cs:19: *  \brief This namespace contains I/O routines, e.g. to load interaction data from files and databases, or for loading recommender models from disk.
+./MyMediaLite/IO/Model.cs:22:	/// <summary>Class containing static routines for reading and writing recommender models</summary>
+./MyMediaLite/IO/Model.cs:25:		/// <summary>Save the model parameters of a recommender to a file</summary>
+./MyMediaLite/IO/Model.cs:29:		/// <param name="recommender">the recommender to store</param>
+./MyMediaLite/IO/Model.cs:31:		public static void Save(IRecommender recommender, string filename)
+./MyMediaLite/IO/Model.cs:37:			recommender.SaveModel(filename);
+./MyMediaLite/IO/Model.cs:40:		/// <summary>Save the model parameters of a recommender (in a given iteration of the training) to a file</summary>
+./MyMediaLite/IO/Model.cs:44:		/// <param name="recommender">the <see cref="IRecommender"/> to save</param>
+./MyMediaLite/IO/Model.cs:47:		public static void Save(IRecommender recommender, string filename, int iteration)
+./MyMediaLite/IO/Model.cs:52:			Save(recommender, filename + "-it-" + iteration);
+./MyMediaLite/IO/Model.cs:55:		/// <summary>Load the model parameters of a recommender from a file</summary>
+./MyMediaLite/IO/Model.cs:56:		/// <param name="recommender">the <see cref="IRecommender"/> to load</param>
+./MyMediaLite/IO/Model.cs:58:		public static void Load(IRecommender recommender, string filename)
+./MyMediaLite/IO/Model.cs:61:			recommender.LoadModel(filename);
+./MyMediaLite/IO/Model.cs:64:		/// <summary>Load a recommender from a file, including object creation</summary>
+./MyMediaLite/IO/Model.cs:66:		/// <returns>the recommender loaded from the file</returns>
+./MyMediaLite/IO/Model.cs:69:			IRecommender recommender;
+./MyMediaLite/IO/Model.cs:79:			recommender = type_name.CreateRecommender();
+./MyMediaLite/IO/Model.cs:80:			recommender.LoadModel(filename);
+./MyMediaLite/IO/Model.cs:82:			return recommender;
+./MyMediaLite/IO/Model.cs:85:		/// <summary>Get a reader object to read in model parameters of a recommender</summary>
+./MyMediaLite/IO/Model.cs:87:		/// <param name="recommender_type">the expected recommender type</param>
+./MyMediaLite/IO/Model.cs:89:		public static StreamReader GetReader(string filename, Type recommender_type)
+./MyMediaLite/IO/Model.cs:97:			if (!type_name.Equals(recommender_type.ToString()))
+./MyMediaLite/IO/Model.cs:98:				Console.Error.WriteLine("WARNING: No correct type name: {0}, expected: {1}", type_name, recommender_type);
+./MyMediaLite/IO/Model.cs:103:		/// <summary>Get a writer object to save the model parameters of a recommender</summary>
+./MyMediaLite/IO/Model.cs:105:		/// <param name="recommender_type">the recommender type</param>
+./MyMediaLite/IO/Model.cs:108:		public static StreamWriter GetWriter(string filename, Type recommender_type, string version)
+./MyMediaLite/IO/Model.cs:111:			writer.WriteLine(recommender_type);
+./MyMediaLite/IUserRelationAwareRecommender.cs:22:	/// <summary>Interface for recommenders that take a binary relation over users into account</summary>

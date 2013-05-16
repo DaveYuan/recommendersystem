@@ -209,28 +209,28 @@ namespace socialmf
 			t1 = itemFeature[feature,itemId] * gDerv(usrItmProduct) * (g(usrItmProduct) - rating);
 			t2 = lambdaU * userFeature[feature, userId];
 			
-//			numNghbrU = trustNumNghbr[userId];
-//			trustuv = 1.0 / (double)numNghbrU;
-//			sumTrustFeatureProductUV = 0.0;
-//				
-//			foreach (int userV in trustUserDict[userId]) {
-//				sumTrustFeatureProductUV += trustuv * userFeature[feature,userV];
-//				
-//				numNghbrV = trustNumNghbr[userV]; 
-//				trustvw = 1.0 / (double)numNghbrV;
-//				sumTrustFeatureProductVW = 0.0;
-//				
-//				foreach (int userW in trustUserDict[userV]) {
-//					sumTrustFeatureProductVW += trustvw * userFeature[feature,userW];
-//				}
-//				
-//				t4 += trustvw * (userFeature[feature,userV] - sumTrustFeatureProductVW);								
-//			}
-//			
-//			t3 = lambdaT * (userFeature[feature,userId] - sumTrustFeatureProductUV);
-//			t4 = -1 * lambdaT * t4;
-//			
-//			return (t1 + t2 + t3 + t4);		
+			numNghbrU = trustNumNghbr[userId];
+			trustuv = 1.0 / (double)numNghbrU;
+			sumTrustFeatureProductUV = 0.0;
+				
+			foreach (int userV in trustUserDict[userId]) {
+				sumTrustFeatureProductUV += trustuv * userFeature[feature,userV];
+				
+				numNghbrV = trustNumNghbr[userV]; 
+				trustvw = 1.0 / (double)numNghbrV;
+				sumTrustFeatureProductVW = 0.0;
+				
+				foreach (int userW in trustUserDict[userV]) {
+					sumTrustFeatureProductVW += trustvw * userFeature[feature,userW];
+				}
+				
+				t4 += trustvw * (userFeature[feature,userV] - sumTrustFeatureProductVW);								
+			}
+			
+			t3 = lambdaT * (userFeature[feature,userId] - sumTrustFeatureProductUV);
+			t4 = -1 * lambdaT * t4;
+			
+			return (t1 + t2 + t3 + t4);		
 			
 			return t1 + t2;
 		}

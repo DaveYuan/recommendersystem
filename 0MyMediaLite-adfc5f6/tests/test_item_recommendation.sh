@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-PROGRAM="bin/item_recommendation"
+PROGRAM="../bin/item_recommendation"
 K=3
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
