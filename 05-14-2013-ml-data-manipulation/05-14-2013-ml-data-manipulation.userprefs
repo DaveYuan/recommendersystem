@@ -2,14 +2,14 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="05-14-2013-ml-data-manipulation/Main.cs">
     <Files>
-      <File FileName="05-14-2013-ml-data-manipulation/Main.cs" Line="145" Column="10" />
-      <File FileName="05-14-2013-ml-data-manipulation/protobuf-classes.cs" Line="10" Column="16" />
+      <File FileName="05-14-2013-ml-data-manipulation/protobuf-classes.cs" Line="9" Column="20" />
+      <File FileName="05-14-2013-ml-data-manipulation/Main.cs" Line="17" Column="4" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="05-14-2013-ml-data-manipulation" expanded="True">
-            <Node name="References" selected="True" />
+            <Node name="Main.cs" selected="True" />
           </Node>
         </State>
       </Pad>

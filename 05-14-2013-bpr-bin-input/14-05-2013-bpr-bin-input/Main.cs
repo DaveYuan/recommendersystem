@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Linq; // Add System.Core in References
 using System.Text;
+using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.Generic;
 using ProtoBuf;
-//using MathNet.Numerics.Distributions;
 
 namespace bprbininput
 {
@@ -14,23 +14,27 @@ namespace bprbininput
 		private double regUser;
 		private double regPostv;
 		private double regNegtv;
+		private double regBias;
 		private double lrate;
-//		private double minRegPostv;
-//		private double maxRegPostv;
-//		private double initMean;
-//		private double initStDev;
 		private int numEpochs;
 		private int numUsers;
 		private int numItems;
 		private int numEntries;
 		private int numFeatures;
+		private int MAX_USER_ID;
+		private int MAX_ITEM_ID;
 		private int[] trainUsersArray;
-  		private int[] trainItemsArray;
+		private int[] trainItemsArray;
+		private int[] testUsersArray;
+		private int[] testItemsArray;
 		private int[] uniqueItemsArray;
 		private double[,] userFeature;
 		private double[,] itemFeature;
-		private string[] testUserItems;
-		private Dictionary<int, int[]> ratedItemsPerUser;						
+		private double[] userBias;
+		private double[] itemBias;	
+		private Random random;
+		private Dictionary<int, int[]> trainRatedItems;
+		private Dictionary<int, int[]> testRatedItems;
 		
 		public static void writeToConsole(string mssg) 
 		{
@@ -38,86 +42,127 @@ namespace bprbininput
 		}
 		
 		public MainClass(Train trainObj, Test testObj)
-		{				
+		{
 			lrate = 0.05;
 			regUser = 0.0025;
 			regPostv = 0.0025;
 			regNegtv = 0.00025;
-//			initMean = 0;
-//			initStDev = 0.1;
-			numEpochs = 30;								
+			regBias = 0.33;
+			numEpochs = 30;
 			numFeatures = 10;
 			
+			random = new Random();
 			trainUsersArray = trainObj.usersList.ToArray();
 			trainItemsArray = trainObj.itemsList.ToArray();
-			testUserItems = testObj.testUserItem.ToArray();
-		}		
-						
-		public void initFeatures()
-		{			
-			userFeature = new double[numFeatures,numUsers];
-			itemFeature = new double[numFeatures,numItems];																
-			
-//			var nd = new Normal(initMean, initStDev);
-  //          nd.RandomSource = new Random();
-            Random rd = new Random();
+			testUsersArray = testObj.usersList.ToArray();
+			testItemsArray = testObj.itemsList.ToArray();
+			MAX_USER_ID = trainUsersArray.Max();
+			MAX_ITEM_ID = trainItemsArray.Max();
+			Console.WriteLine("\t\t- MAX_USER_ID: {0}, MAX_ITEM_ID: {1}", MAX_USER_ID, MAX_ITEM_ID);
+		}
 
-            for (int i = 0; i < numFeatures; i++) {
-				for (int j = 0; j < numFeatures; j++) {
-//					userFeature[i,j] = (float) nd.Sample();
+		public void init()
+		{
+			userFeature = new double[numFeatures,MAX_USER_ID+1];
+			itemFeature = new double[numFeatures,MAX_ITEM_ID+1];
+			userBias = new double[MAX_USER_ID+1];
+			itemBias = new double[MAX_ITEM_ID+1];
+			Random rd = new Random();
+			
+			for (int i = 0; i < numFeatures; i++) {
+				for (int j = 0; j <= MAX_USER_ID; j++) {
+//					userFeature[i,j] = (float) 0.1;
 					userFeature[i,j] = (float) rd.NextDouble();
 				}
 			}
 			
-//			nd.RandomSource = new Random();
-            rd = new Random();
+			rd = new Random();
 			for (int i = 0; i < numFeatures; i++) {
-				for (int j = 0; j < numItems; j++) {
-	//				itemFeature[i,j] = (float) nd.Sample();
+				for (int j = 0; j <= MAX_ITEM_ID; j++) {
+//					itemFeature[i,j] = (float) 0.1;
 					itemFeature[i,j] = (float) rd.NextDouble();
 				}
 			}
 		}
 		
 		public double dotProduct(int userId,
-		                         int itemId)
+					    int itemId)
 		{
-			double dotProduct = 0.0;			
+			double dotProduct = 0.0;
 			for (int i = 0; i < numFeatures; ++i) {
-				dotProduct += userFeature[i,userId] * itemFeature[i,itemId];		
-			}			
+				dotProduct += userFeature[i,userId] * itemFeature[i,itemId];
+			}
 			return dotProduct;
 		}
-		
-		public void calRatedItemsPerUser()
+	
+		public double PredictRating(int userId, int itemId) 
+		{
+			return itemBias[itemId] + 
+				userBias[userId] + 
+				dotProduct(userId, itemId);
+		}
+	
+		public void trainItemsRatedByUser()
 		{
 			int user;
-			int lenDataset = trainItemsArray.Length;	
+			int size = trainItemsArray.Length;
 			double avgItemsRatedPerUser = 0.0;
-			ratedItemsPerUser = new Dictionary<int, int[]>();			
-			Dictionary<int, List<int>> ratedItemsPerUserTmp = new Dictionary<int, List<int>>();
+			trainRatedItems = new Dictionary<int, int[]>();
+			Dictionary<int, List<int>> trainRatedItemsTmp = new Dictionary<int, List<int>>();
 			
-			for (int i = 0; i < lenDataset; i++) {
+			for (int i = 0; i < size; i++) {
 				user = trainUsersArray[i];
-				if (ratedItemsPerUserTmp.ContainsKey(user)) {
-					ratedItemsPerUserTmp[user].Add(trainItemsArray[i]);
+				if (trainRatedItemsTmp.ContainsKey(user)) {
+					trainRatedItemsTmp[user].Add(trainItemsArray[i]);
 				} else {
 					List<int> tmp = new List<int>();
 					tmp.Add(trainItemsArray[i]);
-					ratedItemsPerUserTmp.Add(user, tmp);
-				}		
-			}			
+					trainRatedItemsTmp.Add(user, tmp);
+				}
+			}
 			
-			// Convert Dictionary<int, List<int>> ratedItemsPerUserTmp => Dictionary<int, int[]> ratedItemsPerUser					
-			foreach (KeyValuePair<int, List<int>> ratedItem in ratedItemsPerUserTmp) {
-				ratedItemsPerUser.Add(ratedItem.Key, ratedItem.Value.ToArray());
+			// Convert Dictionary<int, List<int>> trainRatedItemsTmp => Dictionary<int, int[]> trainRatedItems 
+			foreach (KeyValuePair<int, List<int>> ratedItem in trainRatedItemsTmp) {
+				trainRatedItems.Add(ratedItem.Key, ratedItem.Value.ToArray());
 				avgItemsRatedPerUser += ratedItem.Value.Count;
 				
 			}
 			
-			avgItemsRatedPerUser = avgItemsRatedPerUser / ratedItemsPerUser.Count;
-			Console.WriteLine("\t\t- Avg(itemRatedPerUser): {0}", avgItemsRatedPerUser);				
+			avgItemsRatedPerUser = avgItemsRatedPerUser / trainRatedItems.Count;
+			Console.WriteLine("\t\t- Avg(TrainItemRatedPerUser): {0}", avgItemsRatedPerUser);
 			GC.Collect();
+		}
+
+		public void testItemsRatedByUser()
+		{
+			int user;
+			int size = testItemsArray.Length;
+			double avgItemsRatedPerUser = 0.0;
+			testRatedItems = new Dictionary<int, int[]>();
+			Dictionary<int, List<int>> testRatedItemsTmp = new Dictionary<int, List<int>>();
+			
+			for (int i = 0; i < size; i++) {
+				user = testUsersArray[i];
+				if (testRatedItemsTmp.ContainsKey(user)) {
+					testRatedItemsTmp[user].Add(testItemsArray[i]);
+				} else {
+					List<int> tmp = new List<int>();
+					tmp.Add(testItemsArray[i]);
+					testRatedItemsTmp.Add(user, tmp);
+				}
+			}
+			
+			// Convert Dictionary<int, List<int>> testRatedItemsTmp => Dictionary<int, int[]> testRatedItems 
+			foreach (KeyValuePair<int, List<int>> ratedItem in testRatedItemsTmp) {
+				testRatedItems.Add(ratedItem.Key, ratedItem.Value.ToArray());
+				avgItemsRatedPerUser += ratedItem.Value.Count;
+				
+			}
+			
+			avgItemsRatedPerUser = avgItemsRatedPerUser / testRatedItems.Count;
+			Console.WriteLine("\t\t- Avg(TestItemRatedPerUser): {0}", avgItemsRatedPerUser);
+			GC.Collect();
+
 		}
 		
 		public void calUniqueUsersnItems() 
@@ -129,9 +174,9 @@ namespace bprbininput
 			var hashUsers = new HashSet<int>(trainUsersArray);
 			
 			numUsers = hashUsers.Count;
-			numItems = uniqueItemsArray.Length;			
+			numItems = uniqueItemsArray.Length;
 			
-			Console.WriteLine("\t\t- Uniq(#Users): {0}, Uniq(#Items): {1}", numUsers, numItems);			
+			Console.WriteLine("\t\t- Uniq(#Users): {0}, Uniq(#Items): {1}", numUsers, numItems);
 		}
 		
 		public double sigmoid(double x)
@@ -139,177 +184,197 @@ namespace bprbininput
 			return (1.0 / ( 1.0 + Math.Exp(-x)));
 		}
 		
-		public double oneByOnePlusExpX(double x) 
+		public double updateFeatures(int userId, int itemIdPostv, int itemIdNegtv)
 		{
-			return (1.0 / (1.0 + Math.Exp(x)));
-		}
-		
-		public double bpr()
-		{
-			int numRelation;
-			int numUserTargetRel;
-			int randUser;
-			int randPostvRel;			
-			int randNegtvRel;					
-			double bprOptItem = 0.0;
-			double userValue;
 			double xuPostv;
 			double xuNegtv;
-			double xuPostvNegtv;			
+			double xuPostvNegtv;
 			double dervxuPostvNegtv;
-			
-			// temp var
-			double maxUserFeature;
-			double maxItemFeature;
-			string userRelType = null;
-			string itemRelType = null;
-			
-			numEntries = trainItemsArray.Length;
-			Console.WriteLine("\t\t- #Entries: {0}", numEntries);
-			Random r1 = new Random();
-			Random r2 = new Random();
-			Random r3 = new Random();
-			
-			for (int epoch = 1; epoch <= numEpochs; epoch++) {
-				bprOptItem = 0.0;
-				maxUserFeature = Double.MinValue;
-				maxItemFeature = Double.MinValue;
-				
-				// User-features
-				for (int n = 0; n < numEntries; n++) {										
-					numUserTargetRel = ratedItemsPerUser.Keys.Count;
-					randUser = ratedItemsPerUser.Keys.ElementAt(r1.Next(0, numUserTargetRel));
-					numRelation = ratedItemsPerUser[randUser].Length;
-					randPostvRel = ratedItemsPerUser[randUser][r2.Next(0, numRelation)];
-					randNegtvRel = uniqueItemsArray[r3.Next(0, numItems)];					
-					
-					while (ratedItemsPerUser[randUser].Contains(randNegtvRel)) {
-						randNegtvRel = uniqueItemsArray[r3.Next(0, numItems)];
-					}
-					
-					xuPostv = dotProduct(randUser, randPostvRel);
-					xuNegtv = dotProduct(randUser, randNegtvRel);
-					xuPostvNegtv = xuPostv - xuNegtv;		
-					
-					for (int f = 0; f < numFeatures; f++) {											
-						userValue = userFeature[f, randUser];					
-						dervxuPostvNegtv = itemFeature[f, randPostvRel] - itemFeature[f, randNegtvRel];
-						userFeature[f, randUser] += lrate * (oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv -
-						                                     regUser * userValue);
-						
-						if (userFeature[f, randUser] > maxUserFeature) {
-							maxUserFeature = userFeature[f, randUser];
-							userRelType = "rndUsr";
-						}
-						
-						dervxuPostvNegtv = userValue;
-						itemFeature[f, randPostvRel] += lrate * (oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv -
-						                                              regPostv * itemFeature[f, randPostvRel]);
-						if (itemFeature[f, randPostvRel] > maxItemFeature) {
-							maxItemFeature = itemFeature[f, randPostvRel];
-							itemRelType = "+Rel";
-						}
-						
-						dervxuPostvNegtv = -userValue;
-						itemFeature[f, randNegtvRel] += lrate * (oneByOnePlusExpX(xuPostvNegtv) * dervxuPostvNegtv -
-						                                              regNegtv * itemFeature[f, randNegtvRel]);						
-						if (itemFeature[f, randNegtvRel] > maxItemFeature) {
-							maxItemFeature = itemFeature[f, randNegtvRel];
-							itemRelType = "-Rel";
-						}
-					}	
-					bprOptItem += Math.Log(sigmoid(xuPostvNegtv));
-				}										
-				Console.WriteLine("\t\t- {0}: Opt(Usr+Itm): {1}, MaxUF({2}): {3}, MaxIF({4}): {5}", 
-				                  epoch, bprOptItem, userRelType, maxUserFeature, itemRelType, maxItemFeature);
-			}	
-			return bprOptItem;
-		}
+			double oneByOnePlusExpX;
+
+			xuPostv = userBias[userId] + itemBias[itemIdPostv] +  dotProduct(userId, itemIdPostv);
+			xuNegtv = userBias[userId] + itemBias[itemIdNegtv] + dotProduct(userId, itemIdNegtv);
+			xuPostvNegtv = xuPostv - xuNegtv;
+			oneByOnePlusExpX = 1.0 / (1.0 + Math.Exp(xuPostvNegtv));
 		
-		public int calcItemHitInSortedList(int N, int rankedItem, Dictionary<int, double> itemRatingMapping)
-		{
-			int count = 0;
-			
-			/*
-			 * Sort Avg Rating List
-			 */														
-			var sortedItemRatingMapping = from pair in itemRatingMapping
-								orderby pair.Value descending
-								select pair;						
-			
-			foreach (KeyValuePair<int, double> pair in sortedItemRatingMapping)
-			{
-				count++;						
-				if (count == N+1) break;
-				if (pair.Key == rankedItem) {
-					return 1;
-				}				
-			}	
-			
-			return 0;
+			userBias[userId] += (double) (lrate * (oneByOnePlusExpX - regBias * userBias[userId]));
+			itemBias[itemIdPostv] += (double) (lrate * (oneByOnePlusExpX - regBias * itemBias[itemIdPostv]));
+			itemBias[itemIdNegtv] += (double) (lrate * (-oneByOnePlusExpX - regBias * itemBias[itemIdNegtv]));
+
+			for (int f = 0; f < numFeatures; f++) {
+				double userF = userFeature[f, userId];
+				double itemPostvF = itemFeature[f, itemIdPostv];
+				double itemNegtvF = itemFeature[f, itemIdNegtv];
+
+				dervxuPostvNegtv = itemPostvF - itemNegtvF;
+				userFeature[f, userId] += (double) (lrate * (oneByOnePlusExpX * dervxuPostvNegtv -
+									  regUser * userF));
+				
+				dervxuPostvNegtv = userF;
+				itemFeature[f, itemIdPostv] += (double) (lrate * (oneByOnePlusExpX * dervxuPostvNegtv -
+										    regPostv * itemPostvF));
+				
+				dervxuPostvNegtv = -userF;
+				itemFeature[f, itemIdNegtv] += (double) (lrate * (oneByOnePlusExpX * dervxuPostvNegtv -
+											    regNegtv * itemNegtvF));
+			}
+			return xuPostvNegtv;
 		}	
 		
-		public void recallPrecision(int N,
-		                            ref Dictionary<int, double> recallData,
-		                            ref Dictionary<int, double> precisionData)
+		public int drawUser()
 		{
-			int T = 0; 
-			int hits = 0;
-			int user = -1;			
-			int intVal;
-			int rankedItem = -1;			
-			int rowIndexCounter;		
-			double recall;
-			double precision;
-			double testPredictRating;							
+			int userId;
 			
-			string[] stringSeparator = new string[] { "\t" };
-			
-			foreach (string line in testUserItems) {
-				T++;
-				string[] result = line.Split(stringSeparator, StringSplitOptions.None);
-				Dictionary<int, double> itemRatingMapping = new Dictionary<int, double>();						
-				rowIndexCounter = 0;
-				
-				foreach (string s in result)
-				{	
-					intVal = Convert.ToInt32(s);
-					if (rowIndexCounter == 0) {
-						user = intVal;
-					}					
-					if (rowIndexCounter == 1) {
-						rankedItem = intVal;
-						
-					}
-						
-					if (rowIndexCounter >= 1) {
-						testPredictRating = dotProduct(user, intVal);												
-						if (!itemRatingMapping.ContainsKey(intVal)) {
-							itemRatingMapping.Add(intVal, testPredictRating);																												
-						} 
-					}
-					rowIndexCounter++;
-				}					
-				hits += calcItemHitInSortedList(N, rankedItem, itemRatingMapping);											
+			while(true) {
+				userId = random.Next(0, MAX_USER_ID);
+				if (!trainRatedItems.ContainsKey(userId)) {
+					continue;
+				}
+				return userId;
 			}
+		}
+
+		public double bprTrain()
+		{
+			int numRatedItems = 0;
+			int userId;
+			int itemIdPostv = 1;
+			int itemIdNegtv = 1;
+			double xuPostvNegtv = 1;
+			double bprOpt = 0.0;
 			
-			
-			Console.WriteLine("\n\t\t\t- N: {0}", N);
-			Console.WriteLine("\t\t\t- #Hits/#Tests: {0}/{1}", hits, T);
-			recall = (double)hits / (double)T;
-			precision = (double)recall / (double)N;
-			
-			Console.WriteLine("\t\t\t- Recall: {0}, Precision: {1}\n", recall, precision);	
-			recallData.Add(N, recall);
-			precisionData.Add(N, precision);
+			numEntries = trainItemsArray.Length;
+			Console.WriteLine("\t\t- #TrainEntries: {0}", numEntries);
+		
+			for (int epoch = 1; epoch <= numEpochs; epoch++) {
+				bprOpt = 0.0;
+				for (int n = 0; n < numEntries; n++) {
+					do {
+						userId = drawUser();
+						numRatedItems = trainRatedItems[userId].Length;
+					
+						itemIdPostv = trainRatedItems[userId][random.Next(0, numRatedItems)];
+						itemIdNegtv = uniqueItemsArray[random.Next(0, numItems)];
+					
+						while (trainRatedItems[userId].Contains(itemIdNegtv)) {
+							itemIdNegtv = uniqueItemsArray[random.Next(0, numItems)];
+						}
+					} while( userId > MAX_USER_ID || itemIdPostv > MAX_ITEM_ID || itemIdNegtv > MAX_ITEM_ID);
+					
+					xuPostvNegtv = updateFeatures(userId, itemIdPostv, itemIdNegtv);
+					bprOpt += Math.Log(sigmoid(xuPostvNegtv));
+				}
+//				Console.WriteLine("\t\t- {0}: Opt(Usr+Itm): {1}", epoch, bprOpt);
+			}	
+			return bprOpt;
 		}
 		
+		public Dictionary<int, double> removeRatedItems(int userId, 
+					      			List<int> removeItems)
+		{ 
+			int itemId;
+			int uniqueItemsCnt = uniqueItemsArray.Count();
+			Dictionary<int, double> predictItemRating = new Dictionary<int, double>();
+
+			for (int i = 0; i < uniqueItemsCnt; i++) {
+				itemId = uniqueItemsArray[i];
+				if (!removeItems.Contains(itemId)) {
+					predictItemRating.Add(itemId, PredictRating(userId, itemId));
+				}
+			}
+
+			return predictItemRating;
+		}
+
+		public double hitCount(List<int> ratedItems, List<int> rankedItems, int n)
+		{
+			int len;
+			int hits = 0;
+			int itemId;
+
+			len = rankedItems.Count;
+			for (int i = 0; i < len; i++) {
+				itemId = rankedItems[i];
+				if (!ratedItems.Contains(itemId)) {
+					continue;
+				}
+				
+				if (i < n) {
+					hits++;
+				} else {
+					break;
+				}
+			}
+			return hits;
+		}
+
+		public Dictionary<int, double> predictAtN(List<int> ratedItems, List<int> rankedItems, int[] N)
+		{
+			var precAtN = new Dictionary<int, double>();
+			foreach (int n in N) {
+				precAtN[n] =  (double) hitCount(ratedItems, rankedItems, n) / (double) n;	
+			}
+			return precAtN;
+		}
+
+		public Dictionary<int, double> bprEval()
+		{
+			int numUniqueTestUsers;
+			HashSet<int> testUniqueUsers = new HashSet<int>(testUsersArray);
+			HashSet<int> testUniqueItems = new HashSet<int>(testItemsArray);
+			Dictionary<int, double> result = new Dictionary<int, double>();
+
+			int[] N = new int[] {5, 10, 15};
+			result.Add(5, 0.0);
+			result.Add(10, 0.0);
+			result.Add(15, 0.0);
+
+			numUniqueTestUsers = testUniqueUsers.Count();
+			Console.WriteLine("\t\t- TestEntries: {0}, Uniq(#Users): {1}, Uniq(#Items): {2}", testUsersArray.Length, testUniqueUsers.Count(), testUniqueItems.Count());
+			List<int> candidateItems = testItemsArray.Union(trainItemsArray).ToList();
+
+			Parallel.ForEach(testUniqueUsers, userId => {		
+				try {
+					var ratedItems = new HashSet<int>(testRatedItems[userId]);
+					ratedItems.IntersectWith(candidateItems);
+					if(ratedItems.Count == 0) return;
+				
+					var itemsToRemove = new HashSet<int>(trainRatedItems[userId]);
+					itemsToRemove.IntersectWith(candidateItems);
+
+					var predictItemRating = removeRatedItems(userId, itemsToRemove.ToList());
+					var rankedItems = from pair in predictItemRating
+									orderby pair.Value descending
+									select pair.Key;
+					var precAtN = predictAtN(ratedItems.ToList(), rankedItems.ToList(), N);				
+					lock (result) 
+					{
+						result[5] += precAtN[5];
+						result[10] += precAtN[10];
+						result[15] += precAtN[15];
+//						Console.WriteLine("\t\t- UserId: {0}, #Rnkd: {1}, #Rtd: {2}, #Rmv: {3}, #CndItm: {4}, prec[5]: {5}", 					userId, rankedItems.ToList().Count, ratedItems.ToList().Count, itemsToRemove.ToList().Count,candidateItems.Count, precAtN[5]);
+					}
+				} catch (Exception e) {
+					Console.Error.WriteLine("Error: " + e.Message + e.StackTrace);
+					throw;
+				}
+			});
+
+			result[5] /= numUniqueTestUsers;
+			result[10] /= numUniqueTestUsers;
+			result[15] /= numUniqueTestUsers;
+			return result;
+		}
+
 		public static void Main (string[] args)
 		{			
 			Train trainObj;
-			Test testObj;			
-//			double bprOpt;
+			Test testObj;
+			Stopwatch loadTime = new Stopwatch();
+			Stopwatch trainTime = new Stopwatch();
+			Stopwatch testTime = new Stopwatch();
 			
+			loadTime.Start();
 			writeToConsole("Loading u1.base.bin");
 			using (FileStream file = File.OpenRead("u1.base.bin"))
 			{
@@ -321,30 +386,37 @@ namespace bprbininput
 			{
 				testObj = Serializer.Deserialize<Test>(file);
 			}
+			loadTime.Stop();
 			
 			writeToConsole("Constructor call");
 			MainClass mainclass = new MainClass(trainObj, testObj);
+			GC.Collect();
 			
 			writeToConsole("Find: RatedItemsPerUser");
-			mainclass.calRatedItemsPerUser();
+			mainclass.trainItemsRatedByUser();
+			mainclass.testItemsRatedByUser();
 			
 			writeToConsole("Find: uniqueUsers and uniqueItems");
 			mainclass.calUniqueUsersnItems();
 			
 			writeToConsole("Initialize features");
-			mainclass.initFeatures();
+			mainclass.init();
 			
-			writeToConsole("Bpr for social network data");
-			mainclass.bpr();
-			
-			Dictionary<int, double> recallData = new Dictionary<int, double>();	
-			Dictionary<int, double> precisionData = new Dictionary<int, double>();
-			for (int N = 5; N <= 15; N=N+5) {
-				mainclass.recallPrecision(N,
-				                          ref recallData,
-				                          ref precisionData);
-			}
+			trainTime.Start();
+			writeToConsole("Bpr Training");
+			mainclass.bprTrain();
+			trainTime.Stop();
+		
+			testTime.Start();
+			writeToConsole("Bpr Evaluation");
+			var result = mainclass.bprEval();	
+			testTime.Stop();
+
+			Console.WriteLine("\t\t- Prec[5]: {0}, Prec[10]: {1}, Prec[15]: {2}", result[5], result[10], result[15]);
+			Console.WriteLine("\t- Time(load): {0}, Time(train): {1}, Time(test): {2}", 
+					loadTime.Elapsed, trainTime.Elapsed, testTime.Elapsed);
+
 			writeToConsole("Done!");
-		}		
+		}
 	}
 }

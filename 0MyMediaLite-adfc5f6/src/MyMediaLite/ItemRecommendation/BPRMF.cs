@@ -120,9 +120,12 @@ namespace MyMediaLite.ItemRecommendation
 		[ThreadStatic] // we need one random number generator per thread because synchronizing is slow
 		static protected System.Random random;
 
+		int epoch_Counter;
+
 		/// <summary>Default constructor</summary>
 		public BPRMF()
 		{
+			epoch_Counter = 0;
 			UniformUserSampling = true;
 			UpdateUsers = true;
 			UpdateItems = false;
@@ -195,7 +198,6 @@ namespace MyMediaLite.ItemRecommendation
 		{
 			int num_pos_events = Feedback.Count;
 			int user_id, pos_item_id, neg_item_id;
-
 			var user_matrix = Feedback.GetUserMatrixCopy();
 
 			for (int i = 0; i < num_pos_events; i++)
@@ -226,14 +228,19 @@ namespace MyMediaLite.ItemRecommendation
 		/// </summary>
 		protected virtual void IterateWithoutReplacementUniformUser()
 		{
+			epoch_Counter++;
 			int num_pos_events = Feedback.Count;
 			int user_id, pos_item_id, neg_item_id;
+			double bprOpt = 0.0;
 
 			for (int i = 0; i < num_pos_events; i++)
 			{
 				SampleTriple(out user_id, out pos_item_id, out neg_item_id);
 				UpdateFactors(user_id, pos_item_id, neg_item_id, true, true, update_j);
+				double x_uij = item_bias[pos_item_id] - item_bias[neg_item_id] + DataType.MatrixExtensions.RowScalarProductWithRowDifference(user_factors, user_id, item_factors, pos_item_id, item_factors, neg_item_id);
+				bprOpt += Math.Log(1.0 / (1.0 + Math.Exp(-x_uij)));
 			}
+			Console.WriteLine("\t{0}: BprOpt: {1}", epoch_Counter, bprOpt);
 		}
 
 		/// <summary>

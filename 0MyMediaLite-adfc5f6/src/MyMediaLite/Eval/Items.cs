@@ -175,6 +175,9 @@ namespace MyMediaLite.Eval
 						result["prec@10"]   += (float) prec[10];
 						result["recall@5"]  += (float) recall[5];
 						result["recall@10"] += (float) recall[10];
+						Console.WriteLine("UserId: {0}, #Rnkd: {1}, #Rtd: {2}, #Rmv: {3}, #CndItm: {4}, #Prec[5]: {5}", 
+								user_id, prediction_list.ToList().Count, correct_items.ToList().Count, 
+								ignore_items_for_this_user.Count, candidate_items.Count, prec[5]);
 					}
 
 					if (num_users % 1000 == 0)
@@ -194,7 +197,7 @@ namespace MyMediaLite.Eval
 			result["num_users"] = num_users;
 			result["num_lists"] = num_users;
 			result["num_items"] = candidate_items.Count;
-
+			Console.WriteLine("Num_Users: {0}", num_users);
 			return result;
 		}
 
