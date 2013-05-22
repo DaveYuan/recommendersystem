@@ -11,4 +11,8 @@ File Specification:
 	Test-1000, Test-2500, Test-random-1000 : 
 		Contains entries in format: User-id, Rated-item-id, Random-non-rated-items(n)
 
+	Default:
+		Direct conversion of input to .bin
 
+	Default-mapping:
+		UserId and item-ID mapped to indexes and items not in train removed from test

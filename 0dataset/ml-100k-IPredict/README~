@@ -4,3 +4,11 @@ The u1.test.bin contains the entries as
 	user -> ranteditem, nonrated item1, nonrated item2,..
 
 TEST-1000 means the number of nonrated items against each user
+
+
+File Specification:
+
+	Test-1000, Test-2500, Test-random-1000 : 
+		Contains entries in format: User-id, Rated-item-id, Random-non-rated-items(n)
+
+

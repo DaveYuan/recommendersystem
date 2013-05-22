@@ -48,7 +48,7 @@ namespace bprbininput
 			regPostv = 0.0025;
 			regNegtv = 0.00025;
 			regBias = 0.33;
-			numEpochs = 30;
+			numEpochs = 25;
 			numFeatures = 10;
 			
 			random = new Random();
@@ -58,6 +58,8 @@ namespace bprbininput
 			testItemsArray = testObj.itemsList.ToArray();
 			MAX_USER_ID = trainUsersArray.Max();
 			MAX_ITEM_ID = trainItemsArray.Max();
+			Console.WriteLine("\t\t- #epochs: {0}, #features: {1}, lrate: {2}, regUser: {3}, regPostv: {4}, regNegtv: {5}, regBias: {6}",
+			                  numEpochs, numFeatures, lrate, regUser, regPostv, regNegtv, regBias);			    
 			Console.WriteLine("\t\t- MAX_USER_ID: {0}, MAX_ITEM_ID: {1}", MAX_USER_ID, MAX_ITEM_ID);
 		}
 
@@ -175,8 +177,6 @@ namespace bprbininput
 			
 			numUsers = hashUsers.Count;
 			numItems = uniqueItemsArray.Length;
-			
-			Console.WriteLine("\t\t- Uniq(#Users): {0}, Uniq(#Items): {1}", numUsers, numItems);
 		}
 		
 		public double sigmoid(double x)
@@ -244,7 +244,8 @@ namespace bprbininput
 			double bprOpt = 0.0;
 			
 			numEntries = trainItemsArray.Length;
-			Console.WriteLine("\t\t- #TrainEntries: {0}", numEntries);
+			Console.WriteLine("\t\t- #TrainEntries: {0}, Uniq(#Users): {1}, Uniq(#Items): {2}", 
+					numEntries, numUsers, numItems);
 		
 			for (int epoch = 1; epoch <= numEpochs; epoch++) {
 				bprOpt = 0.0;
@@ -308,31 +309,44 @@ namespace bprbininput
 			return hits;
 		}
 
-		public Dictionary<int, double> predictAtN(List<int> ratedItems, List<int> rankedItems, int[] N)
+		public Dictionary<string, double> predictAtN(List<int> ratedItems, List<int> rankedItems, int[] N)
 		{
-			var precAtN = new Dictionary<int, double>();
+			var resultAtN = new Dictionary<string, double>();
 			foreach (int n in N) {
-				precAtN[n] =  (double) hitCount(ratedItems, rankedItems, n) / (double) n;	
+				double hits = hitCount(ratedItems, rankedItems, n);
+				resultAtN["Prec["+n+"]"] =  (double) hits / (double) n;	
+				resultAtN["Recl["+n+"]"] =  (double) hits / (double) ratedItems.Count;	
 			}
-			return precAtN;
+			return resultAtN;
 		}
 
-		public Dictionary<int, double> bprEval()
+		public Dictionary<string, double> initResult() 
+		{
+			Dictionary<string, double> result = new Dictionary<string, double>();
+			result.Add("Prec[5]", 0.0);
+			result.Add("Prec[10]", 0.0);
+			result.Add("Prec[15]", 0.0);
+			result.Add("Recl[5]", 0.0);
+			result.Add("Recl[10]", 0.0);
+			result.Add("Recl[15]", 0.0);
+			return result;
+		}
+
+		public Dictionary<string, double> bprEval()
 		{
 			int numUniqueTestUsers;
 			HashSet<int> testUniqueUsers = new HashSet<int>(testUsersArray);
 			HashSet<int> testUniqueItems = new HashSet<int>(testItemsArray);
-			Dictionary<int, double> result = new Dictionary<int, double>();
-
 			int[] N = new int[] {5, 10, 15};
-			result.Add(5, 0.0);
-			result.Add(10, 0.0);
-			result.Add(15, 0.0);
+
+			Dictionary<string, double> result = initResult();
+			List<string> keys = new List<string>(result.Keys);
 
 			numUniqueTestUsers = testUniqueUsers.Count();
-			Console.WriteLine("\t\t- TestEntries: {0}, Uniq(#Users): {1}, Uniq(#Items): {2}", testUsersArray.Length, testUniqueUsers.Count(), testUniqueItems.Count());
-			List<int> candidateItems = testItemsArray.Union(trainItemsArray).ToList();
+			Console.WriteLine("\t\t- TestEntries: {0}, Uniq(#Users): {1}, Uniq(#Items): {2}", 
+					testUsersArray.Length, testUniqueUsers.Count(), testUniqueItems.Count());
 
+			List<int> candidateItems = testItemsArray.Union(trainItemsArray).ToList();
 			Parallel.ForEach(testUniqueUsers, userId => {		
 				try {
 					var ratedItems = new HashSet<int>(testRatedItems[userId]);
@@ -346,12 +360,12 @@ namespace bprbininput
 					var rankedItems = from pair in predictItemRating
 									orderby pair.Value descending
 									select pair.Key;
-					var precAtN = predictAtN(ratedItems.ToList(), rankedItems.ToList(), N);				
+					var resultAtN = predictAtN(ratedItems.ToList(), rankedItems.ToList(), N);			
 					lock (result) 
 					{
-						result[5] += precAtN[5];
-						result[10] += precAtN[10];
-						result[15] += precAtN[15];
+						foreach (string k in keys) {
+							result[k] += resultAtN[k];
+						}
 //						Console.WriteLine("\t\t- UserId: {0}, #Rnkd: {1}, #Rtd: {2}, #Rmv: {3}, #CndItm: {4}, prec[5]: {5}", 					userId, rankedItems.ToList().Count, ratedItems.ToList().Count, itemsToRemove.ToList().Count,candidateItems.Count, precAtN[5]);
 					}
 				} catch (Exception e) {
@@ -360,10 +374,18 @@ namespace bprbininput
 				}
 			});
 
-			result[5] /= numUniqueTestUsers;
-			result[10] /= numUniqueTestUsers;
-			result[15] /= numUniqueTestUsers;
+			foreach (string k in keys) {
+				result[k] /= numUniqueTestUsers;
+			}
+				
 			return result;
+		}
+		
+		public void displayResult(Dictionary<string, double> result)
+		{
+			foreach (var pair in result) {
+				Console.WriteLine("\t\t- " + pair.Key + ": " + pair.Value);
+			}
 		}
 
 		public static void Main (string[] args)
@@ -411,8 +433,8 @@ namespace bprbininput
 			writeToConsole("Bpr Evaluation");
 			var result = mainclass.bprEval();	
 			testTime.Stop();
-
-			Console.WriteLine("\t\t- Prec[5]: {0}, Prec[10]: {1}, Prec[15]: {2}", result[5], result[10], result[15]);
+			
+			mainclass.displayResult(result);
 			Console.WriteLine("\t- Time(load): {0}, Time(train): {1}, Time(test): {2}", 
 					loadTime.Elapsed, trainTime.Elapsed, testTime.Elapsed);
 

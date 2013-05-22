@@ -1,0 +1,16 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="05-21-2013-bpr-modular-old-eval/Eval.cs">
+    <Files>
+      <File FileName="05-21-2013-bpr-modular-old-eval/Main.cs" Line="15" Column="17" />
+      <File FileName="05-21-2013-bpr-modular-old-eval/Eval.cs" Line="114" Column="5" />
+      <File FileName="05-21-2013-bpr-modular-old-eval/Init.cs" Line="137" Column="8" />
+      <File FileName="05-21-2013-bpr-modular-old-eval/PredictRecall.cs" Line="40" Column="46" />
+      <File FileName="05-21-2013-bpr-modular-old-eval/Protobufnet.cs" Line="4" Column="21" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

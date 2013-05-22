@@ -1,0 +1,60 @@
+using System;
+using System.Linq; // Add System.Core in References
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace bprmodularMLLoldeval
+{
+	class Eval : PredictRecall
+	{		
+		protected static Dictionary<string, double> bprEval()
+		{
+			int numUniqueTestUsers;
+			HashSet<int> testUniqueUsers = new HashSet<int>(testUsersArray);
+			HashSet<int> testUniqueItems = new HashSet<int>(testItemsArray);
+			int[] N = new int[] {5, 10, 15};
+
+			Dictionary<string, double> result = initResult();
+			List<string> keys = new List<string>(result.Keys);
+
+			numUniqueTestUsers = testUniqueUsers.Count;
+			Console.WriteLine("\t\t- TestEntries: {0}, Uniq(#Users): {1}, Uniq(#Items): {2}", 
+					testUsersArray.Length, testUniqueUsers.Count, testUniqueItems.Count);
+
+			List<int> candidateItems = testItemsArray.Union(trainItemsArray).ToList();
+			Parallel.ForEach(testUniqueUsers, userId => {		
+				try {
+					var ratedItems = new HashSet<int>(testRatedItems[userId]);
+					ratedItems.IntersectWith(candidateItems);
+					if(ratedItems.Count == 0) return;
+				
+					var itemsToRemove = new HashSet<int>(trainRatedItems[userId]);
+					itemsToRemove.IntersectWith(candidateItems);
+
+					var predictItemRating = PredictRecall.removeRatedItems(userId, itemsToRemove.ToList());
+					var rankedItems = from pair in predictItemRating
+									orderby pair.Value descending
+									select pair.Key;
+					var resultAtN = PredictRecall.predictAtN(ratedItems.ToList(), rankedItems.ToList(), N);			
+					lock (result) 
+					{
+						foreach (string k in keys) {
+							result[k] += resultAtN[k];
+						}
+//						Console.WriteLine("\t\t- UserId: {0}, #Rnkd: {1}, #Rtd: {2}, #Rmv: {3}, #CndItm: {4}, prec[5]: {5}",
+//						userId, rankedItems.ToList().Count, ratedItems.ToList().Count, itemsToRemove.ToList().Count,candidateItems.Count, precAtN[5]);
+					}
+				} catch (Exception e) {
+					Console.Error.WriteLine("Error: " + e.Message + e.StackTrace);
+					throw;
+				}
+			});
+
+			foreach (string k in keys) {
+				result[k] /= numUniqueTestUsers;
+			}
+				
+			return result;
+		}
+	}
+}
