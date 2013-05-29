@@ -1,0 +1,4 @@
+/home/whitepearl/upb/Program/05-21-2013-bpr-modular-MML/05-21-2013-bpr-modular-MML/bin/Debug/05-21-2013-bpr-modular-MML.exe.mdb
+/home/whitepearl/upb/Program/05-21-2013-bpr-modular-MML/05-21-2013-bpr-modular-MML/bin/Debug/05-21-2013-bpr-modular-MML.exe
+/home/whitepearl/upb/Program/05-21-2013-bpr-modular-MML/05-21-2013-bpr-modular-MML/obj/x86/Debug/05-21-2013-bpr-modular-MML.exe
+/home/whitepearl/upb/Program/05-21-2013-bpr-modular-MML/05-21-2013-bpr-modular-MML/obj/x86/Debug/05-21-2013-bpr-modular-MML.exe.mdb

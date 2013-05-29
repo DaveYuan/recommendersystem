@@ -124,9 +124,7 @@ namespace lastfmsndatamanipulation
 		}
 		
 		static void ratingDataManipulation(ref Dictionary<string, int> userIdToIndx,
-		                                   ref Dictionary<string, int> movieIdToIndx,
-		                                   ref List<int> uniqueItemList,
-		                                   ref Dictionary<int, List<int>> itemsRatedPerUser)
+		                                   ref Dictionary<string, int> movieIdToIndx)
 		{
 			Rating rating = new Rating();
 			rating.usersList = new List<int>();
@@ -163,17 +161,7 @@ namespace lastfmsndatamanipulation
 							movieIdToIndx.Add(s, movieIdIndx);
 							movieIdIndx++;							
 						}
-						rating.itemsList.Add(movieIdToIndx[s]);
-						if (!uniqueItemList.Contains(movieIdToIndx[s])) {
-							uniqueItemList.Add(movieIdToIndx[s]);
-						}
-						if (itemsRatedPerUser.ContainsKey(user)) {
-							itemsRatedPerUser[user].Add(movieIdToIndx[s]);
-						} else {
-							List<int> tmp = new List<int>();
-							tmp.Add(movieIdToIndx[s]);
-							itemsRatedPerUser.Add(user, tmp);
-						}
+						rating.itemsList.Add(movieIdToIndx[s]);						
 					}
 					if (rowIndexCounter == 2) {
 						rating.ratingsList.Add(Convert.ToInt32(s));
@@ -212,16 +200,18 @@ namespace lastfmsndatamanipulation
 		}
 
 		static void testDataManipulation(ref Dictionary<string, int> userIdToIndx,
-		                                 ref Dictionary<string, int> movieIdToIndx,
-		                                 ref List<int> uniqueItemList,
-		                                 ref Dictionary<int, List<int>> itemsRatedPerUser)
+		                                 ref Dictionary<string, int> movieIdToIndx)
 		{						
 			Test test = new Test();
-			test.testUserItem = new List<string>();
+		//	test.testUserItem = new List<string>();
+			test.usersList = new List<int>();
+			test.itemsList = new List<int>();
+			test.ratingsList = new List<int>();
 				
 			writeToConsole("test.txt data loading");
 			
 			int user = -1;
+			int item = -1;
 			int ratedItem = -1;
 			int flag;
 			int rowIndexCounter;
@@ -247,80 +237,21 @@ namespace lastfmsndatamanipulation
 					} 
 					if (rowIndexCounter == 1) {	
 						if (movieIdToIndx.ContainsKey(s)) {
-							if (itemsRatedPerUser.ContainsKey(user)) {
-								itemsRatedPerUser[user].Add(movieIdToIndx[s]);
-							} else {
-								List<int> tmp = new List<int>();
-								tmp.Add(movieIdToIndx[s]);
-								itemsRatedPerUser.Add(user, tmp);
-							}
-						} else {							
-							break;
-						}
-					}										
-					rowIndexCounter++;
-				}								
-			}		
-			
-			//test_mapped will have id->indx of user and item
-			File.Open("test_mapped.txt", FileMode.Create).Close();
-			
-			foreach (string line in ratings) {
-				string[] stringSeparator = new string[] { "\t" };			
-				string[] result = line.Split(stringSeparator, StringSplitOptions.None);
-				rowIndexCounter = 0;
-				flag = 1;
-				foreach (string s in result)
-				{						
-					if (rowIndexCounter == 0) {					
-						if (userIdToIndx.ContainsKey(s)) {
-							user = userIdToIndx[s];						
+							item = movieIdToIndx[s];	
 						} else {
-							// TODO: right now removing users who are in train but not in trust
-							removedEntriesCount++;		
-							flag = 0;
+							removedEntriesCount++;
 							break;
-						}
-					} 
-					if (rowIndexCounter == 1) {	
-						if (movieIdToIndx.ContainsKey(s)) {
-							ratedItem = movieIdToIndx[s];
-						} else {	
-							flag = 0;
-							break;
-						}
-					}										
-					rowIndexCounter++;
-				}		
-				if (flag == 1) {
-					File.AppendAllText("test_mapped.txt", user + "\t" + ratedItem);		
-					string str;
-					str = user + "\t" + ratedItem;
-					//testList.Add(user);
-					//testList.Add(ratedItem);
-					
-					int len = uniqueItemList.Count;
-					int cnt = 0;
-					int pseudoNonRatedItem;
-					for (int i = 0; i < len; i++) {
-						pseudoNonRatedItem = uniqueItemList[i];
-						if (!itemsRatedPerUser[user].Contains(pseudoNonRatedItem)) {
-							if (cnt < 1000) {
-								File.AppendAllText("test_mapped.txt", "\t" + pseudoNonRatedItem);								
-					//			testList.Add(pseudoNonRatedItem);
-								str = str + "\t" + pseudoNonRatedItem;
-								cnt++;
-							} else {
-								File.AppendAllText("test_mapped.txt", "\n");
-								break;
-							}
 						}
 					}
-					test.testUserItem.Add(str);
-				}
+					if (rowIndexCounter == 2) {
+						test.usersList.Add(user);
+						test.itemsList.Add(item);
+						test.ratingsList.Add(Convert.ToInt32(s));
+					}
+					rowIndexCounter++;
+				}				
 			}		
-			
-			writeToConsole("test_mapped.txt data loaded");						           		
+												           	
 			Console.WriteLine("\nNum entries removed from test dataset: {0}\n", removedEntriesCount);
 			writeToConsole("test.bin creation in progress");
 			
@@ -339,7 +270,7 @@ namespace lastfmsndatamanipulation
 			}
 			
 			writeToConsole("test.bin data loaded");
-			if (test.testUserItem[0].Equals(t1.testUserItem[0])){
+			if (test.usersList[0] == t1.usersList[0]){
 				Console.WriteLine("Serialization properly completed");
 			} else {
 				Console.WriteLine("Problem with serialization");
@@ -352,23 +283,17 @@ namespace lastfmsndatamanipulation
 		static void Main(string[] args)
         {			
 			Dictionary<string, int> userIdToIndx = new Dictionary<string, int>();
-			Dictionary<string, int> movieIdToIndx = new Dictionary<string, int>();
-			Dictionary<int, List<int>> itemsRatedPerUser = new Dictionary<int, List<int>>();
-			List<int> uniqueItemList = new List<int>();
+			Dictionary<string, int> movieIdToIndx = new Dictionary<string, int>();		
 			
 //			mapRatings("rating.txt");
 			
 			trustDataManipulation(ref userIdToIndx);
 			
 			ratingDataManipulation(ref userIdToIndx,
-			                       ref movieIdToIndx,
-			                       ref uniqueItemList,
-			                       ref itemsRatedPerUser);
+			                       ref movieIdToIndx);
 			
 			testDataManipulation(ref userIdToIndx,
-			                     ref movieIdToIndx,
-			                     ref uniqueItemList,
-			                     ref itemsRatedPerUser);
+			                     ref movieIdToIndx);
 			
 			Console.WriteLine("Done!");
         }

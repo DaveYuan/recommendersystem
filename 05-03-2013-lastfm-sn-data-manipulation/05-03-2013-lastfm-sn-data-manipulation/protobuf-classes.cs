@@ -27,10 +27,14 @@ namespace lastfmsndatamanipulation
     }
 	
 	[ProtoContract]
-	class Test
-	{
-		[ProtoMember(1)]
-		public List<string> testUserItem {get; set;}
-	}
+    class Test
+    {
+        [ProtoMember(1)]
+        public List<int> usersList {get; set;}
+        [ProtoMember(2)]
+        public List<int> itemsList {get; set;}
+		[ProtoMember(3)]
+		public List<int> ratingsList {get; set;}
+    }
 
 }
