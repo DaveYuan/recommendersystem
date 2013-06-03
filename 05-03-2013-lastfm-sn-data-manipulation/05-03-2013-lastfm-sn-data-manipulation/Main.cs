@@ -77,7 +77,7 @@ namespace lastfmsndatamanipulation
 			string[] links = readAllLines("trust.txt");
 			
 			foreach (string line in links) {
-				string[] stringSeparator = new string[] { "\t" };			
+				string[] stringSeparator = new string[] { "\t", " " };			
 				string[] result = line.Split(stringSeparator, StringSplitOptions.None);
 				rowIndexCounter = 0;
 				
@@ -115,7 +115,7 @@ namespace lastfmsndatamanipulation
             }
 			
 			writeToConsole("trust.bin data loaded");
-			
+			Console.WriteLine("t1: {0}, t2: {1}", trust.trustUserList1.Count, trust.trustUserList2.Count);
 			Console.WriteLine("OrigList1 => List1[0]: {0}, List1[end]: {1}", trust.trustUserList1[0], trust.trustUserList1[trust.trustUserList1.Count-1]);
 			Console.WriteLine("ActList1 => List1[0]: {0}, List1[end]: {1}", t1.trustUserList1[0], t1.trustUserList1[t1.trustUserList1.Count-1]);
             
@@ -140,7 +140,7 @@ namespace lastfmsndatamanipulation
 			string[] ratings = readAllLines("train.txt");			
 			
 			foreach (string line in ratings) {
-				string[] stringSeparator = new string[] { "\t" };			
+				string[] stringSeparator = new string[] { "\t", " " };			
 				string[] result = line.Split(stringSeparator, StringSplitOptions.None);
 				rowIndexCounter = 0;
 				
@@ -220,7 +220,7 @@ namespace lastfmsndatamanipulation
 			
 			//Rated items per user from test data			
 			foreach (string line in ratings) {
-				string[] stringSeparator = new string[] { "\t" };			
+				string[] stringSeparator = new string[] { "\t", " " };			
 				string[] result = line.Split(stringSeparator, StringSplitOptions.None);
 				rowIndexCounter = 0;
 				flag = 1;

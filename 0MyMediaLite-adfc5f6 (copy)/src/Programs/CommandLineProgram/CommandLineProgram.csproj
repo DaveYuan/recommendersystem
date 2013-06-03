@@ -15,7 +15,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin/Debug</OutputPath>
+    <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,21 +24,21 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin/Release</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="CommandLineProgram.cs" />
-    <Compile Include="..\..\..\lib\Options.cs">
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\CommandLineProgram\CommandLineProgram.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\lib\Options.cs">
       <Link>Options.cs</Link>
     </Compile>
-    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\CommandLineProgram\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MyMediaLite\MyMediaLite.csproj">
+    <ProjectReference Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\MyMediaLite\MyMediaLite.csproj">
       <Project>{73424F09-BEEA-4992-B116-5F123496F5D3}</Project>
       <Name>MyMediaLite</Name>
     </ProjectReference>

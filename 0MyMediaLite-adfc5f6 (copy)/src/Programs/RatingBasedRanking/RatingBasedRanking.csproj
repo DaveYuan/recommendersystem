@@ -15,7 +15,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin/Debug</OutputPath>
+    <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin/Release</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
@@ -33,20 +33,20 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="RatingBasedRanking.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\RatingBasedRanking\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\RatingBasedRanking\RatingBasedRanking.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\RatingPrediction\RatingPrediction.csproj">
+    <ProjectReference Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\RatingPrediction\RatingPrediction.csproj">
       <Project>{7DCAB3F3-B687-4589-80F6-76F8BECBC6F8}</Project>
       <Name>RatingPrediction</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\MyMediaLite\MyMediaLite.csproj">
+    <ProjectReference Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\MyMediaLite\MyMediaLite.csproj">
       <Project>{73424F09-BEEA-4992-B116-5F123496F5D3}</Project>
       <Name>MyMediaLite</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CommandLineProgram\CommandLineProgram.csproj">
+    <ProjectReference Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\CommandLineProgram\CommandLineProgram.csproj">
       <Project>{CF099BD4-46D6-4FB0-B42B-641A1F829241}</Project>
       <Name>CommandLineProgram</Name>
     </ProjectReference>

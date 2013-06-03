@@ -54,27 +54,27 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="gtk-gui\gui.stetic">
+    <EmbeddedResource Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\gtk-gui\gui.stetic">
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gtk-gui\generated.cs" />
-    <Compile Include="MainWindow.cs" />
-    <Compile Include="gtk-gui\MainWindow.cs" />
-    <Compile Include="Main.cs" />
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="GtkSharpUtils.cs" />
-    <Compile Include="IMDBAkaTitles.cs" />
-    <Compile Include="Locale.cs" />
-    <Compile Include="MovieLensGenres.cs" />
-    <Compile Include="MovieLensMovieInfo.cs" />
-    <Compile Include="UserNameInput.cs" />
-    <Compile Include="gtk-gui\MovieDemo.UserNameInput.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\gtk-gui\generated.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\MainWindow.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\gtk-gui\MainWindow.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\Main.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\GtkSharpUtils.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\IMDBAkaTitles.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\Locale.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\MovieLensGenres.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\MovieLensMovieInfo.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\UserNameInput.cs" />
+    <Compile Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\Programs\MovieDemo\gtk-gui\MovieDemo.UserNameInput.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\MyMediaLite\MyMediaLite.csproj">
+    <ProjectReference Include="..\..\..\..\0MyMediaLite-adfc5f6 %28copy%29\src\MyMediaLite\MyMediaLite.csproj">
       <Project>{73424F09-BEEA-4992-B116-5F123496F5D3}</Project>
       <Name>MyMediaLite</Name>
     </ProjectReference>

@@ -2,9 +2,9 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="05-23-2013-socialMF-v1.0/SocialMF.cs">
     <Files>
-      <File FileName="05-23-2013-socialMF-v1.0/SocialMF.cs" Line="101" Column="17" />
-      <File FileName="05-23-2013-socialMF-v1.0/Init.cs" Line="79" Column="4" />
-      <File FileName="05-23-2013-socialMF-v1.0/PredictRecall.cs" Line="6" Column="4" />
+      <File FileName="05-23-2013-socialMF-v1.0/SocialMF.cs" Line="229" Column="20" />
+      <File FileName="05-23-2013-socialMF-v1.0/Init.cs" Line="62" Column="22" />
+      <File FileName="05-23-2013-socialMF-v1.0/PredictRecall.cs" Line="17" Column="41" />
       <File FileName="05-23-2013-socialMF-v1.0/Protobufnet.cs" Line="30" Column="34" />
       <File FileName="05-23-2013-socialMF-v1.0/SparseMatrix.cs" Line="59" Column="5" />
     </Files>
