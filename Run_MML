@@ -1,1 +1,5 @@
-rating_prediction --training-file=./data/epinions/ratings_data.txt --user-relations=./data/epinions/trust_data.txt --save-model=model.dat --recommender=SocialMF --recommender-options="num_factors=5 regularization=0.1 social_regularization=0.1 num_iter=100"model.dat --recommender=SocialMF --recommender-opt
+rating_prediction --training-file=./data/epinions/ratings_data.txt --user-relations=./data/epinions/trust_data.txt --save-model=model.dat --recommender=SocialMF --recommender-options="num_factors=5 regularization=0.1 social_regularization=0.1 num_iter=100"
+
+training_time 00:05:50.8697750 RMSE 1.102857 MAE 0.8438402 CBD 0.2340739 new users: RMSE 1.16946 MAE 0.91999 CBD 0.2227 new items: RMSE 1.08107 MAE 0.8367 CBD 0.23724  new users and items: RMSE 1.22141 MAE 0.94396 CBD 0.2276 testing_time 00:00:00.1330240
+memory 76
+

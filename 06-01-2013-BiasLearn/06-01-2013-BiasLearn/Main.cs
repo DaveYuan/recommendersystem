@@ -70,15 +70,15 @@ namespace MultiRecommender
 					writeToConsole("Initialize features");
 					init();	
 					
-					model = BIAS_LEARN_MF;
+					model = SOCIAL_MF;
 					
 					switch (model) {
 						case BIAS_LEARN_MF: 
-								writeToConsole("RMSE trace per epoch on test");
+								writeToConsole("BIAS_LEARN_MF: RMSE trace per epoch on test");
 								BiasLearnMF.biasLearnMF();								
 								break;
 						case SOCIAL_MF:
-								writeToConsole("Load SOCIAL_MF model");
+								writeToConsole("SOCIAL_MF: RMSE trace per epoch on test");
 								SocialMF.socialMFInit();
 								SocialMF.socialMF();
 								break;					

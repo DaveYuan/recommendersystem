@@ -108,9 +108,10 @@ namespace MyMediaLite.Eval
 				var timed_ratings = ratings as ITimedRatings;
 				foreach (int index in indices)
 				{
-					float prediction = time_aware_recommender.Predict(timed_ratings.Users[index], timed_ratings.Items[index], timed_ratings.Times[index]);
+//					float prediction = time_aware_recommender.Predict(timed_ratings.Users[index], timed_ratings.Items[index], timed_ratings.Times[index]);
+					float prediction = time_aware_recommender.Predict(timed_ratings.Users[index], timed_ratings.Items[index]);
 					float error = prediction - ratings[index];
-
+					Console.WriteLine("In Evaluate: Eval/Ratings.cs");
 					rmse += error * error;
 					mae  += Math.Abs(error);
 					cbd  += ComputeCBD(ratings[index], prediction, ratings.Scale.Min, ratings.Scale.Max);

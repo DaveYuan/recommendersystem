@@ -26,20 +26,20 @@ namespace MultiRecommender
 					int item = trainItemsArray[n];
 					int rating = trainRatingsArray[n];	
 				
-					predictScore = globalAvg + PredictRating(user, item);	
+					predictScore = PredictRating(user, item);	
 					sigScore = g(predictScore);
 					mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
 					err = mappedPredictScore - rating;
 					err = err * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
 					
-					incBias(USER_INC, user, -lrate * (err + regBias * regUser * userBias[user]));
-					incBias(ITEM_INC, item, -lrate * (err + regBias * regItem * itemBias[item]));
+					decBias(USER_DEC, user, lrate * (err + regBias * regUser * userBias[user]));
+					decBias(ITEM_DEC, item, lrate * (err + regBias * regItem * itemBias[item]));
 								
 					for (int f = 0; f < numFeatures; f++) {
 						double uF = userFeature[f, user];
 						double iF = itemFeature[f, item];
-						incFeature(USER_INC, user, f, -lrate * (err * iF + regUser * uF));
-						incFeature(ITEM_INC, item, f, -lrate * (err * uF + regItem * iF));						
+						decFeature(USER_DEC, user, f, lrate * (err * iF + regUser * uF));
+						decFeature(ITEM_DEC, item, f, lrate * (err * uF + regItem * iF));						
 					}
 				}
 							

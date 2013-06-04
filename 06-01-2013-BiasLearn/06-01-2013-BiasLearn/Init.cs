@@ -11,8 +11,8 @@ namespace MultiRecommender
 		public static double regBias;
 		public static double globalAvg;
 		public static double lrate;
-		public const int USER_INC = 1;
-		public const int ITEM_INC = -1;
+		public const int USER_DEC = 1;
+		public const int ITEM_DEC = -1;
 		public static int numEpochs;
 		public static int numEntries;
 		public static int numFeatures;		
@@ -38,7 +38,7 @@ namespace MultiRecommender
 			regUser = 0.015;
 			regItem = 0.015;
 			regBias = 0.01;
-			numEpochs = 30;
+			numEpochs = 60;
 			numFeatures = 10;	
 			MAX_RATING = 5;
 			MIN_RATING = 1;
@@ -81,21 +81,21 @@ namespace MultiRecommender
 			Console.WriteLine("\t\t- MAX_USER_ID: {0}, MAX_ITEM_ID: {1}", MAX_USER_ID, MAX_ITEM_ID);			
 		}
 		
-		public static void incBias(int incRel, int indx, double inc) 
+		public static void decBias(int decRel, int indx, double dec) 
 		{
-			if (incRel == USER_INC) {
-				userBias[indx] += inc;
-			} else if (incRel == ITEM_INC) {
-				itemBias[indx] += inc;
+			if (decRel == USER_DEC) {
+				userBias[indx] -= dec;
+			} else if (decRel == ITEM_DEC) {
+				itemBias[indx] -= dec;
 			}
 		}
 		
-		public static void incFeature(int incRel, int indx, int feature, double inc)
+		public static void decFeature(int decRel, int indx, int feature, double dec)
 		{
-			if (incRel == USER_INC) {
-				userFeature[feature, indx] += inc;
-			} else if (incRel == ITEM_INC) {
-				itemFeature[feature, indx] += inc;
+			if (decRel == USER_DEC) {
+				userFeature[feature, indx] -= dec;
+			} else if (decRel == ITEM_DEC) {
+				itemFeature[feature, indx] -= dec;
 			}
 		}
 					

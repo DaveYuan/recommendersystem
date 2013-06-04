@@ -67,6 +67,7 @@ namespace MyMediaLite.Eval
 		{
 			MeasuresToShow = DefaultMeasuresToShow;
 			IntsToShow = new string[] {};
+			Console.WriteLine("In Init Eval/RatingPredictionEvaluationResults.cs");
 		}
 
 		/// <summary>Format rating prediction results</summary>
