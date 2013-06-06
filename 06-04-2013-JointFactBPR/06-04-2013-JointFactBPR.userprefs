@@ -1,0 +1,30 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="06-04-2013-JointFactBPR/BiasLearnMF.cs">
+    <Files>
+      <File FileName="06-04-2013-JointFactBPR/Main.cs" Line="88" Column="5" />
+      <File FileName="06-04-2013-JointFactBPR/SocialMF.cs" Line="17" Column="7" />
+      <File FileName="06-04-2013-JointFactBPR/BprSocialJointMF.cs" Line="125" Column="31" />
+      <File FileName="06-04-2013-JointFactBPR/BiasLearnMF.cs" Line="24" Column="24" />
+      <File FileName="06-04-2013-JointFactBPR/Eval.cs" Line="14" Column="34" />
+      <File FileName="06-04-2013-JointFactBPR/SparseMatrix.cs" Line="64" Column="20" />
+      <File FileName="06-04-2013-JointFactBPR/PredictRecall.cs" Line="36" Column="90" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="06-04-2013-JointFactBPR" expanded="True">
+            <Node name="BiasLearnMF.cs" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

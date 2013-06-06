@@ -74,6 +74,7 @@ namespace bprmodularMML
 			int userId;
 			
 			while(true) {
+				// TODO: check if MAX_USER_ID+1
 				userId = random.Next(0, MAX_USER_ID);
 				if (!trainRatedItems.ContainsKey(userId)) {
 					continue;

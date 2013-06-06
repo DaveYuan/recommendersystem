@@ -1,0 +1,29 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="06-01-2013-BiasLearn/Eval.cs">
+    <Files>
+      <File FileName="06-01-2013-BiasLearn/Init.cs" Line="41" Column="18" />
+      <File FileName="06-01-2013-BiasLearn/BiasLearnMF.cs" Line="34" Column="6" />
+      <File FileName="06-01-2013-BiasLearn/SocialMF.cs" Line="14" Column="18" />
+      <File FileName="06-01-2013-BiasLearn/Main.cs" Line="86" Column="21" />
+      <File FileName="06-01-2013-BiasLearn/PredictRecall.cs" Line="19" Column="11" />
+      <File FileName="06-01-2013-BiasLearn/Eval.cs" Line="35" Column="32" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="06-01-2013-MultiRecommender" expanded="True">
+            <Node name="Eval.cs" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
