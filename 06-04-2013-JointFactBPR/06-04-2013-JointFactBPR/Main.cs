@@ -85,7 +85,7 @@ namespace JointFactBPR
 						case BPR_SOCIAL_JOINT_MF:
 								writeToConsole("BPR_SOCIAL_JOINT_MF: RMSE trace per epoch on test");
 								BprSocialJointMF bprSocialJointMF = new BprSocialJointMF(associationObj);
-								bprSocialJointMF.bprSocialJointMFTrain();
+								bprSocialJointMF.hyperParameterSearch();
 								break;
 					}				
 			trainTime.Stop();
