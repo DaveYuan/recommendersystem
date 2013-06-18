@@ -14,21 +14,22 @@ namespace JointFactBPR
 		public SparseMatrix userAssociations {get; set;}
 		public List<HashSet<int>> userSymmetricAssociations;
 		public string[] csvHeadLine;
-		public string csvFileName;
-						
+		public string csvFileName;						
 				
 		public BprSocialJointMF(Association associationObj)
 		{	
-			
 			csvFileName = "06-05-2013-JointFactBPR.csv";				
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "regSocial", "regBias", "regPostv", "regNegtv",
 			"regUser", "regItem", "RMSE"};
-				
-			lrate = 0.005;
-			regPostv = 0.005;
-			regNegtv = 0.005;
-			regSocial = 10;
-			
+		
+			regUser = 0.005;
+			regItem = 0.0009; //0.15
+			regBias = 0.2; //0.1
+
+			regPostv = 0.005; //1
+			regNegtv = 0.0005; //22
+			regSocial = 1; //0.1
+
 			Console.WriteLine(", regSocial: {0}, regPostv: {1}, regNegtv: {2}", regSocial, regPostv, regNegtv);		
 			userAssociations = new SparseMatrix();
 			userAssociations.createSparseMatrix(associationObj.user1List.ToArray(), associationObj.user2List.ToArray());	
@@ -74,7 +75,7 @@ namespace JointFactBPR
 			int user = trainUsersArray[n];
 			int item = trainItemsArray[n];
 			int rating = trainRatingsArray[n];	
-				
+			
 			predictScore = PredictRating(user, item);	
 			sigScore = g(predictScore);
 			mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
@@ -99,22 +100,18 @@ namespace JointFactBPR
 			double xuPostvNegtv;
 			double dervxuPostvNegtv;
 			double oneByOnePlusExpX;
-
+			
 			xuPostv = predictRatingSocialRel(userId, userIdPostv);
 			xuNegtv = predictRatingSocialRel(userId, userIdNegtv);
 			xuPostvNegtv = xuPostv - xuNegtv;
 			oneByOnePlusExpX = 1.0 / (1.0 + Math.Exp(xuPostvNegtv));
-//			oneByOnePlusExpX = oneByOnePlusExpX * (1 - oneByOnePlusExpX) * 4;
 		
 //			userBias[userId] += (double) (lrate *  regSocial * (oneByOnePlusExpX - regBias * regUser * userBias[userId]));
-//			userBias[userIdPostv] += (double) (lrate * lratePostv * regSocial * (oneByOnePlusExpX - regBias * regPostv * regUser * userBias[userIdPostv]));
-//			userBias[userIdNegtv] += (double) (lrate * regSocial * (-oneByOnePlusExpX - regBias * regPostv * regUser * userBias[userIdNegtv]));
-
-			userBias[userId] += (double) (lrate *  regSocial * (oneByOnePlusExpX - regBias * userBias[userId]));
-
 			userBias[userIdPostv] += (double) (lrate * regSocial * (oneByOnePlusExpX - regBias * regPostv * userBias[userIdPostv]));
 			userBias[userIdNegtv] += (double) (lrate * regSocial * (-oneByOnePlusExpX - regBias * regNegtv * userBias[userIdNegtv]));
 
+//			userBias[userIdPostv] += (double) (lrate * regSocial * (oneByOnePlusExpX - regPostv * regUser * userBias[userIdPostv]));
+//			userBias[userIdNegtv] += (double) (lrate * regSocial * (-oneByOnePlusExpX - regNegtv * regUser * userBias[userIdNegtv]));
 
 			for (int f = 0; f < numFeatures; f++) {
 				double userF = userFeature[f, userId];
@@ -127,11 +124,11 @@ namespace JointFactBPR
 				
 				dervxuPostvNegtv = userF;
 				userFeature[f, userIdPostv] += (double) (lrate * regSocial * (oneByOnePlusExpX * dervxuPostvNegtv -
-										    regUser * regPostv * userPostvF));
+										    regPostv * userPostvF));
 				
 				dervxuPostvNegtv = -userF;
 				userFeature[f, userIdNegtv] += (double) (lrate * regSocial * (oneByOnePlusExpX * dervxuPostvNegtv -
-											    regUser * regNegtv * userNegtvF));
+											    regNegtv * userNegtvF));
 			}
 			return xuPostvNegtv;
 		}
@@ -160,14 +157,16 @@ namespace JointFactBPR
 			
 			numTestEntries = testCheck();
 			
+			lrate = 0.008;
 			for (int itr = 1; itr <= numEpochs; itr++) {
 				regularization();
-				bprOpt = 0.0;				
+				bprOpt = 0.0;							
 				for (int n = 0; n < numEntries; n++) {
 					predictionErrorLearn(n);	
 					bprOpt += Math.Log(g(socialRelLearn()));
 				}
 				rmse = errTestSet(numTestEntries);
+				
 				Console.WriteLine("\t\t- RMSE[{0}]: {1}, {2}", itr, rmse, bprOpt);
 				string[] rowData = new string[]{itr.ToString(), 
 								numFeatures.ToString(),
