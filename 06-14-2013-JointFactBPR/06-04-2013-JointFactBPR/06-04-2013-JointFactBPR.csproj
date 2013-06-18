@@ -52,6 +52,7 @@
     <Compile Include="SparseMatrix.cs" />
     <Compile Include="BprSocialJointMF.cs" />
     <Compile Include="ISocial.cs" />
+    <Compile Include="SqErrSocialMF.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

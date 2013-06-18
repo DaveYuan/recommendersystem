@@ -26,7 +26,7 @@ namespace JointFactBPR
 //			regUser = 0.025;
 //			regItem = 0.025;
 //			regBias = 0.03;
-
+			
 			regUser = 0.5;
 			regItem = 0.9;
 			regBias = 1;

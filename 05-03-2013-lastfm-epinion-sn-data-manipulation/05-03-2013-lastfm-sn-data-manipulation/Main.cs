@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using ProtoBuf;
 
-/* To serialize Epinion dataset with id mapping */
+/* To serialize Epinion-flixster-lastfm dataset with id mapping */
 namespace lastfmsndatamanipulation
 {
 	class MainClass

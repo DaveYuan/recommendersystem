@@ -12,6 +12,7 @@ namespace JointFactBPR
 		public const int BIAS_LEARN_MF = 1;
 		public const int SOCIAL_MF = 2;
 		public const int BPR_SOCIAL_JOINT_MF = 3;
+		public const int SQ_ERR_SOCIAL_MF = 4;
 		
 		protected static Test testObj;
 		protected static Train trainObj;
@@ -69,7 +70,7 @@ namespace JointFactBPR
 					writeToConsole("Initialize features");
 					init();	
 					
-					model = BPR_SOCIAL_JOINT_MF;
+					model = SQ_ERR_SOCIAL_MF;
 					
 					switch (model) {
 						case BIAS_LEARN_MF: 
@@ -87,6 +88,11 @@ namespace JointFactBPR
 								BprSocialJointMF bprSocialJointMF = new BprSocialJointMF(associationObj);
 								bprSocialJointMF.bprSocialJointMFTrain();
 //								bprSocialJointMF.hyperParameterSearch();
+								break;
+						case SQ_ERR_SOCIAL_MF:
+								writeToConsole("SQ_ERR_SOCIAL_MF: RMSE trace per epoch on test");
+								SqErrSocialMF sqErrrSocialMF = new SqErrSocialMF(associationObj);
+								sqErrrSocialMF.sqErrSocialMFTrain();
 								break;
 					}				
 			trainTime.Stop();
