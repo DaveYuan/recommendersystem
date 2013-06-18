@@ -12,6 +12,16 @@ namespace HPlearnSocialBPRMF
 				dotProduct += userFeature[i,userId] * itemFeature[i,itemId];
 			}
 			return dotProduct;
+		}		
+			
+		public double dotProduct(int user, int item, double err)
+		{
+			double product = 0.0;
+			for (int f = 0; f < numFeatures; f++) {
+				product += (userFeature[f, user] - lrate*(err*itemFeature[f, item] + regUser*userFeature[f, user])) *
+				           (itemFeature[f, item] - lrate*(err*userFeature[f, user] + regItem*itemFeature[f, item]));
+			}
+			return product;
 		}
 		
 		public double dotProductUser(int user1, int user2)
@@ -38,5 +48,16 @@ namespace HPlearnSocialBPRMF
 			       userBias[userIdAssoc] +
 			       dotProductUser(userId, userIdAssoc);
 		}
+			
+		public double predictAtT1(int user, int item, double err)
+		{
+			double predictRating;
+			predictRating = (globalAvg - lrate*(err + regGlbAvg*globalAvg)) +
+							(itemBias[item] - lrate*(err + regItem*itemBias[item])) +
+				 			(userBias[user] - lrate*(err + regUser*userBias[user])) +
+				  			dotProduct(user, item, err);				
+			return predictRating;
+		}
+		
 	}
 }

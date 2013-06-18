@@ -22,13 +22,13 @@ namespace HPlearnSocialBPRMF
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "regSocial", "regBias", "regPostv", "regNegtv",
 			"regUser", "regItem", "RMSE"};
 		
-			regUser = 0.005;
-			regItem = 0.1; //0.15
-			regBias = 0.09; //0.1
+			regUser = 0.0015;
+			regItem = 0.001; //0.15
+			regBias = 0.1; //0.1
 
-			regPostv = 0.005; //1
-			regNegtv = 0.1; //22
-			regSocial = 0.7; //0.1
+			regPostv = 0.0015; //1
+			regNegtv = 0.001; //22
+			regSocial = 1; //0.1
 
 			Console.WriteLine(", regSocial: {0}, regPostv: {1}, regNegtv: {2}", regSocial, regPostv, regNegtv);		
 			userAssociations = new SparseMatrix();
@@ -146,8 +146,61 @@ namespace HPlearnSocialBPRMF
 			File.AppendAllText(csvFileName, builder.ToString());
 		}
 		
+		public double sumFeatures(int type, int indx)
+		{
+			double sum = 0.0;
+			if (type == USER_DEC) {
+				for (int f = 0; f < numFeatures; f++) {
+					sum += userFeature[f, indx];
+				}
+			} else if (type == ITEM_DEC) {
+				for (int f = 0; f < numFeatures; f++) {
+					sum += itemFeature[f, indx];
+				}
+			}
+			return sum;
+		}
+		
+		public void updateReg(int user, int item, double err)
+		{
+			double dervWRTregGlbAvg = -lrate * err * globalAvg;
+			regGlbAvg = regGlbAvg - lrate*dervWRTregGlbAvg;
+			
+			double dervWRTregItem = -lrate*err*(itemBias[item] + sumFeatures(ITEM_DEC, item));
+			regItem = regItem - lrate*dervWRTregItem;
+			
+			double dervWRTregUser = -lrate*err*(userBias[user] + sumFeatures(USER_DEC, user));
+			regUser = regUser - lrate*dervWRTregUser;
+		}		
+		
 		public void adaptRegularization()
 		{
+			double err;
+			double errT1;
+			double mappedPredictScore;
+			double sigScore;
+			double predictT;
+			double predictT1;
+			
+			for (int i = 0; i < numValidationEntries; i++) {
+				int user = validatationUsersArray[i];
+				int item = validationItemsArray[i];
+				double rating = validationRatingsArray[i];
+				predictT = PredictRating(user, item);
+			//	err = predictT - rating;
+				sigScore = g(predictT);
+				mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
+				err = mappedPredictScore - rating;
+				err = err * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
+				
+				predictT1 = predictAtT1(user, item, err);
+				sigScore = g(predictT1);
+				mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
+				errT1 = mappedPredictScore - rating;
+				errT1 = errT1 * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
+//				errT1 = predictT1 - rating;
+				updateReg(user, item, errT1);				
+			}
 		}
 		
 		public void bprSocialJointMFTrain()
@@ -158,7 +211,7 @@ namespace HPlearnSocialBPRMF
 			
 			numTestEntries = testCheck();
 			
-			lrate = 0.005;
+			lrate = 0.001;
 			for (int itr = 1; itr <= numEpochs; itr++) {
 				regularization();
 				bprOpt = 0.0;							
