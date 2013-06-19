@@ -5,15 +5,16 @@ using System.Collections.Generic;
 
 namespace HPlearnSocialBPRMF
 {
-	public class Init {
+	public class Init
+	{
 		public static double regUser;
 		public static double regItem;
 		public static double regBias;
 		public static double regGlbAvg;
 		public static double globalAvg;
 		public static double lrate;
-		public const int USER_DEC = 1;
-		public const int ITEM_DEC = -1;
+		public const int USER = 1;
+		public const int ITEM = -1;
 		public static int numEpochs;
 		public static int numTrainEntries;
 		public static int numValidationEntries;
@@ -85,18 +86,18 @@ namespace HPlearnSocialBPRMF
 		
 		public static void decBias(int decRel, int indx, double dec) 
 		{
-			if (decRel == USER_DEC) {
+			if (decRel == USER) {
 				userBias[indx] -= dec;
-			} else if (decRel == ITEM_DEC) {
+			} else if (decRel == ITEM) {
 				itemBias[indx] -= dec;
 			}
 		}
 		
 		public static void decFeature(int decRel, int indx, int feature, double dec)
 		{
-			if (decRel == USER_DEC) {
+			if (decRel == USER) {
 				userFeature[feature, indx] -= dec;
-			} else if (decRel == ITEM_DEC) {
+			} else if (decRel == ITEM) {
 				itemFeature[feature, indx] -= dec;
 			}
 		}

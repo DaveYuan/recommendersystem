@@ -41,9 +41,9 @@ namespace HPlearnSocialBPRMF
 				}
 				
 				if (numUAssociations != 0) {
-					decBias(USER_DEC, u, lrate *(regSocial * (userBias[u] - sumUserUAssociationBias/numUAssociations)));
+					decBias(USER, u, lrate *(regSocial * (userBias[u] - sumUserUAssociationBias/numUAssociations)));
 					for (int f = 0; f < numFeatures; f++) {
-						decFeature(USER_DEC, u, f, lrate * (regSocial * (userFeature[f,u] - sumUserUAssociationFeatures[f]/numUAssociations)));
+						decFeature(USER, u, f, lrate * (regSocial * (userFeature[f,u] - sumUserUAssociationFeatures[f]/numUAssociations)));
 					}
 				}								
 				
@@ -61,15 +61,74 @@ namespace HPlearnSocialBPRMF
 					
 					if (numVAssociations != 0) {
 						double biasInc = -userBias[v] + sumUserWAssociationBias/(double)numVAssociations;
-						decBias(USER_DEC, u, lrate * (regSocial * biasInc / (double)numVAssociations));
+						decBias(USER, u, lrate * (regSocial * biasInc / (double)numVAssociations));
 						for (int f = 0; f < numFeatures; f++) {
 							double dec = -userFeature[f,v] + sumUserWAssociationFeatures[f]/(double)numVAssociations;
-							decFeature(USER_DEC, u, f, lrate * (regSocial * dec / (double)numVAssociations));
+							decFeature(USER, u, f, lrate * (regSocial * dec / (double)numVAssociations));
 						}
 					}
 				}				
 			}
 		}	
+		
+		public double productSumFeatures(int type, int user, int item, double err)
+		{
+			double sum = 0.0;
+			if (type == USER) {
+				for (int f = 0; f < numFeatures; f++) {
+					double itemFeatureT1 = itemFeature[f, item] - lrate*(err*userFeature[f, user] + regItem*itemFeature[f, item]);
+					sum += (userFeature[f, user] * itemFeatureT1);
+				}
+			} else if (type == ITEM) {
+				for (int f = 0; f < numFeatures; f++) {
+					double userFeatureT1 = userFeature[f, user] - lrate*(err*itemFeature[f, item] + regUser*userFeature[f, user]);
+					sum += (itemFeature[f, item] * userFeatureT1);
+				}
+			}
+			return sum;
+		}
+		
+		public void updateReg(int user, int item, double err)
+		{
+			double dervWRTregGlbAvg = -lrate * err * globalAvg;
+			regGlbAvg = regGlbAvg - lrate*dervWRTregGlbAvg;
+			
+			double dervWRTregItem = -lrate*err*(itemBias[item] + productSumFeatures(ITEM, user, item, err));
+			regItem = regItem - lrate*dervWRTregItem;
+			
+			double dervWRTregUser = -lrate*err*(userBias[user] + productSumFeatures(USER, user, item, err));
+			regUser = regUser - lrate*dervWRTregUser;
+		}
+		
+		public void adaptRegularization()
+		{
+			double err;
+			double errT1;
+			double mappedPredictScore;
+			double sigScore;
+			double predictT;
+			double predictT1;
+			
+			for (int i = 0; i < numValidationEntries; i++) {
+				int user = validatationUsersArray[i];
+				int item = validationItemsArray[i];
+				double rating = validationRatingsArray[i];
+				predictT = PredictRating(user, item);
+			//	err = predictT - rating;
+				sigScore = g(predictT);
+				mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
+				err = mappedPredictScore - rating;
+				err = err * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
+				
+				predictT1 = predictAtT1(user, item, err);
+				sigScore = g(predictT1);
+				mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
+				errT1 = mappedPredictScore - rating;
+				errT1 = errT1 * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
+//				errT1 = predictT1 - rating;
+				updateReg(user, item, errT1);				
+			}
+		}
 		
 		public void socialMFTrain()
 		{		
@@ -81,8 +140,8 @@ namespace HPlearnSocialBPRMF
 			for (int itr = 1; itr <= numEpochs; itr++) {
 				predictionErrorLearn();	
 				regularization();					
-				socialRelLearn();
-				
+				socialRelLearn();				
+				adaptRegularization();
 				rmse = errTestSet(numTestEntries);
 				Console.WriteLine("\t\t- RMSE[{0}]: {1}", itr, rmse);
 			}

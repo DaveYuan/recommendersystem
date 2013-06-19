@@ -13,6 +13,8 @@ namespace HPlearnSocialBPRMF
 		public const int SOCIAL_MF = 2;
 		public const int BPR_SOCIAL_JOINT_MF = 3;
 		public const int SQ_ERR_SOCIAL_MF = 4;
+		public const int BPR_SOCIAL_BPR = 5;
+		public const int BPR_SOCIAL_MF = 6;
 		
 		protected static Test testObj;
 		protected static Train trainObj;
@@ -86,7 +88,7 @@ namespace HPlearnSocialBPRMF
 					writeToConsole("Initialize features");
 					init();	
 					
-					model = BPR_SOCIAL_JOINT_MF;
+					model = BPR_SOCIAL_MF;
 					
 					switch (model) {
 						case BIAS_LEARN_MF: 
@@ -109,6 +111,16 @@ namespace HPlearnSocialBPRMF
 								writeToConsole("SQ_ERR_SOCIAL_MF: RMSE trace per epoch on test");
 								SqErrSocialMF sqErrrSocialMF = new SqErrSocialMF(associationObj);
 								sqErrrSocialMF.sqErrSocialMFTrain();
+								break;
+						case BPR_SOCIAL_BPR:
+								writeToConsole("BPR_SOCIAL_BPR: RMSE trace per epoch on test");
+								BPRSocialBPR bprSocialBpr = new BPRSocialBPR(associationObj);
+								bprSocialBpr.BPRSocialBPRTrain();
+								break;
+						case BPR_SOCIAL_MF:
+								writeToConsole("BPR_SOCIAL_BPR: RMSE trace per epoch on test");
+								BPRSocialMF bprSocialMf = new BPRSocialMF(associationObj);
+								bprSocialMf.BPRSocialMFTrain();
 								break;
 					}				
 			trainTime.Stop();

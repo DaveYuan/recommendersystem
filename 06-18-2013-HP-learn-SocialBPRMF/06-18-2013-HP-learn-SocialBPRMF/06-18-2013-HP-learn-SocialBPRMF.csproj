@@ -49,6 +49,10 @@
     <Compile Include="SocialMF.cs" />
     <Compile Include="SparseMatrix.cs" />
     <Compile Include="SqErrSocialMF.cs" />
+    <Compile Include="BPRSocialBPR.cs" />
+    <Compile Include="BPRSocialMF.cs" />
+    <Compile Include="ItemAssociation.cs" />
+    <Compile Include="AdaptRegularization.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

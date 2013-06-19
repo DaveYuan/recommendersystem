@@ -1,33 +1,34 @@
 using System;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 
 namespace HPlearnSocialBPRMF
 {
-	public class BprSocialJointMF : BiasLearnMF, ISocial
-	{
+	public class BPRSocialBPR : ItemAssociation, ISocial
+	{	
 		public double regPostv;
 		public double regNegtv;
 		public double regSocial {get; set;}
 		public SparseMatrix userAssociations {get; set;}
 		public List<HashSet<int>> userSymmetricAssociations;
 		public string[] csvHeadLine;
-		public string csvFileName;						
-				
-		public BprSocialJointMF(Association associationObj)
+		public string csvFileName;					
+		
+		public BPRSocialBPR(Association associationObj)
 		{	
 			csvFileName = "06-05-2013-JointFactBPR.csv";				
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "regSocial", "regBias", "regPostv", "regNegtv",
 			"regUser", "regItem", "RMSE"};
 		
+			lrate = 0.01;
 			regUser = 0.015;
-			regItem = 0.019; //0.15
-			regBias = 0.77; //0.1
+			regItem = 0.09; //0.15
+			regBias = 0.99; //0.1
 
 			regPostv = 0.015; //1
-			regNegtv = 0.019; //22
+			regNegtv = 0.09; //22
 			regSocial = 0.7; //0.1
 
 			Console.WriteLine(", regSocial: {0}, regPostv: {1}, regNegtv: {2}", regSocial, regPostv, regNegtv);		
@@ -43,7 +44,7 @@ namespace HPlearnSocialBPRMF
 			File.AppendAllText(csvFileName, builder.ToString());
 		}		
 		
-		public int drawUser() 
+		public int drawSocialUser() 
 		{
 			int userId;
 			while(true) {
@@ -56,10 +57,30 @@ namespace HPlearnSocialBPRMF
 			}
 		}		
 		
+		public int drawTargetUser()
+		{
+			int userId;
+			
+			while(true) {
+				// TODO: check if MAX_USER_ID+1
+				userId = random.Next(0, MAX_USER_ID+1);
+				if (!trainRatedItems.ContainsKey(userId)) {
+					continue;
+				}
+				return userId;
+			}
+		}
+		
 		public int drawPostvUser(int userId)
 		{
 			int numAssociations = userSymmetricAssociations[userId].Count;
 			return userSymmetricAssociations[userId].ElementAt(random.Next(0, numAssociations));			
+		}
+		
+		public int drawPostvItem(int userId)
+		{
+			int numRatedItems = trainRatedItems[userId].Length;
+			return trainRatedItems[userId][random.Next(0, numRatedItems)];
 		}
 		
 		public int drawNegtvUser(int userId) 
@@ -72,53 +93,53 @@ namespace HPlearnSocialBPRMF
 			return userIdNegtv;
 		}
 		
-		public void predictionErrorLearn(int n)
-		{			
-			double err;
-			double sigScore;
-			double predictScore;
-			double mappedPredictScore;				
-			
-			int user = trainUsersArray[n];
-			int item = trainItemsArray[n];
-			int rating = trainRatingsArray[n];	
-			
-			predictScore = PredictRating(user, item);	
-			sigScore = g(predictScore);
-			mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
-			err = mappedPredictScore - rating;
-			err = err * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
-			
-			globalAvg = globalAvg - lrate*err - regGlbAvg*globalAvg;
-			decBias(USER, user, lrate * (err));
-			decBias(ITEM, item, lrate * (err));
-							
+		public int drawNegtvItem(int userId)
+		{
+			int itemIdNegtv = random.Next(0, MAX_ITEM_ID+1);
+					
+			while (trainRatedItems[userId].Contains(itemIdNegtv)) {
+				itemIdNegtv = random.Next(0, MAX_ITEM_ID+1);
+			}
+			return itemIdNegtv;
+		}
+		
+		public double updateFeatures(int userId, int itemIdPostv, int itemIdNegtv)
+		{
+			double xuPostv;
+			double xuNegtv;
+			double xuPostvNegtv;
+			double dervxuPostvNegtv;
+			double oneByOnePlusExpX;
+
+			xuPostv = userBias[userId] + itemBias[itemIdPostv] +  dotProduct(userId, itemIdPostv);
+			xuNegtv = userBias[userId] + itemBias[itemIdNegtv] + dotProduct(userId, itemIdNegtv);
+			xuPostvNegtv = xuPostv - xuNegtv;
+			oneByOnePlusExpX = 1.0 / (1.0 + Math.Exp(xuPostvNegtv));
+		
+			userBias[userId] += (double) (lrate * (oneByOnePlusExpX - regBias * userBias[userId]));
+			itemBias[itemIdPostv] += (double) (lrate * (oneByOnePlusExpX - regBias * itemBias[itemIdPostv]));
+			itemBias[itemIdNegtv] += (double) (lrate * (-oneByOnePlusExpX - regBias * itemBias[itemIdNegtv]));
+
 			for (int f = 0; f < numFeatures; f++) {
-				double uF = userFeature[f, user];
-				double iF = itemFeature[f, item];
-				decFeature(USER, user, f, lrate * (err * iF));
-				decFeature(ITEM, item, f, lrate * (err * uF));						
-			}							
+				double userF = userFeature[f, userId];
+				double itemPostvF = itemFeature[f, itemIdPostv];
+				double itemNegtvF = itemFeature[f, itemIdNegtv];
+
+				dervxuPostvNegtv = itemPostvF - itemNegtvF;
+				userFeature[f, userId] += (double) (lrate * (oneByOnePlusExpX * dervxuPostvNegtv -
+									  regUser * userF));
+				
+				dervxuPostvNegtv = userF;
+				itemFeature[f, itemIdPostv] += (double) (lrate * (oneByOnePlusExpX * dervxuPostvNegtv -
+										    regPostv * itemPostvF));
+				
+				dervxuPostvNegtv = -userF;
+				itemFeature[f, itemIdNegtv] += (double) (lrate * (oneByOnePlusExpX * dervxuPostvNegtv -
+											    regNegtv * itemNegtvF));
+			}
+			return xuPostvNegtv;
 		}	
 		
-		public void regularization() 
-		{
-			//globalAvg = globalAvg			
-			for (int u = 0; u <= MAX_USER_ID; u++) {
-				decBias(USER, u, lrate * userBias[u] * regUser * regBias);
-				for (int f = 0; f < numFeatures; f++) {
-					decFeature(USER, u, f, lrate * userFeature[f,u] * regUser);
-				}
-			}
-			
-			for (int i = 0; i <= MAX_ITEM_ID; i++) {
-				decBias(ITEM, i, lrate * itemBias[i] * regItem * regBias);
-				for (int f = 0; f < numFeatures; f++) {
-					decFeature(ITEM, i, f, lrate * itemFeature[f,i] * regItem);
-				}
-			}			
-		}
-				
 		public double updateSocialFeatures(int userId, int userIdPostv, int userIdNegtv)
 		{
 			double xuPostv;
@@ -153,17 +174,26 @@ namespace HPlearnSocialBPRMF
 											    regNegtv * userNegtvF));
 			}
 			return xuPostvNegtv;
+		}		
+		
+		public double bprTargetTrain()
+		{
+			int userId = drawTargetUser();
+			int itemIdPostv = drawPostvItem(userId);
+			int itemIdNegtv = drawNegtvItem(userId);
+					
+			return updateFeatures(userId, itemIdPostv, itemIdNegtv);
 		}
-				
-		public double socialRelLearn()
+		
+		public double bprSocialTrain()
 		{	
-			int userId = drawUser();
+			int userId = drawSocialUser();
 			int userIdPostv = drawPostvUser(userId);
 			int userIdNegtv = drawNegtvUser(userId);
 			
 			return updateSocialFeatures(userId, userIdPostv, userIdNegtv);			
 		}
-				
+		
 		public double productSumFeatures(int type, int user, int item, double err)
 		{
 			double sum = 0.0;
@@ -222,95 +252,26 @@ namespace HPlearnSocialBPRMF
 				updateReg(user, item, errT1);				
 			}
 		}
-		
-		public void bprSocialJointMFTrain()
-		{		
-			double rmse;
-			double bprOpt;
-			int numTestEntries; 
-			numEpochs = 200;
-			numTestEntries = testCheck();
+				
+		public void BPRSocialBPRTrain()
+		{
+			double bprOptTarget;
+			double bprOptSocial;			
 			
-			lrate = 0.002;
+			trainItemsRatedByUser();
+			int numTestEntries = testCheck();
+			numEpochs = 500;
 			for (int itr = 1; itr <= numEpochs; itr++) {
-				regularization();
-				bprOpt = 0.0;							
-				for (int n = 0; n < numTrainEntries; n++) {
-					predictionErrorLearn(n);	
-					bprOpt += Math.Log(g(socialRelLearn()));
+				bprOptTarget = bprOptSocial = 0.0;
+				for (int n = 0; n < numTrainEntries; n++) {					
+					bprOptSocial += Math.Log(g(bprSocialTrain()));
+					bprOptTarget += Math.Log(g(bprTargetTrain()));
 				}
-				rmse = errTestSet(numTestEntries);
+				double rmse = errTestSet(numTestEntries);				
 				adaptRegularization();
-				Console.WriteLine("\t\t- RMSE[{0}]: {1}, {2}", itr, rmse, bprOpt);
-				string[] rowData = new string[]{itr.ToString(), 
-								numFeatures.ToString(),
-								lrate.ToString(),
-								regSocial.ToString(),
-								regBias.ToString(),
-								regPostv.ToString(),
-								regNegtv.ToString(),
-								regUser.ToString(),
-								regItem.ToString(),
-								rmse.ToString()};
-				writeToLog(rowData);
-			}				
-		}
-
-		public void hyperParameterSearch() 
-		{ 
-			double LRATE_MIN = 0.001;
-			double LRATE_MAX = 0.05;
-			double LRATE_INC = 0.005;
-
-			double REG_SOCIAL_MIN = 1;
-			double REG_SOCIAL_MAX = 15;
-			double REG_SOCIAL_INC = 5;
-
-			double REG_BIAS_MIN = 0.01;
-			double REG_BIAS_MAX = 0.30;
-			double REG_BIAS_INC = 0.05;
-
-			double REG_POSTV_MIN = 0.001;
-			double REG_POSTV_MAX = 0.06;
-			double REG_POSTV_INC = 0.005;
-
-			double REG_NEGTV_MIN = 0.0001;
-			double REG_NEGTV_MAX = 0.006;
-			double REG_NEGTV_INC = 0.0005;
-
-			double REG_USER_MIN = 0.001;
-			double REG_USER_MAX = 0.06;
-			double REG_USER_INC = 0.005;
-
-			double REG_ITEM_MIN = 0.001;
-			double REG_ITEM_MAX = 0.06;
-			double REG_ITEM_INC = 0.005;
-
-			numEpochs = 50;
-			File.Open(csvFileName, FileMode.Create).Close();
-			writeToLog(csvHeadLine);
-			for (double lr = LRATE_MIN; lr <= LRATE_MAX; lr=lr+LRATE_INC) {
-				lrate = lr;
-				for (double rs = REG_SOCIAL_MIN; rs <= REG_SOCIAL_MAX; rs=rs+REG_SOCIAL_INC) {
-					regSocial = rs;
-					for (double rb = REG_BIAS_MIN; rb <= REG_BIAS_MAX; rb=rb+REG_BIAS_INC) {
-						regBias = rb;
-						for (double rp = REG_POSTV_MIN; rp <= REG_POSTV_MAX; rp=rp+REG_POSTV_INC) {
-							regPostv = rp;
-							for (double rn = REG_NEGTV_MIN; rn <= REG_NEGTV_MAX; rn=rn+REG_NEGTV_INC) {
-								regNegtv = rn;
-								for (double ru = REG_USER_MIN; ru <= REG_USER_MAX; ru=ru+REG_USER_INC) {
-									regUser = ru;
-									for (double ri = REG_ITEM_MIN; ri <= REG_ITEM_MAX; ri=ri+REG_ITEM_INC) {
-										regItem = ri;
-										bprSocialJointMFTrain();
-									}
-								}
-							}
-						}
-					}
-				}
+				Console.WriteLine("\t\t- RMSE[{0}]: {1}, OPT(trgt): {2}, OPT(social): {3}", 
+				                  itr, rmse, bprOptTarget, bprOptSocial);
 			}
-		}
+		}		
 	}
 }

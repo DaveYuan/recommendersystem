@@ -1,14 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="06-18-2013-HP-learn-SocialBPRMF/BprSocialJointMF.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="06-18-2013-HP-learn-SocialBPRMF/BPRSocialMF.cs">
     <Files>
-      <File FileName="06-18-2013-HP-learn-SocialBPRMF/Main.cs" Line="9" Column="20" />
-      <File FileName="06-18-2013-HP-learn-SocialBPRMF/Init.cs" Line="97" Column="29" />
-      <File FileName="06-18-2013-HP-learn-SocialBPRMF/BprSocialJointMF.cs" Line="170" Column="27" />
-      <File FileName="06-18-2013-HP-learn-SocialBPRMF/BiasLearnMF.cs" Line="13" Column="4" />
-      <File FileName="06-18-2013-HP-learn-SocialBPRMF/Eval.cs" Line="3" Column="29" />
-      <File FileName="06-18-2013-HP-learn-SocialBPRMF/SparseMatrix.cs" Line="6" Column="2" />
-      <File FileName="06-18-2013-HP-learn-SocialBPRMF/SqErrSocialMF.cs" Line="120" Column="40" />
+      <File FileName="06-18-2013-HP-learn-SocialBPRMF/Main.cs" Line="122" Column="65" />
+      <File FileName="06-18-2013-HP-learn-SocialBPRMF/BPRSocialMF.cs" Line="30" Column="17" />
+      <File FileName="06-18-2013-HP-learn-SocialBPRMF/AdaptRegularization.cs" Line="1" Column="1" />
+      <File FileName="06-18-2013-HP-learn-SocialBPRMF/Init.cs" Line="8" Column="19" />
+      <File FileName="06-18-2013-HP-learn-SocialBPRMF/ItemAssociation.cs" Line="10" Column="44" />
+      <File FileName="06-18-2013-HP-learn-SocialBPRMF/BPRSocialBPR.cs" Line="25" Column="25" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

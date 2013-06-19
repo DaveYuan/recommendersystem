@@ -55,14 +55,14 @@ namespace HPlearnSocialBPRMF
 			err = sigScore - 1;
 			err = err * sigScore * (1 - sigScore);			
 		
-		//	decBias(USER_DEC, userId, lrate * regSocial * (err + regBias * regUser * userBias[userId]));
-			decBias(USER_DEC, userIdPostv, lrate * regSocial * (err + regBias * regUser * userBias[userIdPostv]));
+		//	decBias(USER, userId, lrate * regSocial * (err + regBias * regUser * userBias[userId]));
+			decBias(USER, userIdPostv, lrate * regSocial * (err + regBias * regUser * userBias[userIdPostv]));
 							
 			for (int f = 0; f < numFeatures; f++) {
 				double uF = userFeature[f, userId];
 				double iF = userFeature[f, userIdPostv];
-				decFeature(USER_DEC, userId, f, lrate * regSocial * (err * iF + regUser * userFeature[f,userId]));
-				decFeature(USER_DEC, userIdPostv, f, lrate * regSocial * (err * uF + regUser * userFeature[f, userIdPostv]));						
+				decFeature(USER, userId, f, lrate * regSocial * (err * iF + regUser * userFeature[f,userId]));
+				decFeature(USER, userIdPostv, f, lrate * regSocial * (err * uF + regUser * userFeature[f, userIdPostv]));						
 			}	
 			return err;
 		}
@@ -92,14 +92,14 @@ namespace HPlearnSocialBPRMF
 			err = mappedPredictScore - rating;
 			err = err * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
 			
-			decBias(USER_DEC, user, lrate * (err));
-			decBias(ITEM_DEC, item, lrate * (err));
+			decBias(USER, user, lrate * (err));
+			decBias(ITEM, item, lrate * (err));
 							
 			for (int f = 0; f < numFeatures; f++) {
 				double uF = userFeature[f, user];
 				double iF = itemFeature[f, item];
-				decFeature(USER_DEC, user, f, lrate * (err * iF));
-				decFeature(ITEM_DEC, item, f, lrate * (err * uF));						
+				decFeature(USER, user, f, lrate * (err * iF));
+				decFeature(ITEM, item, f, lrate * (err * uF));						
 			}							
 		}	
 		

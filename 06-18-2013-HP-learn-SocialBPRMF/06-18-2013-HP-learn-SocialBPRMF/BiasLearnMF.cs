@@ -34,14 +34,14 @@ namespace HPlearnSocialBPRMF
 				err = err * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
 					
 				globalAvg = globalAvg - lrate*err  - regGlbAvg*globalAvg;
-				decBias(USER_DEC, user, lrate * (err));
-				decBias(ITEM_DEC, item, lrate * (err));
+				decBias(USER, user, lrate * (err));
+				decBias(ITEM, item, lrate * (err));
 							
 				for (int f = 0; f < numFeatures; f++) {
 					double uF = userFeature[f, user];
 					double iF = itemFeature[f, item];
-					decFeature(USER_DEC, user, f, lrate * (err * iF));
-					decFeature(ITEM_DEC, item, f, lrate * (err * uF));						
+					decFeature(USER, user, f, lrate * (err * iF));
+					decFeature(ITEM, item, f, lrate * (err * uF));						
 				}				
 			}
 		}
@@ -51,16 +51,16 @@ namespace HPlearnSocialBPRMF
 			//globalAvg = globalAvg
 			
 			for (int u = 0; u <= MAX_USER_ID; u++) {
-				decBias(USER_DEC, u, lrate * userBias[u] * regUser * regBias);
+				decBias(USER, u, lrate * userBias[u] * regUser * regBias);
 				for (int f = 0; f < numFeatures; f++) {
-					decFeature(USER_DEC, u, f, lrate * userFeature[f,u] * regUser);
+					decFeature(USER, u, f, lrate * userFeature[f,u] * regUser);
 				}
 			}
 			
 			for (int i = 0; i <= MAX_ITEM_ID; i++) {
-				decBias(ITEM_DEC, i, lrate * itemBias[i] * regItem * regBias);
+				decBias(ITEM, i, lrate * itemBias[i] * regItem * regBias);
 				for (int f = 0; f < numFeatures; f++) {
-					decFeature(ITEM_DEC, i, f, lrate * itemFeature[f,i] * regItem);
+					decFeature(ITEM, i, f, lrate * itemFeature[f,i] * regItem);
 				}
 			}			
 		}
