@@ -1,0 +1,4 @@
+/home/artus/06-18-2013-HP-learn-SocialBPRMF/06-18-2013-HP-learn-SocialBPRMF/bin/Debug/06-18-2013-HP-learn-SocialBPRMF.exe.mdb
+/home/artus/06-18-2013-HP-learn-SocialBPRMF/06-18-2013-HP-learn-SocialBPRMF/bin/Debug/06-18-2013-HP-learn-SocialBPRMF.exe
+/home/artus/06-18-2013-HP-learn-SocialBPRMF/06-18-2013-HP-learn-SocialBPRMF/obj/x86/Debug/06-18-2013-HP-learn-SocialBPRMF.exe
+/home/artus/06-18-2013-HP-learn-SocialBPRMF/06-18-2013-HP-learn-SocialBPRMF/obj/x86/Debug/06-18-2013-HP-learn-SocialBPRMF.exe.mdb

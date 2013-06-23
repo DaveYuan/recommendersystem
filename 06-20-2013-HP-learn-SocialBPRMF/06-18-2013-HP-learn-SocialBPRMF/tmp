@@ -1,0 +1,66 @@
+		public double productSumLearnRate(int user, int item, double err)
+		{
+			double sum = 0.0;		
+			for (int f = 0; f < numFeatures; f++) {
+				double itemFeatureT1 = itemFeature[f, item] - lrate*(err*userFeature[f, user] + regItem*itemFeature[f, item]);
+				double userFeatureT1 = userFeature[f, user] - lrate*(err*itemFeature[f, item] + regUser*userFeature[f, user]);
+				sum += ( ( (err*userFeature[f, user] + regItem*itemFeature[f, item]) * userFeatureT1 ) +
+					 ( (err*itemFeature[f, item] + regUser*userFeature[f, user]) * itemFeatureT1 ) );
+			}
+			return sum;
+		}
+		
+		public void updateReg(int user, int item, double err)
+		{
+			double oldRegGlbAvg = regGlbAvg;
+			double oldRegItem = regItem;
+			double oldRegUser = regUser;
+
+			double dervWRTregGlbAvg = -lrate * err * globalAvg;
+			regGlbAvg = regGlbAvg - lrateRegConst *dervWRTregGlbAvg;
+			
+			double dervWRTregItem = -lrate*err*(itemBias[item] + productSumFeatures(ITEM, user, item, err));
+			regItem = regItem - lrateRegConst*dervWRTregItem;
+			
+			double dervWRTregUser = -lrate*err*(userBias[user] + productSumFeatures(USER, user, item, err));
+			regUser = regUser - lrateRegConst*dervWRTregUser;
+
+			double dervWRTlRate = -(3*err + 
+						oldRegGlbAvg * globalAvg +
+						oldRegItem * itemBias[item] +
+						oldRegUser * userBias[user] +
+						productSumLearnRate(user, item, err));
+//			Console.WriteLine("dervWRTlRate: {0}", dervWRTlRate);
+//			lrate = lrate + 0.00001 * dervWRTlRate;
+		}		
+		
+		public void adaptRegularization()
+		{
+			double err;
+			double errT1;
+			double mappedPredictScore;
+			double sigScore;
+			double predictT;
+			double predictT1;
+			
+			for (int i = 0; i < numValidationEntries; i++) {
+				int user = validatationUsersArray[i];
+				int item = validationItemsArray[i];
+				double rating = validationRatingsArray[i];
+				predictT = PredictRating(user, item);
+				err = predictT - rating;
+//				sigScore = g(predictT);
+//				mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
+//				err = mappedPredictScore - rating;
+//				err = err * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
+				
+				predictT1 = predictAtT1(user, item, err);
+//				sigScore = g(predictT1);
+//				mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
+//				errT1 = mappedPredictScore - rating;
+//				errT1 = errT1 * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
+				errT1 = predictT1 - rating;
+				updateReg(user, item, errT1);				
+			}
+		}
+	

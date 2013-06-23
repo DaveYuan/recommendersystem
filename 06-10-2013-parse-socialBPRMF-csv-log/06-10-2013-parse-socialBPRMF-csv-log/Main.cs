@@ -27,19 +27,24 @@ namespace parsesocialBPRMFcsvlog
 			File.Open(csvFileName, FileMode.Create).Close();
 			writeToLog(csvHeadLine);
 			var line1 = reader.ReadLine();
+			var line = reader.ReadLine();
 			
 			while (!reader.EndOfStream) {
 				itrMinRMSE = 0;
 				minRMSE = Double.MaxValue;
 				string[] rowData = new string[10];
-				for (int i = 1; i <= numEpochs; i++) {
-					var line = reader.ReadLine();
+				while(true) {
+					Console.WriteLine ("Hello!");			
 					var values = line.Split(',');
+					var values_prev = values;
+					if (Convert.ToInt32(values_prev[0]) > Convert.ToInt32(values[0])) {
+						break;
+					}
 					if (Convert.ToDouble(values[9]) < minRMSE) {
 						minRMSE = Convert.ToDouble(values[9]);
-						itrMinRMSE = i;
+						itrMinRMSE = Convert.ToInt32(values[0]);
 					}
-					if (i == 1) {
+					if (Convert.ToInt32(values[0]) == 1) {
 						rowData = values;
 					}
 				}
