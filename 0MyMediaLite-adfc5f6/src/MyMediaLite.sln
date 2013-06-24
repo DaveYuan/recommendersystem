@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyMediaLite", "MyMediaLite\MyMediaLite.csproj", "{73424F09-BEEA-4992-B116-5F123496F5D3}"
 EndProject
-Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "Packages", "Packages.mdproj", "{AD1EB4BB-DE14-418B-B704-67D76E468FF0}"
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Packages", "Packages.mdproj", "{AD1EB4BB-DE14-418B-B704-67D76E468FF0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{21DB122B-6D35-41F2-AE88-790A55859209}"
 EndProject

@@ -73,10 +73,4 @@
     <Compile Include="gtk-gui\MovieDemo.UserNameInput.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\..\MyMediaLite\MyMediaLite.csproj">
-      <Project>{73424F09-BEEA-4992-B116-5F123496F5D3}</Project>
-      <Name>MyMediaLite</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>
