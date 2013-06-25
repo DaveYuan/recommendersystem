@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="06-24-2013-MultiRecommenderGUI/MainWindow.cs">
+    <Files>
+      <File FileName="06-24-2013-MultiRecommenderGUI/MainWindow.cs" Line="70" Column="3" />
+      <File FileName="06-24-2013-MultiRecommenderGUI/Program.cs" Line="12" Column="36" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

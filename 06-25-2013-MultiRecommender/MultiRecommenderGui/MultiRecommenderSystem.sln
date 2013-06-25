@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiRecommenderGUI", "06-25-2013-MultiRecommender-GUI\MultiRecommenderGUI.csproj", "{324C0890-C0F0-4AA3-8964-5CD909D9CBF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiRecommender", "..\MultiRecommenderNoGui\06-23-2013-MultiRecommender\MultiRecommender.csproj", "{89C2F4B7-C4A6-4665-B0E2-1B672EED16A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{324C0890-C0F0-4AA3-8964-5CD909D9CBF6}.Debug|x86.ActiveCfg = Debug|x86
+		{324C0890-C0F0-4AA3-8964-5CD909D9CBF6}.Debug|x86.Build.0 = Debug|x86
+		{324C0890-C0F0-4AA3-8964-5CD909D9CBF6}.Release|x86.ActiveCfg = Release|x86
+		{324C0890-C0F0-4AA3-8964-5CD909D9CBF6}.Release|x86.Build.0 = Release|x86
+		{89C2F4B7-C4A6-4665-B0E2-1B672EED16A3}.Debug|x86.ActiveCfg = Debug|x86
+		{89C2F4B7-C4A6-4665-B0E2-1B672EED16A3}.Debug|x86.Build.0 = Debug|x86
+		{89C2F4B7-C4A6-4665-B0E2-1B672EED16A3}.Release|x86.ActiveCfg = Release|x86
+		{89C2F4B7-C4A6-4665-B0E2-1B672EED16A3}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = ..\MultiRecommenderNoGui\06-23-2013-MultiRecommender\MultiRecommender.csproj
+	EndGlobalSection
+EndGlobal

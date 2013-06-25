@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="06-25-2013-MultiRecommender-GUI/MainWindow.cs">
+    <Files>
+      <File FileName="../MultiRecommenderNoGui/06-23-2013-MultiRecommender/RatingPredictor/MatrixFactorizationBiasReg.cs" Line="104" Column="4" />
+      <File FileName="../MultiRecommenderNoGui/06-23-2013-MultiRecommender/MultiRecommender.cs" Line="96" Column="22" />
+      <File FileName="06-25-2013-MultiRecommender-GUI/MainWindow.cs" Line="3" Column="40" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

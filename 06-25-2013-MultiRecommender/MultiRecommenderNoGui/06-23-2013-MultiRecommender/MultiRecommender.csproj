@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{89C2F4B7-C4A6-4665-B0E2-1B672EED16A3}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MultiRecommender</RootNamespace>
+    <AssemblyName>06-23-2013-MultiRecommender</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\..\06-20-2013-HP-learn-SocialBPRMF\06-18-2013-HP-learn-SocialBPRMF\bin\Debug\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Init.cs" />
+    <Compile Include="ISocial.cs" />
+    <Compile Include="ItemAssociation.cs" />
+    <Compile Include="MultiRecommender.cs" />
+    <Compile Include="RatingPredictor\MatrixFactorization.cs" />
+    <Compile Include="RatingPredictor\MatrixFactorizationBias.cs" />
+    <Compile Include="RatingPredictor\MatrixFactorizationBiasReg.cs" />
+    <Compile Include="RatingPredictor\MatrixFactorizationReg.cs" />
+    <Compile Include="SocialRatingPredictor\SocialMF.cs" />
+    <Compile Include="JointFactorization\BprSocialJointMF.cs" />
+    <Compile Include="Evaluation\Eval.cs" />
+    <Compile Include="Evaluation\Predict.cs" />
+    <Compile Include="Datatype\SparseMatrix.cs" />
+    <Compile Include="IO\Protobufnet.cs" />
+    <Compile Include="JointFactorization\SqErrSocialMF.cs" />
+    <Compile Include="IO\Model.cs" />
+    <Compile Include="IO\MatrixExtension.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="RatingPredictor\" />
+    <Folder Include="SocialRatingPredictor\" />
+    <Folder Include="JointFactorization\" />
+    <Folder Include="Evaluation\" />
+    <Folder Include="Datatype\" />
+    <Folder Include="IO\" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
