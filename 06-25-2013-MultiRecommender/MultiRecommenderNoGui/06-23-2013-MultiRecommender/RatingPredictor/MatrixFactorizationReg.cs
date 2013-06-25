@@ -17,7 +17,7 @@ namespace MultiRecommender.RatingPredictor
 			regItem = 0.0015;
 			regGlbAvg = 0.01;
 
-			csvFileName = "./log/MatrixFactorizationReg.csv";				
+			csvFileName = "../../../../log/MatrixFactorizationReg.csv";				
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "regUser", "regItem",
 									"regGlbAvg", "RMSE(R)", "RMSE(Test)"};		
 			File.Open(csvFileName, FileMode.Create).Close();

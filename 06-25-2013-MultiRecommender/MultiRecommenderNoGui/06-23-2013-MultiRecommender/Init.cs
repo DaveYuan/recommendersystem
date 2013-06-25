@@ -14,8 +14,19 @@ namespace MultiRecommender
 		public static double regGlbAvg;
 		public static double globalAvg;
 		public static double lrate;
+
 		public const int USER = 1;
 		public const int ITEM = -1;
+//		public static bool SAVE_MODEL_LRATE = false;
+//		public static bool SAVE_MODEL_LRATE_BPR = false;
+//		public static bool SAVE_MODEL_REG_USER = false;
+//		public static bool SAVE_MODEL_REG_ITEM = false;
+//		public static bool SAVE_MODEL_REG_BIAS = false;
+//		public static bool SAVE_MODEL_REG_POSTV = false;
+//		public static bool SAVE_MODEL_REG_NEGTV = false;
+//		public static bool SAVE_MODEL_REG_GLB_AVG = false;
+//		public static bool SAVE_MODEL_REG_SOCIAL = false;
+
 		public static int numEpochs;
 		public static int numTrainEntries;
 		public static int numValidationEntries;
@@ -24,6 +35,7 @@ namespace MultiRecommender
 		public static int MAX_ITEM_ID;
 		public static int MIN_RATING;
 		public static int MAX_RATING;
+
 		public static int[] trainUsersArray;
 		public static int[] trainItemsArray;
 		public static int[] trainRatingsArray;
@@ -34,12 +46,16 @@ namespace MultiRecommender
 		public static int[] testItemsArray;
 		public static int[] testRatingsArray;		
 		public static int[] uniqueItemsArray;
+
+		//TODO: replace double with float
 		public static double[] userBias;
 		public static double[] itemBias;	
 		public static double[,] userFeature;
 		public static double[,] itemFeature;
+
 		public string csvFileName;	
 		public string[] csvHeadLine;
+
 		public static Random random;
 		public static Dictionary<int, int[]> trainRatedItems;
 		public static Dictionary<int, int[]> testRatedItems;				

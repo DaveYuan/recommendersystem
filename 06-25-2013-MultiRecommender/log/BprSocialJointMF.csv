@@ -1,0 +1,1 @@
+#itr,#feature,lrate,regSocial,regBias,regPostv,regNegtv,regUser,regItem,RMSE(R),BPTOPT(S),RMSE(T),Prec[5],Prec[10],Recl[5],Recl[10]

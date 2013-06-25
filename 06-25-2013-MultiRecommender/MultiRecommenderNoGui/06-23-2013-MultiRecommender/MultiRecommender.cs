@@ -12,7 +12,7 @@ using MultiRecommender.SocialRatingPredictor;
 
 namespace MultiRecommender
 {
-	public class MainClass : Init
+	public class MultiRecommenderMain : Init
 	{	
 		public static int model;
 		public const int MATRIX_FACTORIZATION = 1;
@@ -24,10 +24,10 @@ namespace MultiRecommender
 		public const int SQ_ERR_SOCIAL_MF = 7;
 
 		public static StreamWriter writer;
-		protected static Test testObj;
-		protected static Train trainObj;
-		protected static Validation validationObj;
-		protected static Association associationObj;	
+		public static Test testObj;
+		public static Train trainObj;
+		public static Validation validationObj;
+		public static Association associationObj;	
 
 
 		public static void writeToConsole(string mssg) 
@@ -37,6 +37,30 @@ namespace MultiRecommender
 
 		public static void loadDatasetToMemory() 
 		{
+			writeToConsole("Loading train.bin");
+			using (FileStream file = File.OpenRead("../../../../data/train.bin"))
+			{
+				trainObj = Serializer.Deserialize<Train>(file);
+			}
+
+			writeToConsole("Loading validation.bin");
+			using (FileStream file = File.OpenRead("../../../../data/validation.bin"))
+			{
+				validationObj = Serializer.Deserialize<Validation>(file);
+			}
+
+			writeToConsole("Loading test.bin");
+			using (FileStream file = File.OpenRead("../../../../data/test.bin"))
+			{
+				testObj = Serializer.Deserialize<Test>(file);
+			}			
+
+			writeToConsole("Loading trust.bin");
+			using (FileStream file = File.OpenRead("../../../../data/trust.bin"))
+			{
+				associationObj = Serializer.Deserialize<Association>(file);
+			}
+
 			trainUsersArray = trainObj.usersList.ToArray();
 			trainItemsArray = trainObj.itemsList.ToArray();
 			trainRatingsArray = trainObj.ratingsList.ToArray();
@@ -64,29 +88,6 @@ namespace MultiRecommender
 			Stopwatch trainTime = new Stopwatch();
 
 			loadTime.Start();				
-			writeToConsole("Loading train.bin");
-			using (FileStream file = File.OpenRead("train.bin"))
-			{
-				trainObj = Serializer.Deserialize<Train>(file);
-			}
-
-			writeToConsole("Loading validation.bin");
-			using (FileStream file = File.OpenRead("validation.bin"))
-			{
-				validationObj = Serializer.Deserialize<Validation>(file);
-			}
-
-			writeToConsole("Loading test.bin");
-			using (FileStream file = File.OpenRead("test.bin"))
-			{
-				testObj = Serializer.Deserialize<Test>(file);
-			}			
-
-			writeToConsole("Loading trust.bin");
-			using (FileStream file = File.OpenRead("trust.bin"))
-			{
-				associationObj = Serializer.Deserialize<Association>(file);
-			}
 			loadDatasetToMemory();
 			loadTime.Stop();
 
@@ -97,7 +98,7 @@ namespace MultiRecommender
 			writeToConsole("Initialize features");
 			init();	
 
-			model = SOCIAL_MF;
+			model = BPR_SOCIAL_JOINT_MF;
 
 			switch (model) {
 				case MATRIX_FACTORIZATION:

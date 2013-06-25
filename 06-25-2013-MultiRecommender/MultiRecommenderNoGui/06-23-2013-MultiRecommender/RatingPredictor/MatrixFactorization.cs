@@ -13,7 +13,7 @@ namespace MultiRecommender.RatingPredictor
 		{
 			lrate = 0.0001;
 			numEpochs = 50;
-			csvFileName = "./log/MatrixFactorization.csv";				
+			csvFileName = "../../../../log/MatrixFactorization.csv";				
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "RMSE(R)", "RMSE(Test)"};
 
 			File.Open(csvFileName, FileMode.Create).Close();

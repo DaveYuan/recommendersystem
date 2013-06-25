@@ -11,7 +11,7 @@ namespace MultiRecommender.SocialRatingPredictor
 	public class SocialMF : MatrixFactorizationBiasReg, ISocial
 	{
 		public double lrateRegConst;	
-		public double regSocial {get; set;}
+		public static double regSocial;
 		public SparseMatrix userAssociations {get; set;}
 		
 		public SocialMF(Association associationObj)
@@ -26,7 +26,7 @@ namespace MultiRecommender.SocialRatingPredictor
 			userAssociations = new SparseMatrix();
 			userAssociations.createSparseMatrix(associationObj.user1List.ToArray(), associationObj.user2List.ToArray());								
 							
-			csvFileName = "./log/SocialMF.csv";				
+			csvFileName = "../../../../log/SocialMF.csv";				
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "regUser", "regItem", "regBias", 
 										"regGlbAvg", "regSocial", "RMSE(R)", "RMSE(Test)"};		
 			File.Open(csvFileName, FileMode.Create).Close();

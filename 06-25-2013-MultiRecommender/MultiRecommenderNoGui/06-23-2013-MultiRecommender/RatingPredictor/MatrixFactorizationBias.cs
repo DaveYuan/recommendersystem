@@ -12,7 +12,7 @@ namespace MultiRecommender.RatingPredictor
 		public MatrixFactorizationBias()
 		{
 			lrate = 0.05;
-			csvFileName = "./log/MatrixFactorizationBias.csv";				
+			csvFileName = "../../../../log/MatrixFactorizationBias.csv";				
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "RMSE(R)", "RMSE(Test)"};
 
 			File.Open(csvFileName, FileMode.Create).Close();

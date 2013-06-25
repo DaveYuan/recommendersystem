@@ -10,11 +10,11 @@ namespace MultiRecommender.JointFactorization
 {
 	public class BprSocialJointMF : ItemAssociation, ISocial
 	{
-		public double lrateBPR;
-		public double lrateRegConst;
-		public double regPostv;
-		public double regNegtv;
-		public double regSocial {get; set;}
+		public static double lrateBPR;
+		public static double lrateRegConst;
+		public static double regPostv;
+		public static double regNegtv;
+		public static double regSocial;
 		public SparseMatrix userAssociations {get; set;}
 		public List<HashSet<int>> userSymmetricAssociations;					
 				
@@ -36,13 +36,26 @@ namespace MultiRecommender.JointFactorization
 			userAssociations.createSparseMatrix(associationObj.user1List.ToArray(), associationObj.user2List.ToArray());	
 			userSymmetricAssociations = userAssociations.symmetricMatrix();
 
-			csvFileName = "./log/BprSocialJointMF.csv";				
+			csvFileName = "../../../../log/BprSocialJointMF.csv";				
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "regSocial", "regBias", "regPostv", "regNegtv",
 				"regUser", "regItem", "RMSE(R)", "BPTOPT(S)", "RMSE(T)", "Prec[5]", "Prec[10]", "Recl[5]", "Recl[10]"};
 			File.Open(csvFileName, FileMode.Create).Close();
 			writeToLog(csvHeadLine);
 		}
-		
+
+//		public void saveModelInit()
+//		{
+//			SAVE_MODEL_LRATE = true;
+//			SAVE_MODEL_LRATE_BPR = true;
+//			SAVE_MODEL_REG_USER = true;
+//			SAVE_MODEL_REG_ITEM = true;
+//			SAVE_MODEL_REG_BIAS = true;
+//			SAVE_MODEL_REG_POSTV = true;
+//			SAVE_MODEL_REG_NEGTV = true;
+//			SAVE_MODEL_REG_GLB_AVG = true;
+//			SAVE_MODEL_REG_SOCIAL = true;
+//		}
+
 		public int drawUser() 
 		{
 			int userId;
@@ -319,6 +332,8 @@ namespace MultiRecommender.JointFactorization
 		
 		public void bprSocialJointMFTrain()
 		{		
+	//		saveModelInit();
+
 			bool SOCIAL_FLAG = true;
 			double rmse_XY;
 			double rmse_X;
