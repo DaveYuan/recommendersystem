@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace MultiRecommender.Evaluation
 {
 	//TODO: Change name of class PredictRecall to Predict
-	public class PredictRecall : Init
+	public class PredictRecall : Initialize
 	{				
 		public static double dotProduct(int userId,
 					  			 int itemId)
@@ -25,7 +25,7 @@ namespace MultiRecommender.Evaluation
 			return product;
 		}
 		
-		public double dotProductUser(int user1, int user2)
+		public static double dotProductUser(int user1, int user2)
 		{
 			double dotProduct = 0.0;
 			for (int i = 0; i < numFeatures; i++) {
@@ -42,7 +42,7 @@ namespace MultiRecommender.Evaluation
 				   dotProduct(userId, itemId);
 		}	
 		
-		public double predictRatingSocialRel(int userId, int userIdAssoc)
+		public static double predictRatingSocialRel(int userId, int userIdAssoc)
 		{
 			return globalAvg + 
 			       userBias[userId] +

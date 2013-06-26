@@ -73,4 +73,30 @@
     <Compile Include="gtk-gui\MovieDemo.UserNameInput.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\CommandLineProgram\CommandLineProgram.csproj">
+      <Project>{CF099BD4-46D6-4FB0-B42B-641A1F829241}</Project>
+      <Name>CommandLineProgram</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ItemRecommendation\ItemRecommendation.csproj">
+      <Project>{E1ECFAE9-E3D8-4567-8FA9-536A50F1C531}</Project>
+      <Name>ItemRecommendation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MyMediaLite\MyMediaLite.csproj">
+      <Project>{73424F09-BEEA-4992-B116-5F123496F5D3}</Project>
+      <Name>MyMediaLite</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RatingBasedRanking\RatingBasedRanking.csproj">
+      <Project>{7180F796-4365-498D-87AA-4A6F8DE42A1D}</Project>
+      <Name>RatingBasedRanking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RatingPrediction\RatingPrediction.csproj">
+      <Project>{7DCAB3F3-B687-4589-80F6-76F8BECBC6F8}</Project>
+      <Name>RatingPrediction</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tests\Tests.csproj">
+      <Project>{21DB122B-6D35-41F2-AE88-790A55859209}</Project>
+      <Name>Tests</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

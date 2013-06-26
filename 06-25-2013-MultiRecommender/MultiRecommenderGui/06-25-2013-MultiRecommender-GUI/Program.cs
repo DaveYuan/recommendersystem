@@ -7,7 +7,7 @@ namespace MultiRecommenderGUI
 	{
 		public static void Main (string[] args)
 		{
-			Application.Init ();
+			Application.Init();
 
 			MainWindow win = new MainWindow ();
 			win.Show ();

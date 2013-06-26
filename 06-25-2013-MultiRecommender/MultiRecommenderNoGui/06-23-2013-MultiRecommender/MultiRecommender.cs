@@ -12,7 +12,7 @@ using MultiRecommender.SocialRatingPredictor;
 
 namespace MultiRecommender
 {
-	public class MultiRecommenderMain : Init
+	public class MultiRecommenderMain : Initialize
 	{	
 		public static int model;
 		public const int MATRIX_FACTORIZATION = 1;
