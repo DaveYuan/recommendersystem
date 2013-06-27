@@ -11,7 +11,7 @@ namespace MultiRecommender.RatingPredictor
 	{
 		public MatrixFactorization ()
 		{
-			lrate = 0.0001;
+			lrate = 0.001;
 			numEpochs = 50;
 			csvFileName = "../../../../log/MatrixFactorization.csv";				
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "RMSE(R)", "RMSE(Test)"};
@@ -38,7 +38,7 @@ namespace MultiRecommender.RatingPredictor
 				sigScore = g(predictScore);
 				mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
 				err = mappedPredictScore - rating;
-				err = err * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
+		///		err = err * sigScore * (1 - sigScore) * (MAX_RATING - MIN_RATING);
 
 				//TODO: remove it as it increases error
 				//			globalAvg = globalAvg - lrate*err;

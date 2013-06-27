@@ -27,6 +27,7 @@ public partial class MainWindow: Window
 	public static Label label1;
 	public static Entry entry1;
 	public static TreeView treeView;
+	public static TreeView friendsView;
 
 	public static TreeModelFilter preFilter;
 	public static bool SHOW_ONLY_TOP_ARTISTS = true;
@@ -37,6 +38,7 @@ public partial class MainWindow: Window
 	public static TreeViewColumn artistColumn = new TreeViewColumn();
 	public static TreeViewColumn predictionColumn = new TreeViewColumn();
 	public static TreeViewColumn ratingColumn = new TreeViewColumn();
+	public static TreeViewColumn friendsColumn = new TreeViewColumn();
 
 	public static List<int> usersList;
 	public static List<int> artistsList;
@@ -209,7 +211,7 @@ public partial class MainWindow: Window
 	}
 
 	//TODO: Merge sorting functions
-	private int CompareTitleReversed(TreeModel model, TreeIter a, TreeIter b)
+	private int CompareNameReversed(TreeModel model, TreeIter a, TreeIter b)
 	{
 		Artist artist1 = (Artist) model.GetValue(a, 0);
 		Artist artist2 = (Artist) model.GetValue(b, 0);
@@ -217,7 +219,7 @@ public partial class MainWindow: Window
 		return string.Compare(artist2.name, artist1.name);
 	}
 
-	private int CompareTitle(TreeModel model, TreeIter a, TreeIter b)
+	private int CompareName(TreeModel model, TreeIter a, TreeIter b)
 	{
 		Artist artist1 = (Artist) model.GetValue(a, 0);
 		Artist artist2 = (Artist) model.GetValue(b, 0);
@@ -231,12 +233,12 @@ public partial class MainWindow: Window
 		if (artistColumn.SortOrder == SortType.Ascending)
 		{
 			artistColumn.SortOrder = SortType.Descending;
-			sorter.DefaultSortFunc = CompareTitleReversed;
+			sorter.DefaultSortFunc = CompareNameReversed;
 		}
 		else
 		{
 			artistColumn.SortOrder = SortType.Ascending;
-			sorter.DefaultSortFunc = CompareTitle;
+			sorter.DefaultSortFunc = CompareName;
 		}
 	}
 
@@ -394,6 +396,7 @@ public partial class MainWindow: Window
 		vBox = new VBox ();
 		filterBox = new HBox ();
 		treeView = new TreeView ();
+		friendsView = new TreeView();
 
 		entry1 = new Entry ();
 		entry1.Changed += OnFilterEntryTextChanged;
@@ -421,11 +424,18 @@ public partial class MainWindow: Window
 		artistColumn.SortIndicator = true;
 		artistColumn.Clickable = true;
 		artistColumn.Clicked += new EventHandler(ArtistColumnClicked);
+
+		var friendsCell = new CellRendererText();
+		friendsColumn.PackStart(friendsCell, true);
+		friendsColumn.SortIndicator = true;
+		friendsColumn.Clickable = true;
+//		friendsColumn.Clicked += new EventHandler(FriendsColumnClicked);
 	
 		// Add columns to treeView
 		treeView.AppendColumn(artistColumn);
 		treeView.AppendColumn(predictionColumn);
 		treeView.AppendColumn(ratingColumn);
+		friendsView.AppendColumn(friendsColumn);
 
 		predictionColumn.SetCellDataFunc(predictionCell, new TreeCellDataFunc(fetchPredictionColumn));
 		ratingColumn.SetCellDataFunc(ratingCell, new TreeCellDataFunc(fetchRatingColumn));
@@ -434,6 +444,7 @@ public partial class MainWindow: Window
 		predictionColumn.Title = "Prediction";
 		ratingColumn.Title = "Rating";
 		artistColumn.Title = "Artist";
+		friendsColumn.Title = "Friends";
 
 		predictionColumn.Resizable = true;
 		ratingColumn.Resizable = true;
@@ -457,16 +468,24 @@ public partial class MainWindow: Window
 
 		treeView.Model = sorter;	
 		treeView.ShowAll();
+		friendsView.ShowAll();
 
 		// Add the widgets to the box
 		filterBox.PackStart (label1, false, false, 5);
 		filterBox.PackStart (entry1, true, true, 5);
-		ScrolledWindow sc = new ScrolledWindow();
-		sc.Add(treeView);
+		ScrolledWindow sc1 = new ScrolledWindow();
+		ScrolledWindow sc2 = new ScrolledWindow();
+
+		sc1.Add(treeView);
+		sc2.Add(friendsView);
+
+		HBox hbox = new HBox();
+		hbox.PackStart(sc1);
+		hbox.PackStart(sc2);
 
 		// Add the widgets to the box
 		vBox.PackStart (filterBox, false, false, 5);
-		vBox.PackStart (sc, true, true, 5);
+		vBox.PackStart (hbox, true, true, 5);
 		
 
 		this.Add(vBox);

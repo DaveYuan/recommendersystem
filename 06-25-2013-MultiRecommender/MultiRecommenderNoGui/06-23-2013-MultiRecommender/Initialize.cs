@@ -157,7 +157,7 @@ namespace MultiRecommender
 		public void writeToLog(string[] rowData)
 		{
 			StringBuilder builder = new StringBuilder();
-			builder.AppendLine(string.Join(",", rowData));
+			builder.AppendLine(string.Join(";", rowData));
 			File.AppendAllText(csvFileName, builder.ToString());
 		}	
 

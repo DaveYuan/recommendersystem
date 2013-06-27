@@ -100,6 +100,7 @@ namespace MultiRecommender
 
 			model = BPR_SOCIAL_JOINT_MF;
 
+			//Bad: MATRIX_FACTORIZATION_BIAS, MATRIX_FACTORIZATION_REG ~ MATRIX_FACTORIZATION_BIAS_REG
 			switch (model) {
 				case MATRIX_FACTORIZATION:
 					writeToConsole("MATRIX_FACTORIZATION: RMSE trace per epoch on test");

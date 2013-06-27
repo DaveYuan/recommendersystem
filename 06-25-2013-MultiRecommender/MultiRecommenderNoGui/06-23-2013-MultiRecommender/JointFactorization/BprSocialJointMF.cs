@@ -20,7 +20,7 @@ namespace MultiRecommender.JointFactorization
 				
 		public BprSocialJointMF(Association associationObj)
 		{	
-			numEpochs = 20;		
+			numEpochs = 30;		
 			lrateRegConst = 0.001;
 			lrate = 0.009;
 			regUser = 4; //0.015

@@ -35,7 +35,7 @@ namespace MultiRecommender.Evaluation
 				double rating = testRatingsArray[i];
 							
 				predictScore = globalAvg + dotProduct(user, item);
-				sigScore = g(globalAvg + predictScore);
+				sigScore = g(predictScore);
 				mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);
 
 				err = mappedPredictScore - rating;				
