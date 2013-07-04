@@ -47,13 +47,13 @@ namespace JointFactBPR
 			
 			loadTime.Start();				
 					writeToConsole("Loading train.bin");
-					using (FileStream file = File.OpenRead("train1.bin"))
+					using (FileStream file = File.OpenRead("train.bin"))
 					{
 						trainObj = Serializer.Deserialize<Train>(file);
 					}
 					
 					writeToConsole("Loading test.bin");
-					using (FileStream file = File.OpenRead("test1.bin"))
+					using (FileStream file = File.OpenRead("test.bin"))
 					{
 						testObj = Serializer.Deserialize<Test>(file);
 					}			
@@ -70,7 +70,7 @@ namespace JointFactBPR
 					writeToConsole("Initialize features");
 					init();	
 					
-					model = SQ_ERR_SOCIAL_MF;
+					model = BPR_SOCIAL_JOINT_MF;
 					
 					switch (model) {
 						case BIAS_LEARN_MF: 

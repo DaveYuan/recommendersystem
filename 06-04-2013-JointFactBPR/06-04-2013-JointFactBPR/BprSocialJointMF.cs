@@ -24,10 +24,14 @@ namespace JointFactBPR
 			csvHeadLine = new string[]{"#itr", "#feature", "lrate", "regSocial", "regBias", "regPostv", "regNegtv",
 			"regUser", "regItem", "RMSE"};
 				
-			lrate = 0.005;
-			regPostv = 0.005;
-			regNegtv = 0.005;
-			regSocial = 10;
+		//	lrate = 0.005;
+			regUser = 0.5;
+			regItem = 0.9;
+			regBias = 1;
+		
+			regPostv = 2;
+			regNegtv = 9;
+			regSocial = 0.007;
 			
 			Console.WriteLine(", regSocial: {0}, regPostv: {1}, regNegtv: {2}", regSocial, regPostv, regNegtv);		
 			userAssociations = new SparseMatrix();
@@ -159,9 +163,11 @@ namespace JointFactBPR
 			int numTestEntries; 
 			
 			numTestEntries = testCheck();
-			
+
+			lrate = 0.7;
 			for (int itr = 1; itr <= numEpochs; itr++) {
 				regularization();
+				lrate = 0.004;
 				bprOpt = 0.0;				
 				for (int n = 0; n < numEntries; n++) {
 					predictionErrorLearn(n);	

@@ -11,7 +11,7 @@ namespace MultiRecommenderGUI
 
 			MainWindow win = new MainWindow ();
 			win.Show ();
-			win.Title ="Social BPR-MF Recommender";
+			win.Title ="Bayesian social joint matrix factorization recommender";
 			Application.Run ();
 		}
 	}

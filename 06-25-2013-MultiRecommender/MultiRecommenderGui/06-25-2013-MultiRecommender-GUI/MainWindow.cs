@@ -481,7 +481,7 @@ public partial class MainWindow: Window
 
 		HBox hbox = new HBox();
 		hbox.PackStart(sc1);
-		hbox.PackStart(sc2);
+//		hbox.PackStart(sc2);
 
 		// Add the widgets to the box
 		vBox.PackStart (filterBox, false, false, 5);

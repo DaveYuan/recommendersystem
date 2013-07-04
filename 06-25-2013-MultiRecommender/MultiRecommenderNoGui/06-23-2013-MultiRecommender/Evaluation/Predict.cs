@@ -36,8 +36,9 @@ namespace MultiRecommender.Evaluation
 
 		public static double PredictRating(int userId, int itemId) 
 		{
+			if (itemId > MAX_ITEM_ID) return globalAvg;
 			return globalAvg +
-				   itemBias[itemId] + 
+				itemBias[itemId] +
 				   userBias[userId] +
 				   dotProduct(userId, itemId);
 		}	

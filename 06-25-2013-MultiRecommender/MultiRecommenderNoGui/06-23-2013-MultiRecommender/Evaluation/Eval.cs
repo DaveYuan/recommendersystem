@@ -66,7 +66,7 @@ namespace MultiRecommender.Evaluation
 				sigScore = g(globalAvg + predictScore);
 				mappedPredictScore = MIN_RATING + sigScore * (MAX_RATING - MIN_RATING);				
 				err = mappedPredictScore - rating;								
-	//			err = predictScore - rating;
+//				err = predictScore - rating;
 				rmse += err * err;				
 			}
 			rmse = Math.Sqrt(rmse/numTestEntries);			

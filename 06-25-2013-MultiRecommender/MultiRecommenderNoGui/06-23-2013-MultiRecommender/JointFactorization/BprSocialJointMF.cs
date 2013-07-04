@@ -20,8 +20,9 @@ namespace MultiRecommender.JointFactorization
 				
 		public BprSocialJointMF(Association associationObj)
 		{	
+//			Last.fm hyper-parameters
 			numEpochs = 30;		
-			lrateRegConst = 0.001;
+			lrateRegConst = 0.001; 
 			lrate = 0.009;
 			regUser = 4; //0.015
 			regItem = -4; //0.019
@@ -32,6 +33,18 @@ namespace MultiRecommender.JointFactorization
 			regSocial = 0.03; //0.7
 			lrateBPR = 0.02;
 
+/*			numEpochs = 30;		
+			lrateRegConst = 0.001; 
+			lrate = 0.05;
+			regUser = -0.4; 
+			regItem = -0.8; 
+			regBias = 0.09; 
+
+			regPostv = 0.08; 
+			regNegtv = 0.05; 
+			regSocial = 0.07; 
+			lrateBPR = 0.2;
+*/
 			userAssociations = new SparseMatrix();
 			userAssociations.createSparseMatrix(associationObj.user1List.ToArray(), associationObj.user2List.ToArray());	
 			userSymmetricAssociations = userAssociations.symmetricMatrix();
