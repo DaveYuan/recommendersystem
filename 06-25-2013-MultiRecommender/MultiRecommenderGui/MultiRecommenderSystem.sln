@@ -21,6 +21,6 @@ Global
 		{89C2F4B7-C4A6-4665-B0E2-1B672EED16A3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = ..\MultiRecommenderNoGui\06-23-2013-MultiRecommender\MultiRecommender.csproj
+		StartupItem = 06-25-2013-MultiRecommender-GUI\MultiRecommenderGUI.csproj
 	EndGlobalSection
 EndGlobal
