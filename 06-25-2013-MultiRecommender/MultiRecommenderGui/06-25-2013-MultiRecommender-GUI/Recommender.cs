@@ -177,12 +177,36 @@ namespace MultiRecommenderGUI
 			}					
 		}
 
+		public static void bprSocialJointMFTrainOnly(int type, int indx)
+		{		
+			RecommenderExtensions.fetchUniqueArtist();
+			RecommenderExtensions.artistsRatedByUser();
+
+			for (int itr = 1; itr <= Initialize.numEpochs; itr++) {
+				regularization(type, indx);				
+				predictionErrorLearn(type, FindAllIndexof(MainWindow.usersList.ToArray(), indx));
+				for (int i = 1; i < 70; i++) {
+					socialRelLearn(indx);
+				}
+			}					
+		}
+
 		public static void retrainUser(int user) 
 		{
 			Initialize.userBias[user] = Initialize.random.NextDouble();
 			for (int f = 0; f < Initialize.numFeatures; f++) {
 				Initialize.userFeature[f, user] = Initialize.random.NextDouble();
 			}
+			bprSocialJointMFTrain(Initialize.USER, user);
+		}
+
+		public static void retrainUserOnly(int user) 
+		{
+			Initialize.userBias[user] = Initialize.random.NextDouble();
+			for (int f = 0; f < Initialize.numFeatures; f++) {
+				Initialize.userFeature[f, user] = Initialize.random.NextDouble();
+			}
+			Console.WriteLine("Retrain User");
 			bprSocialJointMFTrain(Initialize.USER, user);
 		}
 

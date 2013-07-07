@@ -73,6 +73,8 @@
     <Compile Include="LastFMArtistInfo.cs" />
     <Compile Include="RecommenderExtensions.cs" />
     <Compile Include="Recommender.cs" />
+    <Compile Include="ColumnEventHandler.cs" />
+    <Compile Include="Filters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

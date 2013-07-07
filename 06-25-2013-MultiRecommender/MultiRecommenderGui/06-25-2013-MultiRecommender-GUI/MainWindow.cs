@@ -28,21 +28,30 @@ public partial class MainWindow: Window
 	public static Entry entry1;
 	public static TreeView treeView;
 	public static TreeView friendsView;
+	public static TreeView usersView;
 
 	public static TreeModelFilter preFilter;
 	public static bool SHOW_ONLY_TOP_ARTISTS = true;
 
 	public static TreeModelFilter nameFilter;
-	public static TreeModelSort sorter;
+	public static TreeModelSort sorter1;
+	public static TreeModelSort sorter2;
+	public static TreeModelSort sorter3;
 
 	public static TreeViewColumn artistColumn = new TreeViewColumn();
 	public static TreeViewColumn predictionColumn = new TreeViewColumn();
 	public static TreeViewColumn ratingColumn = new TreeViewColumn();
 	public static TreeViewColumn friendsColumn = new TreeViewColumn();
+	public static TreeViewColumn usersColumn = new TreeViewColumn();
 
 	public static List<int> usersList;
 	public static List<int> artistsList;
 	public static List<int> ratingsList;
+	public static List<int> nonFriendsList;
+		
+	public static ListStore artistStore = new ListStore(typeof(Artist));
+	public static ListStore friendsStore = new ListStore(typeof(int));
+	public static ListStore usersStore = new ListStore(typeof(int));
 
 	LastFMArtistInfo artist = new LastFMArtistInfo();
 
@@ -55,7 +64,7 @@ public partial class MainWindow: Window
 	{
 		ratingsFile = "../../../../data/ratings.txt";
 		artistFile = "../../../../data/artists.dat";
-		modelFile = "../../../../models/BPRSocialJointMF.model";
+		modelFile = "BPRSocialJointMF.model";
 	}
 
 	public int drawLiveUserId()
@@ -85,8 +94,7 @@ public partial class MainWindow: Window
 	{
 		return values.Select((b,i) => object.Equals(b, val) ? i : -1).Where(i => i != -1).ToArray();
 	}
-
-
+	
 	public void fetchTopNArtist()
 	{
 		int numArtist = artistsList.Count;
@@ -107,22 +115,13 @@ public partial class MainWindow: Window
 		}
 	}
 	
-	public void predictRatingsLiveUser()
+	public static void predictRatingsLiveUser()
 	{
 		Console.WriteLine("\t- Predicting ratings for live user");
 		for (int i = 0; i <= Initialize.MAX_ITEM_ID; i++) {
 			predictions[i] = Eval.PredictRating(liveUserID, i);
 		}
 	}
-
-//	public void ratingsLiveUser()
-//	{
-//		Console.WriteLine("Fetching ratings given by live user");
-//		var indices = FindAllIndexof(usersList, liveUserID);
-//		foreach(int indx in indices) { 
-//			ratings.Add(artistsArray[indx], ratingsArray[indx]);
-//		}
-//	}
 
 	public void fetchArtistColumn(TreeViewColumn column, CellRenderer cell, TreeModel model, TreeIter iter)
 	{
@@ -180,226 +179,29 @@ public partial class MainWindow: Window
 			(cell as CellRendererText).Text = string.Empty;
 	}
 
-
-	private void OnFilterEntryTextChanged (object o, System.EventArgs args)
+	public void fetchFriendsColumn(TreeViewColumn column, CellRenderer cell, TreeModel model, TreeIter iter)
 	{
-		// Since the filter text changed, tell the filter to re-determine which rows to display
-		nameFilter.Refilter ();
+		int user = (int) model.GetValue(iter, 0);
+		(cell as CellRendererText).Text = string.Format(CultureInfo.InvariantCulture, "{0}", user);
 	}
 
-	private bool PreFilter(TreeModel model, TreeIter iter)
+	public void fetchUsersColumn(TreeViewColumn column, CellRenderer cell, TreeModel model, TreeIter iter)
 	{
-		Artist artist = (Artist) model.GetValue(iter, 0);
-		if (SHOW_ONLY_TOP_ARTISTS && !topNArtist.Contains(artist.id)) {
-			return false;
-		}
-		return true;
+		int user = (int) model.GetValue(iter, 0);
+		(cell as CellRendererText).Text = string.Format(CultureInfo.InvariantCulture, "{0}", user);
 	}
 
-	private bool FilterByName(TreeModel model, TreeIter iter)
-	{
-		Artist artist = (Artist) model.GetValue(iter, 0);
-		string artistName = artist.name;
-
-		if (entry1.Text == string.Empty)
-			return true;
-
-		if (artistName.Contains(entry1.Text))
-			return true;
-		else 
-			return false;				                
-	}
-
-	//TODO: Merge sorting functions
-	private int CompareNameReversed(TreeModel model, TreeIter a, TreeIter b)
-	{
-		Artist artist1 = (Artist) model.GetValue(a, 0);
-		Artist artist2 = (Artist) model.GetValue(b, 0);
-
-		return string.Compare(artist2.name, artist1.name);
-	}
-
-	private int CompareName(TreeModel model, TreeIter a, TreeIter b)
-	{
-		Artist artist1 = (Artist) model.GetValue(a, 0);
-		Artist artist2 = (Artist) model.GetValue(b, 0);
-
-		return string.Compare(artist1.name, artist2.name);
-	}
-
-
-	private void ArtistColumnClicked(object o, EventArgs args)
-	{
-		if (artistColumn.SortOrder == SortType.Ascending)
-		{
-			artistColumn.SortOrder = SortType.Descending;
-			sorter.DefaultSortFunc = CompareNameReversed;
-		}
-		else
-		{
-			artistColumn.SortOrder = SortType.Ascending;
-			sorter.DefaultSortFunc = CompareName;
-		}
-	}
-
-
-	private int ComparePrediction(TreeModel model, TreeIter a, TreeIter b)
-	{
-		Artist artist1 = (Artist) model.GetValue(a, 0);
-		Artist artist2 = (Artist) model.GetValue(b, 0);
-		
-		double prediction1 = -1;
-		predictions.TryGetValue(artist1.id, out prediction1);
-		double prediction2 = -1;
-		predictions.TryGetValue(artist2.id, out prediction2);
-
-		double diff = prediction1 - prediction2;
-
-		if (diff > 0)
-			return 1;
-		if (diff < 0)
-			return -1;
-		return 0;
-	}
-
-	public int ComparePredictionReversed(TreeModel model, TreeIter a, TreeIter b)
-	{
-		Artist artist1 = (Artist) model.GetValue(a, 0);
-		Artist artist2 = (Artist) model.GetValue(b, 0);
-
-		double prediction1 = -1;
-		predictions.TryGetValue(artist1.id, out prediction1);
-		double prediction2 = -1;
-		predictions.TryGetValue(artist2.id, out prediction2);
-
-		double diff = prediction2 - prediction1;
-
-		if (diff > 0) {
-			return 1;
-		}
-		if (diff < 0) {
-			return -1;
-		}
-		return 0;
-	}
-
-	private void PredictionColumnClicked(object o, EventArgs args)
-	{
-		if (predictionColumn.SortOrder == SortType.Ascending)
-		{
-			predictionColumn.SortOrder = SortType.Descending;
-			sorter.DefaultSortFunc = ComparePrediction;
-		}
-		else
-		{
-			predictionColumn.SortOrder = SortType.Ascending;
-			sorter.DefaultSortFunc = ComparePredictionReversed;
-		}
-	}
-	
-	private int CompareRating(TreeModel model, TreeIter a, TreeIter b)
-	{
-		Artist artist1 = (Artist) model.GetValue(a, 0);
-		Artist artist2 = (Artist) model.GetValue(b, 0);
-
-		double rating1;
-		ratings.TryGetValue(artist1.id, out rating1);
-		double rating2;
-		ratings.TryGetValue(artist2.id, out rating2);
-
-		double diff = rating1 - rating2;
-
-		if (diff > 0)
-			return 1;
-		if (diff < 0)
-			return -1;
-		return 0;
-	}
-
-	private int CompareRatingReversed(TreeModel model, TreeIter a, TreeIter b)
-	{
-		Artist artist1 = (Artist) model.GetValue(a, 0);
-		Artist artist2 = (Artist) model.GetValue(b, 0);
-
-		double rating1;	
-		ratings.TryGetValue(artist1.id, out rating1);
-		double rating2;
-		ratings.TryGetValue(artist2.id, out rating2);
-
-		double diff = rating2 - rating1;
-
-		if (diff > 0)
-			return 1;
-		if (diff < 0)
-			return -1;
-		return 0;
-	}
-
-	private void RatingColumnClicked(object o, EventArgs args)
-	{
-		if (ratingColumn.SortOrder == SortType.Ascending)
-		{
-			ratingColumn.SortOrder = SortType.Descending;
-			sorter.DefaultSortFunc = CompareRating;
-		}
-		else
-		{
-			ratingColumn.SortOrder = SortType.Ascending;
-			sorter.DefaultSortFunc = CompareRatingReversed;
-		}
-	}
-
-	private void RatingCellEdited(object o, EditedArgs args)
-	{
-		TreeIter iter;
-		treeView.Model.GetIter(out iter, new TreePath(args.Path));
-
-		Artist artist = (Artist) treeView.Model.GetValue(iter, 0);
-		string input = args.NewText.Trim();
-
-		if (input == string.Empty)
-		{
-			Console.WriteLine("Remove rating.");
-			if (ratings.Remove(artist.id)) {
-				RecommenderExtensions.removeRating(liveUserID, artist.id);
-			}
-
-			predictRatingsLiveUser();
-			return;
-		}
-
-		try
-		{
-			double rating = double.Parse(input);
-			if (rating > Initialize.MAX_RATING)
-				rating = Initialize.MAX_RATING;
-			if (rating < Initialize.MIN_RATING)
-				rating = Initialize.MIN_RATING;
-
-			if (ratings.ContainsKey(artist.id)) {
-				RecommenderExtensions.removeRating(liveUserID, artist.id);
-			}
-
-			RecommenderExtensions.addRating(liveUserID, artist.id, (int)rating);
-			ratings[artist.id] = rating;
-
-			predictRatingsLiveUser();
-		}
-		catch (FormatException)
-		{
-			Console.Error.WriteLine("Could not parse input '{0}' as a number.", input);
-		}
-	}
-	
 	public void createGUI()
 	{
 		vBox = new VBox ();
 		filterBox = new HBox ();
 		treeView = new TreeView ();
 		friendsView = new TreeView();
+		usersView = new TreeView();
+		nonFriendsList = new List<int>();
 
 		entry1 = new Entry ();
-		entry1.Changed += OnFilterEntryTextChanged;
+		entry1.Changed += Filters.OnFilterEntryTextChanged;
 		label1 = new Label ("Artist Search:");
 	
 		// create a column for the prediction
@@ -407,86 +209,123 @@ public partial class MainWindow: Window
 		predictionColumn.PackStart(predictionCell, true);
 		predictionColumn.SortIndicator = true;
 		predictionColumn.Clickable = true;
-		predictionColumn.Clicked += new EventHandler(PredictionColumnClicked);
+		predictionColumn.Clicked += new EventHandler(ColumnEventHandler.PredictionColumnClicked);
 
 		// create a column for the rating
 		var ratingCell = new CellRendererText();
 		ratingCell.Editable = true;
-		ratingCell.Edited += RatingCellEdited;
+		ratingCell.Edited += ColumnEventHandler.RatingCellEdited;
 		ratingColumn.PackStart(ratingCell, true);
 		ratingColumn.SortIndicator = true;
 		ratingColumn.Clickable = true;
-		ratingColumn.Clicked += new EventHandler(RatingColumnClicked);
+		ratingColumn.Clicked += new EventHandler(ColumnEventHandler.RatingColumnClicked);
 
 		// set up a column for the movie title
 		var artistCell = new CellRendererText();
 		artistColumn.PackStart(artistCell, true);
 		artistColumn.SortIndicator = true;
 		artistColumn.Clickable = true;
-		artistColumn.Clicked += new EventHandler(ArtistColumnClicked);
+		artistColumn.Clicked += new EventHandler(ColumnEventHandler.ArtistColumnClicked);
 
 		var friendsCell = new CellRendererText();
 		friendsColumn.PackStart(friendsCell, true);
 		friendsColumn.SortIndicator = true;
 		friendsColumn.Clickable = true;
-//		friendsColumn.Clicked += new EventHandler(FriendsColumnClicked);
-	
+		friendsColumn.Clicked += new EventHandler(ColumnEventHandler.FriendsColumnClicked);
+
+		var usersCell = new CellRendererText();
+		usersColumn.PackStart(usersCell, true);
+		usersColumn.SortIndicator = true;
+		usersColumn.Clickable = true;
+		usersColumn.Clicked += new EventHandler(ColumnEventHandler.UsersColumnClicked);
+
 		// Add columns to treeView
 		treeView.AppendColumn(artistColumn);
 		treeView.AppendColumn(predictionColumn);
 		treeView.AppendColumn(ratingColumn);
 		friendsView.AppendColumn(friendsColumn);
+		usersView.AppendColumn(usersColumn);
 
 		predictionColumn.SetCellDataFunc(predictionCell, new TreeCellDataFunc(fetchPredictionColumn));
 		ratingColumn.SetCellDataFunc(ratingCell, new TreeCellDataFunc(fetchRatingColumn));
 		artistColumn.SetCellDataFunc(artistCell, new TreeCellDataFunc(fetchArtistColumn));
+		friendsColumn.SetCellDataFunc(friendsCell, new TreeCellDataFunc(fetchFriendsColumn));
+		usersColumn.SetCellDataFunc(usersCell, new TreeCellDataFunc(fetchUsersColumn));
 
 		predictionColumn.Title = "Prediction";
 		ratingColumn.Title = "Rating";
 		artistColumn.Title = "Artist";
 		friendsColumn.Title = "Friends";
+		usersColumn.Title = "Make friend";
 
 		predictionColumn.Resizable = true;
 		ratingColumn.Resizable = true;
 		artistColumn.Resizable = true;
 
-		var artistStore = new ListStore(typeof(Artist));
-
 		foreach (Artist ar in artist.artistList) {	
 			artistStore.AppendValues(ar);
 		}
 
+		var friends = Recommender.userSymmetricAssociations[liveUserID];
+		foreach (int user in friends) {
+			friendsStore.AppendValues(user);
+		}
+
+		HashSet<int> users = new HashSet<int>(usersList);
+		foreach (int user in users) {
+			if (!friends.Contains(user)) {
+				usersStore.AppendValues(user);
+				nonFriendsList.Add(user);
+//				Console.WriteLine(user);
+			}
+		}
+
 		preFilter = new TreeModelFilter(artistStore, null);
-		preFilter.VisibleFunc = new TreeModelFilterVisibleFunc(PreFilter);
+		preFilter.VisibleFunc = new TreeModelFilterVisibleFunc(Filters.PreFilter);
 
 		nameFilter = new TreeModelFilter(preFilter, null);
-		nameFilter.VisibleFunc =  new TreeModelFilterVisibleFunc(FilterByName);
+		nameFilter.VisibleFunc =  new TreeModelFilterVisibleFunc(Filters.FilterByName);
 
-		sorter = new TreeModelSort(nameFilter);
-		sorter.DefaultSortFunc = ComparePredictionReversed;
+		sorter1 = new TreeModelSort(nameFilter);
+		sorter1.DefaultSortFunc = ColumnEventHandler.ComparePredictionReversed;
+		sorter2 = new TreeModelSort(friendsStore);
+		sorter2.DefaultSortFunc = ColumnEventHandler.CompareUser;
+		sorter3 = new TreeModelSort(usersStore);
+		sorter3.DefaultSortFunc = ColumnEventHandler.CompareUser;
 
+		treeView.Model = sorter1;
+		friendsView.Model = sorter2;
+		usersView.Model = sorter3;
+	
+		treeView.ColumnsAutosize();
+		friendsView.ColumnsAutosize();
+		usersView.ColumnsAutosize();
 
-		treeView.Model = sorter;	
+		usersView.CursorChanged += new EventHandler(ColumnEventHandler.MakeFriend);
+
 		treeView.ShowAll();
 		friendsView.ShowAll();
+		usersView.ShowAll();
 
 		// Add the widgets to the box
 		filterBox.PackStart (label1, false, false, 5);
 		filterBox.PackStart (entry1, true, true, 5);
 		ScrolledWindow sc1 = new ScrolledWindow();
 		ScrolledWindow sc2 = new ScrolledWindow();
+		ScrolledWindow sc3 = new ScrolledWindow();
 
 		sc1.Add(treeView);
 		sc2.Add(friendsView);
+		sc3.Add(usersView);
 
 		HBox hbox = new HBox();
 		hbox.PackStart(sc1);
-//		hbox.PackStart(sc2);
+		hbox.PackStart(sc2);
+		hbox.PackStart(sc3);
 
 		// Add the widgets to the box
 		vBox.PackStart (filterBox, false, false, 5);
-		vBox.PackStart (hbox, true, true, 5);
-		
+		vBox.PackStart (hbox, true, true, 5);		
 
 		this.Add(vBox);
 	}
@@ -506,11 +345,11 @@ public partial class MainWindow: Window
 		Console.WriteLine("\t- Time(merge-splits): {0}", mergeTime.Elapsed);
 
 		Console.WriteLine("\t- Read ArtistInfo");
-		artist.readArtistInfo(new StreamReader("../../../../data/artists.dat"));
+		artist.readArtistInfo(new StreamReader(artistFile));
 
 		Recommender recommender = new Recommender(MultiRecommenderMain.associationObj);
 
-		var reader = Model.getReader("BPRSocialJointMF.model");
+		var reader = Model.getReader(modelFile);
 		Model.loadModel(reader);
 
 		fetchTopNArtist();
